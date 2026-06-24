@@ -1,6 +1,7 @@
 # Este es un ejemplo
-Este es una informacion del readme de la rama readme
+archivo nuevo readme
 
+# esto es un archivo
 ## README
 h
 fgh
@@ -14,14 +15,9 @@ g
 hgf
 
 gfh
-gfh
 
 gfh
-gfh
-gfh
 
-fg
-h
 fg
 h
 fg
