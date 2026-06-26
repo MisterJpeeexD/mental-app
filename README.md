@@ -141,3 +141,38 @@ El workflow [maven.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/
 2. Inicializa Java JDK 17 (Temurin).
 3. Compila el backend ejecutando `mvn clean package -DskipTests`.
 4. Ejecuta toda la suite de pruebas unitarias mediante `mvn test`.
+
+---
+
+## 📝 Descripción del Pull Request (Rama `agregar-propiedades`)
+
+Esta rama contiene la integración del backend en Java Spring Boot junto con la configuración de la base de datos Neon PostgreSQL y las canalizaciones de CI/CD. Los cambios clave incluidos en este pull request son:
+
+### 1. Base de Datos Neon (PostgreSQL)
+- Migración de la configuración de base de datos de MySQL a **PostgreSQL** para una integración nativa con **Neon**.
+- Configuración de dependencias en [pom.xml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/backend/pom.xml) (`org.postgresql:postgresql`).
+- Creación de variables de entorno y plantillas de conexión JDBC en [application.properties](file:///c:/Users/Ricardo/Desktop/rep/mental-app/backend/src/main/resources/application.properties) con soporte para SSL.
+- Configuración de base de datos H2 en memoria como fallback de desarrollo y pruebas automatizadas (evitando el uso de credenciales expuestas en CI).
+
+### 2. Entidades & Modelos de Dominio
+Se implementaron los siguientes modelos en inglés ([backend/src/main/java/com/example/demo/model](file:///c:/Users/Ricardo/Desktop/rep/mental-app/backend/src/main/java/com/example/demo/model)) mapeados con anotaciones JPA a las tablas en español definidas en el diagrama relacional (`dbdiagram.io`):
+- **`User` (Tabla `usuarios`):** Registro de pacientes y credenciales.
+- **`Professional` (Tabla `profesionales`):** Registro de psicólogos, coaches y voluntarios.
+- **`SessionReservation` (Tabla `reservas_sesiones`):** Agendamiento y estados de las sesiones de telemedicina.
+- **`JournalEntry` (Tabla `diario_emocional`):** Bitácora de autogestión y privacidad del diario.
+- **`Feedback` (Tabla `valoraciones_profesional`):** Retroalimentación de pacientes a profesionales.
+- **Enums de Configuración:** `Gender`, `UserStatus`, `ProfessionalStatus`, `SessionType`, `SessionStatus`, y `PrivacyStatus`.
+
+### 3. Repositorios de Capa de Persistencia
+- Interfaces que extienden `JpaRepository` para todas las entidades nuevas, soportando búsquedas relacionales:
+  - `UserRepository`
+  - `ProfessionalRepository`
+  - `SessionReservationRepository`
+  - `JournalEntryRepository`
+  - `FeedbackRepository`
+
+### 4. Automatización & Integración Continua (CI/CD)
+- **CI de Compilación y Test ([maven.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/workflows/maven.yml)):** Compila el código y ejecuta los tests unitarios en cada push/PR.
+- **Análisis Estático ([codeql.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/workflows/codeql.yml)):** Configurado para escanear código en Java y JavaScript.
+- **Revisiones Automatizadas ([sourcery.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/workflows/sourcery.yml)):** Integración con Sourcery AI para PRs.
+

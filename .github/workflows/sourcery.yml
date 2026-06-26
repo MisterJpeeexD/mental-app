@@ -1,0 +1,21 @@
+name: Sourcery Code Review
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  sourcery:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run Sourcery Review
+      uses: sourcery-ai/action@v1
+      with:
+        token: ${{ secrets.SOURCERY_TOKEN }}

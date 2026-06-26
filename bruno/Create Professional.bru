@@ -1,0 +1,25 @@
+meta {
+  name: Create Professional
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/api/professionals
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": 1,
+    "licenciaProfesional": "LIC-998811",
+    "especialidadPrincipalId": 2,
+    "descripcionProfesional": "Psychologist specializing in Cognitive Behavioral Therapy.",
+    "esVoluntario": false,
+    "tarifaSesion": 45.00,
+    "biografiaProfesional": "Experienced clinical psychologist with over 5 years of experience in emotional support.",
+    "anosExperiencia": 6,
+    "idiomas": "Spanish, English"
+  }
+}

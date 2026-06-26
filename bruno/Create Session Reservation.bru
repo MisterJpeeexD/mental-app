@@ -1,0 +1,23 @@
+meta {
+  name: Create Session Reservation
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8080/api/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": 1,
+    "professionalId": 1,
+    "fechaSesion": "2026-07-10T15:00:00",
+    "duracionMinutos": 60,
+    "tipoSesion": "online",
+    "montoPagado": 45.00,
+    "notasUsuario": "Seeking support for work stress management."
+  }
+}

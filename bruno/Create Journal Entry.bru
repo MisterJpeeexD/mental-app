@@ -1,0 +1,20 @@
+meta {
+  name: Create Journal Entry
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8080/api/diarios
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": 1,
+    "fechaEntrada": "2026-06-25",
+    "contenido": "Today I practiced the 4-4-4-4 breathing technique and felt significantly calmer.",
+    "estadoPrivacidad": "privado"
+  }
+}
