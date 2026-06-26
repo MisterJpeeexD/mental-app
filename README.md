@@ -1,69 +1,143 @@
-# Orden de archivos
-| ├── database
-| └── database.sql
-| ├── script
-| └── script.js
-└── index.html
-└── style.css
+# 🧠 Mente Conecta — Plataforma Práctica de Salud Mental
 
+Este repositorio contiene la arquitectura, el código fuente y el flujo de integración de la **Plataforma Práctica de Salud Mental (Mente Conecta)**, un sistema ágil y psicoeducativo orientado a la autogestión de la salud mental y la colaboración con profesionales clínicos.
 
-# Plataforma Práctica de Salud Mental (MVP Beta 2 Semanas)
+---
 
-[cite_start]Este repositorio contiene el código fuente del Producto Mínimo Viable (MVP) para la Plataforma Práctica de Salud Mental, desarrollado bajo un enfoque ágil y psicoeducativo práctico en un ciclo de 2 semanas[cite: 1, 2, 3]. [cite_start]El sistema prioriza la autogestión diaria y la utilidad clínica inmediata sobre la teoría extensa[cite: 3, 5].
+## 🛡️ Status & Tech Badges
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Maven CI](https://img.shields.io/github/actions/workflow/status/MisterJpeeexD/mental-app/maven.yml?branch=main&style=for-the-badge&label=Maven%20CI)
+![License](https://img.shields.io/github/license/MisterJpeeexD/mental-app?style=for-the-badge)
+
+---
+
+## 🏛️ Arquitectura del Sistema
+
+El proyecto está estructurado como una aplicación desacoplada en tres capas (Frontend en React, Backend en Spring Boot, y Base de Datos Relacional).
+
+```mermaid
+graph TD
+    subgraph Cliente [Capa de Cliente - React]
+        SPA["React SPA (Vite)"]
+        Components["Componentes (Botiquín, Directorio, Portal)"]
+        APIClient["Cliente API (Fetch / Axios)"]
+        SPA --> Components
+        Components --> APIClient
+    end
+
+    subgraph Servidor [Capa de Negocio - Spring Boot]
+        Controller["REST Controllers (User, Task, Auth)"]
+        Service["Servicios de Negocio"]
+        Repository["Repositorio (Spring Data JPA)"]
+        Controller --> Service
+        Service --> Repository
+    end
+
+    subgraph Almacenamiento [Capa de Datos]
+        DB[("Base de Datos (MySQL / H2)")]
+    end
+
+    APIClient -- "HTTP / JSON REST" --> Controller
+    Repository -- "JDBC (Hibernate)" --> DB
+```
+
+---
 
 ## 🛠️ Stack Tecnológico
-* [cite_start]**Frontend:** HTML5, CSS3 (Responsive) y Vanilla JavaScript (ES6+)[cite: 4, 28].
-* [cite_start]**Backend/Base de Datos:** Arquitectura ligera e independiente [cite: 4] [cite_start]con un modelo relacional para la gestión de usuarios, profesionales y formularios[cite: 27, 28].
 
----
-
-## 🚀 Funcionalidades del MVP (Alcance Actual)
-
-### [cite_start]1. Botiquín de Ayuda Inmediata y Explorador [cite: 8]
-* [cite_start]**Ejercicios de Respiración:** Temporizador y reproductor interactivo guiado mediante JavaScript utilizando la técnica de caja (4-4-4-4)[cite: 9, 28].
-* [cite_start]**Botón de Grounding:** Módulo interactivo basado en la técnica de enraizamiento 5-4-3-2-1[cite: 9].
-* [cite_start]**Micro-Hábitos:** Tarjetas interactivas con acciones diarias simples basadas en Terapia Cognitivo Conductual (TCC)[cite: 10].
-
-### [cite_start]2. Biblioteca Práctica y Monetización [cite: 11]
-* [cite_start]**Material Rotativo:** Sección con liberación semanal de recursos gratuitos (videos, infografías o documentos cortos)[cite: 12].
-* [cite_start]**Librería Recomendada (Afiliados Amazon):** Integración de enlaces de afiliado de Amazon para libros de autoayuda con rigor científico, crecimiento personal y organización[cite: 13, 14].
-
-### [cite_start]3. Portal Exclusivo para Profesionales [cite: 15]
-* [cite_start]**Material Clínico Descargable:** Repositorio privado para la descarga de fichas de atención, pautas de evaluación para supervisores y material de apoyo estandarizado[cite: 16].
-* [cite_start]**Feedback y Mejora:** Sistema integrado de encuestas de pacientes y buzón de sugerencias operativo para optimizar el entorno virtual[cite: 17].
-
-### [cite_start]4. Directorio Profesional y Derivación [cite: 18]
-* [cite_start]**Vitrina Segmentada:** Listado clasificado de psicólogos, coaches y voluntarios/practicantes[cite: 19].
-* [cite_start]**Políticas de Acceso:** Sistema de primera sesión gratuita para estudiantes en práctica[cite: 20].
-* [cite_start]**Filtros de Búsqueda:** Clasificación lógica por áreas: Salud Mental, Desarrollo Profesional y Salud Alternativa/Holística[cite: 21].
-
----
-
-## 👥 Asignación de Roles del Equipo
-
-[cite_start]El desarrollo técnico y la documentación se distribuyen bajo la siguiente estructura de responsabilidades[cite: 22]:
-
-| Área | Integrantes |
+| Componente | Tecnologías Utilizadas |
 | :--- | :--- |
-| **HTML y CSS (Frontend)** | [cite_start]Christian, Camila, Ariel, Jean Paul [cite: 23] |
-| **Script (JavaScript Frontend/Lógica)** | [cite_start]Ricardo, Jean Paul, Ariel (Apoyo) [cite: 23] |
-| **Base de Datos / Backend** | [cite_start]Jean Paul, Benjamín, Ricardo [cite: 23] |
-| **Diseño Visual (UX/UI, Figma)** | [cite_start]Christian, Nancy (Apoyo), Camila [cite: 23] |
-| **Fundamentos (Justificación/Solución)** | [cite_start]Nancy [cite: 23] |
-| **Información Educativa & Contenido** | [cite_start]Nancy [cite: 23] |
+| **Frontend** | React, Vite, HTML5, CSS3, JavaScript (ES6+), React Hooks |
+| **Backend** | Java 17+, Spring Boot (Web, JPA, Validation), Lombok |
+| **Base de Datos** | MySQL (Producción), H2 (Desarrollo y Pruebas en Memoria) |
+| **CI / CD** | GitHub Actions (Maven Workflow, CodeQL) |
+| **Licencia** | GNU General Public License v3.0 (GPLv3) |
 
 ---
 
-## 📅 Cronograma de Desarrollo (Sprint de 2 Semanas)
+## 🚀 Funcionalidades Clave
 
-### [cite_start]Semana 1: Estructura, Diseño y Lógica Frontend [cite: 26]
-* [cite_start]**Miércoles:** Redacción de fundamentos, diseño de wireframes básicos y definición del modelo relacional de la base de datos[cite: 27].
-* [cite_start]**Jueves:** Mockups finales, maquetación de la estructura base (`index.html`, navbar, footer) y filtrado de las 5 técnicas del botiquín[cite: 27].
-* [cite_start]**Viernes:** Implementación de estilos CSS responsive, programación de la lógica interactiva del botiquín (JS) y creación física de la base de datos y sus tablas fundamentales[cite: 28].
+### 1. Botiquín de Ayuda Inmediata
+- **Ejercicios de Respiración:** Temporizador interactivo guiado utilizando la técnica de caja (4-4-4-4).
+- **Botón de Grounding:** Módulo interactivo basado en la técnica cognitiva-conductual 5-4-3-2-1.
+- **Micro-Hábitos:** Tarjetas y checklists diarios orientados a la Terapia Cognitivo Conductual (TCC).
 
-### [cite_start]Semana 2: Backend, Enlaces e Integración [cite: 29]
-* [cite_start]**Lunes:** Carga de libros e inserción de enlaces de afiliados, maquetación del Portal de Profesionales y programación de la lógica de filtros del directorio[cite: 30].
-* [cite_start]**Martes:** Conexión de los formularios de registro (pacientes/voluntarios) a la base de datos, validaciones de inputs frontend (RUT, email) y revisión de rigor científico/disclaimers[cite: 30].
-* [cite_start]**Miércoles:** Refactorización y consistencia del CSS general, ejecución de consultas SQL (`SELECT`) para renderizar dinámicamente los profesionales en el DOM y cierre del documento técnico[cite: 30].
-* **Jueves:** Fase de Testing, QA y control de usabilidad sobre el botiquín, links de Amazon y descargas clínicas. [cite_start]Resolución de bugs[cite: 30, 31].
-* [cite_start]**Viernes:** Subida de código a GitHub, despliegue en servidor de hosting (GitHub Pages, Vercel o Netlify) y preparación de la defensa técnica de la versión Beta[cite: 31].
+### 2. Biblioteca Práctica y Recursos
+- **Material Rotativo:** Fichas descargables e infografías sobre psicología y bienestar general.
+- **Librería de Afiliados:** Enlaces estructurados a libros de autoayuda con rigor científico en Amazon.
+
+### 3. Portal de Profesionales & Directorio
+- **Gestión Clínica:** Repositorio seguro para que profesionales registrados descarguen pautas y material clínico.
+- **Directorio Clasificado:** Buscador y filtros avanzados de psicólogos, coaches y terapeutas de apoyo.
+
+---
+
+## 📂 Estructura del Directorio
+
+```text
+mental-app/
+├── .github/
+│   └── workflows/
+│       ├── codeql.yml            # Análisis estático de seguridad de código
+│       └── maven.yml              # CI de compilación y pruebas para Java
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/demo/
+│   │   │   │   ├── controller/   # Controladores de la API REST
+│   │   │   │   ├── model/        # Entidades JPA (User, Task, etc.)
+│   │   │   │   ├── repository/   # Interfaces Spring Data JPA
+│   │   │   │   └── service/      # Lógica de servicio y negocio
+│   │   │   └── resources/
+│   │   │       └── application.properties  # Configuración (H2/MySQL)
+│   │   └── test/                 # Pruebas unitarias de Spring Boot
+│   └── pom.xml                   # Configuración del proyecto Maven
+├── database/
+│   └── database.sql              # Esquema SQL original de la base de datos
+├── index.html                    # Frontend estático original
+├── style.css                     # Estilos generales del MVP estático
+├── script/
+│   └── script.js                 # Lógica interactiva original en Vanilla JS
+├── LICENSE                       # Licencia GPLv3
+└── README.md                     # Documentación principal del repositorio
+```
+
+---
+
+## ⚙️ Configuración y Ejecución Local
+
+### Prerrequisitos
+- **Java JDK 17** o superior instalado en el equipo.
+- **Node.js** y npm (para el desarrollo con React).
+
+### Backend (Spring Boot)
+1. Navega al directorio del backend:
+   ```bash
+   cd backend
+   ```
+2. Ejecuta la aplicación utilizando Maven (el archivo utiliza base de datos H2 en memoria por defecto):
+   ```bash
+   mvn spring-boot:run
+   ```
+3. La API estará disponible en `http://localhost:8080`.
+4. La consola H2 interactiva se encuentra en `http://localhost:8080/h2-console` (Credenciales: URL: `jdbc:h2:mem:taskdb`, Usuario: `sa`, sin contraseña).
+
+### Configuración de MySQL
+Para conectar la aplicación a un servidor MySQL real, edita el archivo `backend/src/main/resources/application.properties` para descomentar las propiedades correspondientes:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/mente_conecta_db?useSSL=false&serverTimezone=UTC
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contraseña
+```
+
+---
+
+## 🔄 Flujo de Integración Continua (CI)
+El workflow [maven.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/workflows/maven.yml) se ejecuta automáticamente en cada `push` o `pull_request` a la rama principal:
+1. Configura un entorno Ubuntu.
+2. Inicializa Java JDK 17 (Temurin).
+3. Compila el backend ejecutando `mvn clean package -DskipTests`.
+4. Ejecuta toda la suite de pruebas unitarias mediante `mvn test`.
