@@ -3,19 +3,24 @@ name: Sourcery Code Review
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+  pull_request_target:
     branches: [ "main" ]
 
 jobs:
   sourcery:
     runs-on: ubuntu-latest
+    env:
+      SOURCERY_TOKEN: ${{ secrets.SOURCERY_TOKEN }}
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
+        repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
         fetch-depth: 0
 
     - name: Run Sourcery Review
+      if: env.SOURCERY_TOKEN != ''
       uses: sourcery-ai/action@v1
       with:
         token: ${{ secrets.SOURCERY_TOKEN }}
