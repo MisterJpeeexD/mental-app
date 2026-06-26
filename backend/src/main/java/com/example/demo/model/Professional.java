@@ -67,6 +67,6 @@ public class Professional {
     private List<SessionReservation> reservations;
 
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProfessionalRating> ratings;
+    private List<Feedback> ratings;
 }
         

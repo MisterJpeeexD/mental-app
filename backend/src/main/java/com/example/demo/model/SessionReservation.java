@@ -65,5 +65,5 @@ public class SessionReservation {
     private LocalDateTime fechaReserva = LocalDateTime.now();
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private ProfessionalRating rating;
+    private Feedback rating;
 }
