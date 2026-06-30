@@ -46,3 +46,6 @@ buildNumber.properties
 .env.production
 .env.development
 .env.staging
+
+# Mac Os
+.DS_Store
