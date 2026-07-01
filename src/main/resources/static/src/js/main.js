@@ -12,12 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const cargarComponente = (url, id, callback) => {
     fetch(`${url}?v=${new Date().getTime()}`)
       .then(res => {
-        if (!res.ok) throw new Error(`No se pudo cargar: ${url}`);
+        if (!res.ok) {
+          throw new Error(`No se pudo cargar: ${url}`);
+        }
         return res.text();
       })
       .then(html => {
         document.getElementById(id).innerHTML = html;
-        if (callback) callback();
+        if (callback) {
+          callback();
+        }
       })
       .catch(err => console.error(err));
   };
@@ -27,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
   
   cargarComponente('../src/components/common/footer.html', 'footer-container', () => {
     const footer = document.querySelector('.mente-footer.reveal');
-    if (footer) setTimeout(() => footer.classList.add('active'), 50);
+    if (footer) {
+      setTimeout(() => footer.classList.add('active'), 50);
+    }
   });
 });

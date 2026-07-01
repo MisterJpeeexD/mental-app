@@ -2,7 +2,9 @@ export function initThemeToggle() {
   const toggleBtn = document.getElementById('theme-toggle');
   const themeIcon = document.getElementById('theme-icon');
   
-  if (!toggleBtn) return;
+  if (!toggleBtn) {
+    return;
+  }
 
   const currentTheme = localStorage.getItem('theme') || 'light';
   if (currentTheme === 'dark') {

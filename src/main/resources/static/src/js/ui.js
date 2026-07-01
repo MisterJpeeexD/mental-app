@@ -5,7 +5,9 @@ export function initUIEffects() {
   orbs.forEach(orb => {
     orb.addEventListener('mouseenter', (e) => {
       const emotionName = orb.dataset.emotion;
-      if (!emotionName) return;
+      if (!emotionName) {
+        return;
+      }
       const tooltip = document.createElement('div');
       tooltip.className = 'apple-tooltip';
       tooltip.textContent = emotionName;
