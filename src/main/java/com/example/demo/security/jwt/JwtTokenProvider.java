@@ -18,12 +18,10 @@ import java.util.function.Function;
 @Component
 public class JwtTokenProvider {
 
-    private static final String DEFAULT_SECRET = "9a4f2c8d3b7a1e5f8c6d4e2b0a3f5c7d9e0f2a4b6c8d0e1f3a5b7c9d1e3f5a7b";
-    
-    @Value("${jwt.secret:" + DEFAULT_SECRET + "}")
+    @Value("${spring.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.expiration:86400000}") 
+    @Value("${spring.jwt.expiration}")
     private long jwtExpirationInMs;
 
     private Key getSigningKey() {
