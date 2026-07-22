@@ -33,8 +33,9 @@ java -jar target/*.jar           # Inicia app
 
 ## Seguridad
 - CORS global en `SecurityConfig.java`
-- Públicos: `/api/auth/**`, `/api/professionals/**`, `/api/journal/**`, `/api/users/**`
-- Resto requiere JWT válido
+- Públicos: `/api/auth/**`, `/auth/**`, `/h2-console/**`, `/api/professionals/**` (solo GET)
+- Resto (incluye `/api/journal/**` y `/api/users/**`) requiere JWT válido
+- Endpoints admin usan `@PreAuthorize("hasRole('ADMIN')")` (ver `UserController.getAllUsers`)
 - Nunca hardcodear secretos
 
 ## CodeGraph
