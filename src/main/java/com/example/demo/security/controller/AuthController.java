@@ -9,6 +9,7 @@ import com.example.demo.security.dto.LoginRequest;
 import com.example.demo.security.dto.LoginResponse;
 import com.example.demo.security.jwt.JwtTokenProvider;
 import com.example.demo.security.service.CustomUserDetails;
+import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,16 +25,16 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
     private final JwtTokenProvider tokenProvider;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
+                          UserService userService,
                           JwtTokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
         this.tokenProvider = tokenProvider;
     }
 
@@ -66,9 +66,7 @@ public class AuthController {
         }
 
         User user = UserMapper.toEntity(signUpRequest);
-        user.setPasswordHash(passwordEncoder.encode(signUpRequest.getPasswordHash()));
-
-        User result = userRepository.save(user);
+        User result = userService.createUser(user);
 
         UserResponseDTO userResponse = UserMapper.toResponseDTO(result);
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
