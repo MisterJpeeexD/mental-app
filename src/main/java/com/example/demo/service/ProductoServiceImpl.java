@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ProductoRequestDTO;
 import com.example.demo.dto.ProductoResponseDTO;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.ProductoMapper;
 import com.example.demo.model.Producto;
 import com.example.demo.repository.ProductoRepository;
@@ -35,14 +36,14 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponseDTO productoById(Long id) {
         Producto producto = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
         return mapper.toDTO(producto);
     }
 
     @Override
     public ProductoResponseDTO eliminarProducto(Long id) {
         Producto producto = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
         repository.delete(producto);
         return mapper.toDTO(producto);
     }

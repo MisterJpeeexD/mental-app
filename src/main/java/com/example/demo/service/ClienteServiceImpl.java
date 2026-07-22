@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ClienteRequestDTO;
 import com.example.demo.dto.ClienteResponseDTO;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
@@ -35,14 +36,14 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public ClienteResponseDTO clienteById(Long id_cliente) {
         Cliente cliente = repository.findById(id_cliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         return mapper.toDTO(cliente);
     }
 
     @Override
     public ClienteResponseDTO actualizarCliente(Long id_cliente, ClienteRequestDTO request) {
         Cliente cliente = repository.findById(id_cliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         cliente.setNombre(request.nombre());
         cliente.setApellido(request.apellido());
         cliente.setDireccion(request.direccion());
@@ -55,7 +56,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public ClienteResponseDTO eliminarCliente(Long id_cliente) {
         Cliente cliente = repository.findById(id_cliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         repository.delete(cliente);
         return mapper.toDTO(cliente);
     }

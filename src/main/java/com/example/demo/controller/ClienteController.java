@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ClienteRequestDTO;
 import com.example.demo.dto.ClienteResponseDTO;
 import com.example.demo.service.ClienteService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class ClienteController {
     private final ClienteService service;
 
     @PostMapping
-    public ClienteResponseDTO crearCliente(@RequestBody ClienteRequestDTO request) {
+    public ClienteResponseDTO crearCliente(@Valid @RequestBody ClienteRequestDTO request) {
         return service.crearCliente(request);
     }
 
@@ -31,7 +32,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id_cliente}")
-    public ClienteResponseDTO actualizarCliente(@PathVariable Long id_cliente, @RequestBody ClienteRequestDTO request) {
+    public ClienteResponseDTO actualizarCliente(@PathVariable Long id_cliente, @Valid @RequestBody ClienteRequestDTO request) {
         return service.actualizarCliente(id_cliente, request);
     }
 
