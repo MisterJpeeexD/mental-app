@@ -1,6 +1,7 @@
 package com.backend.abrazamente.model;
 
 public enum Rol {
-    CLIENT,
+    USER,
+    PROFESIONAL,
     ADMIN
 }
