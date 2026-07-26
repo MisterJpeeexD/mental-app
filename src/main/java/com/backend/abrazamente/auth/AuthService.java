@@ -11,14 +11,13 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final JwtService jwtService;
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager; // Se agrega 'final'
 
-    public LoginResponseDTO login(LoginRequestDTO request){
+    public LoginResponseDTO login(LoginRequestDTO request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.correo(),request.password())
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        String token = jwtService.generateToken(request.correo());
+        String token = jwtService.generateToken(request.email());
         return new LoginResponseDTO(token);
     }
-
 }

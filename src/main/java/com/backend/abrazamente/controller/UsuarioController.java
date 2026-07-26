@@ -5,6 +5,8 @@ import com.backend.abrazamente.dto.UsuarioResponseDTO;
 import com.backend.abrazamente.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,41 +15,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
     private final UsuarioService service;
 
     @PostMapping
-    public UsuarioResponseDTO crearUsuario(@Valid @RequestBody UsuarioRequestDTO request){
-        return service.crearUsuario(request);
+    public ResponseEntity<UsuarioResponseDTO> crearUsuario(@Valid @RequestBody UsuarioRequestDTO request) {
+        UsuarioResponseDTO nuevoUsuario = service.crearUsuario(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @GetMapping
-    public List<UsuarioResponseDTO> obtenerUsuarios(){
-        return service.obtenerUsuarios();
+    public ResponseEntity<List<UsuarioResponseDTO>> obtenerUsuarios() {
+        return ResponseEntity.ok(service.obtenerUsuarios());
     }
 
-    @GetMapping("/{id_usuario}")
-    public UsuarioResponseDTO usuarioById(@PathVariable Long id_usuario){
-        return service.usuarioById(id_usuario);
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> usuarioById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.usuarioById(id));
     }
 
-    @PutMapping("/{id_usuario}")
-    public UsuarioResponseDTO
-    actualizarUsuario(@PathVariable Long id_usuario, @RequestBody UsuarioRequestDTO request){
-        return service.actualizarUsuario(id_usuario,request);
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
+            @PathVariable Integer id,
+            @Valid @RequestBody UsuarioRequestDTO request) {
+        return ResponseEntity.ok(service.actualizarUsuario(id, request));
     }
 
-    @DeleteMapping("/{id_usuario}")
-    public UsuarioResponseDTO eliminarUsuario(@PathVariable Long id_usuario){
-        return service.eliminarUsuario(id_usuario);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable Integer id) {
+        service.eliminarUsuario(id);
+        return ResponseEntity.noContent().build(); // HTTP 204 No Content
     }
 
     @GetMapping("/nombres/{nombre}")
-    public List<UsuarioResponseDTO> ListaPorNombres(@PathVariable String nombre){
-        return service.buscarByNombre(nombre);
+    public ResponseEntity<List<UsuarioResponseDTO>> listaPorNombres(@PathVariable String nombre) {
+        return ResponseEntity.ok(service.buscarByNombre(nombre));
     }
 
-    @GetMapping("/direcciones/{direccion}")
-    public List<UsuarioResponseDTO> ListaPorDireccion(@PathVariable String direccion){
-        return service.findByDireccion(direccion);
+    @GetMapping("/ciudades/{ciudad}")
+    public ResponseEntity<List<UsuarioResponseDTO>> listaPorCiudad(@PathVariable String ciudad) {
+        return ResponseEntity.ok(service.findByCiudad(ciudad));
     }
 }

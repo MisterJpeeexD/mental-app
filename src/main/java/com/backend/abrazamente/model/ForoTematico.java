@@ -12,37 +12,44 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @Entity
-@Table(name = "roles")
-public class Rol {
+@Table(name = "foros_tematicos")
+public class ForoTematico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 150)
     private String nombre;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "permisos_json", columnDefinition = "jsonb")
-    private String permisosJson;
+    @Column(length = 100)
+    private String categoria;
+
+    @Column(name = "reglas_moderacion", columnDefinition = "TEXT")
+    private String reglasModeracion;
 
     @Column(length = 20)
     private String estado = "activo";
 
+    @Column(name = "numero_miembros")
+    private Integer numeroMiembros = 0;
+
     @Column(name = "fecha_creacion", insertable = false, updatable = false)
     private OffsetDateTime fechaCreacion;
 
-    public Rol() {
+    public ForoTematico() {
     }
 
+    // Getters y Setters
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rol rol = (Rol) o;
-        return Objects.equals(id, rol.id);
+        ForoTematico that = (ForoTematico) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override

@@ -8,22 +8,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-    public Usuario toModel(UsuarioRequestDTO request){
+    public Usuario toModel(UsuarioRequestDTO request) {
+        if (request == null) return null;
+
         Usuario usuario = new Usuario();
-        usuario.setNombre(request.nombre());
-        usuario.setApellido(request.apellido());
-        usuario.setDireccion(request.direccion());
-        usuario.setCorreo(request.correo());
+        usuario.setNombres(request.nombres());
+        usuario.setApellidos(request.apellidos());
+        usuario.setCiudad(request.ciudad());
+        usuario.setEmail(request.email());
+        usuario.setPasswordHash(request.password()); // Mapea la contraseña
         usuario.setTelefono(request.telefono());
         return usuario;
     }
 
-    public UsuarioResponseDTO toDTO(Usuario usuario){
+    public UsuarioResponseDTO toDTO(Usuario usuario) {
+        if (usuario == null) return null;
+
         return UsuarioResponseDTO.builder()
-                .id_usuario(usuario.getId_usuario())
-                .nombre(usuario.getNombre())
-                .correo(usuario.getCorreo())
+                .id(usuario.getId())
+                .nombres(usuario.getNombres())
+                .apellidos(usuario.getApellidos())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .ciudad(usuario.getCiudad())
+                .estado(usuario.getEstado())
+                .fechaCreacion(usuario.getFechaCreacion())
                 .build();
     }
-
 }

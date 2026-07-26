@@ -1,14 +1,17 @@
-// Lo que respondera el servidor
-
 package com.backend.abrazamente.dto;
 
 import lombok.Builder;
+import java.time.OffsetDateTime;
 
 @Builder
 public record UsuarioResponseDTO(
-        Long id_usuario,
-        String nombre,
-        String correo
+        Integer id,
+        String nombres,
+        String apellidos,
+        String email,
+        String telefono,
+        String ciudad,
+        String estado,
+        OffsetDateTime fechaCreacion
 ) {
-
 }

@@ -7,6 +7,7 @@ import com.backend.abrazamente.mapper.UsuarioMapper;
 import com.backend.abrazamente.model.Usuario;
 import com.backend.abrazamente.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,53 +18,63 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
+    private final PasswordEncoder passwordEncoder; // Inyección para encriptación de contraseñas
 
-    // Métodos
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO request) {
         Usuario usuario = mapper.toModel(request);
-        repository.save(usuario);
-        return mapper.toDTO(usuario);
+        // Encriptar la contraseña antes de guardar
+        usuario.setPasswordHash(passwordEncoder.encode(request.password()));
+
+        Usuario guardado = repository.save(usuario);
+        return mapper.toDTO(guardado);
     }
 
     @Override
     public List<UsuarioResponseDTO> obtenerUsuarios() {
         return repository.findAll()
                 .stream()
-                .map(mapper::toDTO) // usuario -> mapper.toDTO(usuario)
+                .map(mapper::toDTO)
                 .toList();
     }
 
     @Override
-    public UsuarioResponseDTO usuarioById(Long id_usuario) {
-        Usuario usuario = repository.findById(id_usuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public UsuarioResponseDTO usuarioById(Integer id) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con ID: " + id));
         return mapper.toDTO(usuario);
     }
 
     @Override
-    public UsuarioResponseDTO actualizarUsuario(Long id_usuario, UsuarioRequestDTO request){
-        Usuario usuario = repository.findById(id_usuario).orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
-        usuario.setNombre(request.nombre());
-        usuario.setDireccion(request.direccion());
+    public UsuarioResponseDTO actualizarUsuario(Integer id, UsuarioRequestDTO request) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con ID: " + id));
+
+        usuario.setNombres(request.nombres());
+        usuario.setApellidos(request.apellidos());
+        usuario.setEmail(request.email());
         usuario.setTelefono(request.telefono());
-        usuario.setCorreo(request.correo());
-        usuario.setApellido(request.apellido());
+        usuario.setCiudad(request.ciudad());
+
+        // Opcional: Si se envía una nueva contraseña, encriptarla
+        if (request.password() != null && !request.password().isBlank()) {
+            usuario.setPasswordHash(passwordEncoder.encode(request.password()));
+        }
+
         Usuario actualizado = repository.save(usuario);
         return mapper.toDTO(actualizado);
     }
 
     @Override
-    public UsuarioResponseDTO eliminarUsuario(Long id_usuario){
-        Usuario usuario = repository.findById(id_usuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public void eliminarUsuario(Integer id) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con ID: " + id));
         repository.delete(usuario);
-        return mapper.toDTO(usuario);
     }
 
     @Override
-    public List<UsuarioResponseDTO> findByDireccion(String direccion) {
-        return repository.findByDireccion(direccion)
+    public List<UsuarioResponseDTO> findByCiudad(String ciudad) {
+        return repository.findByCiudad(ciudad)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
@@ -71,11 +82,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioResponseDTO> buscarByNombre(String nombre) {
+        // Se corrige el nombre del metodo según la interfaz del repositorio
         return repository.buscarByNombre(nombre)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
     }
-
-
 }

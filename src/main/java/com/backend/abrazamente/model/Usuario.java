@@ -1,37 +1,86 @@
 package com.backend.abrazamente.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor // Lombok genera el constructor vacío
 @Entity
-@Table(name="usuarios")
-
+@Table(name = "usuarios")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
+    private Integer id;
 
-    private String correo;
-    private String password;
-    private String nombre;
-    private String apellido;
-    private String fecha_nacimiento;
+    @Column(nullable = false, unique = true, length = 255)
+    @Email
+    private String email;
+
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
+
+    @Column(nullable = false, length = 100)
+    private String nombres;
+
+    @Column(nullable = false, length = 100)
+    private String apellidos;
+
+    @Column(name = "fecha_nacimiento")
+    private LocalDate fechaNacimiento;
+
+    @Column(length = 20)
     private String genero;
-    private String estado_civil;
-    private String direccion;
+
+    @Column(name = "estado_civil", length = 50)
+    private String estadoCivil;
+
+    @Column(length = 100)
+    private String ciudad;
+
+    @Column(length = 20)
     private String telefono;
+
+    @Column(columnDefinition = "TEXT")
     private String bio;
-    private String estado;
-    private String fecha_creacion;
-    private String fecha_modificacion;
-    private String ultima_sesion;
 
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
+    @Column(length = 20)
+    private String estado = "activo";
 
+    @Column(name = "fecha_creacion", insertable = false, updatable = false)
+    private OffsetDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion", insertable = false, updatable = false)
+    private OffsetDateTime fechaActualizacion;
+
+    @Column(name = "fecha_ultimo_login")
+    private OffsetDateTime fechaUltimoLogin;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UsuarioRol> usuarioRoles = new HashSet<>();
+
+    // Se remueve el "public Usuario() {}" explicito
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(id, usuario.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
