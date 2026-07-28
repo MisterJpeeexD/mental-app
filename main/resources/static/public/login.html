@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AbrazaMente | Iniciar sesión</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../src/styles/global.css?v=2">
+    <link rel="stylesheet" href="../src/styles/login-global.css?v=2">
+    <link rel="stylesheet" href="../src/styles/login.css?v=2">
+
+</head>
+
+<body>
+
+    <div id="header-container"></div>
+
+    <!-- =========================
+         LOGIN
+    ========================== -->
+
+    <main class="login">
+
+        <!-- ===================================================
+             HERO
+        ==================================================== -->
+
+        <section class="hero">
+
+            <div class="hero__content">
+                <div class="hero__badge">
+
+                    <span class="hero__badge-dot"></span>
+
+                    <span>
+                        Plataforma de bienestar emocional
+                    </span>
+
+                </div>
+
+                <h1 class="hero__title">
+
+                    Tu bienestar comienza
+                    con una conversación.
+
+                </h1>
+
+                <p class="hero__description">
+
+                    Accede a tu cuenta para continuar tu proceso
+                    y mantener un seguimiento de tu bienestar.
+
+                </p>
+
+                <!-- ==========================================
+                     ILUSTRACIÓN
+                =========================================== -->
+
+                <div class="hero__illustration">
+
+                    <!-- Núcleo -->
+
+                    <div class="mind-core">
+
+                        <div class="mind-heart">
+
+                            ❤
+
+                        </div>
+
+                    </div>
+
+                    <!-- Órbitas -->
+
+                    <span class="orbit orbit--1"></span>
+                    <span class="orbit orbit--2"></span>
+                    <span class="orbit orbit--3"></span>
+                    <span class="orbit orbit--4"></span>
+                    <span class="orbit orbit--5"></span>
+                    <span class="orbit orbit--6"></span>
+
+                    <!-- Partículas -->
+
+                    <span class="particle particle--1"></span>
+                    <span class="particle particle--2"></span>
+                    <span class="particle particle--3"></span>
+                    <span class="particle particle--4"></span>
+                    <span class="particle particle--5"></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================
+             LOGIN CARD
+        ==================================================== -->
+
+        <section class="login-card">
+
+            <header class="login-card__header">
+
+                <div class="login-card__heading">
+
+                    <h2 class="login-card__title">
+                        Iniciar sesión
+                    </h2>
+
+                    <p class="login-card__subtitle">
+                        Bienvenido de vuelta a
+                        <strong>AbrazaMente</strong>
+                    </p>
+
+                </div>
+
+            </header>
+
+            <!-- ==========================================
+                 FORMULARIO
+            =========================================== -->
+
+            <form class="form">
+
+                <div class="form__group">
+
+                    <label
+                        class="form__label"
+                        for="email">
+
+                        Correo electrónico
+
+                    </label>
+
+                    <div class="input">
+
+                        <svg
+                            class="input__icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24">
+
+                            <path d="M4 4h16v16H4z" opacity=".15"/>
+                            <path d="M22 6L12 13L2 6"/>
+
+                        </svg>
+
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="correo@ejemplo.com"
+                            autocomplete="email"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="form__group">
+
+                    <div class="form__row">
+
+                        <label
+                            class="form__label"
+                            for="password">
+
+                            Contraseña
+
+                        </label>
+
+                        <a
+                            href="#"
+                            class="form__link">
+
+                            ¿Olvidaste tu contraseña?
+
+                        </a>
+
+                    </div>
+
+                    <div class="input">
+
+                        <svg
+                            class="input__icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24">
+
+                            <rect
+                                x="4"
+                                y="11"
+                                width="16"
+                                height="10"
+                                rx="2"/>
+
+                            <path d="M8 11V8a4 4 0 118 0v3"/>
+
+                        </svg>
+
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="form__options">
+
+                    <label class="checkbox">
+
+                        <input type="checkbox">
+
+                        <span>
+
+                            Recordarme
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="button button--primary">
+
+                    Iniciar sesión
+
+                </button>
+
+            </form>
+
+            <!-- ==========================================
+                 SEPARADOR
+            =========================================== -->
+
+            <div class="separator">
+
+                <span>
+
+                    o continúa con
+
+                </span>
+
+            </div>
+
+            <!-- ==========================================
+                 LOGIN SOCIAL
+            =========================================== -->
+
+            <div class="social">
+
+                <button
+                    id="google-login-button"
+                    class="button button--google"
+                    type="button"
+                    aria-label="Continuar con Google">
+
+                    <span class="button--google__icon" aria-hidden="true">G</span>
+                    <span>Continuar con Google</span>
+
+                </button>
+
+                <div
+                    id="google-signin-native"
+                    class="google-signin-native"
+                    aria-hidden="true">
+                </div>
+
+            </div>
+
+            <!-- ==========================================
+                 FOOTER
+            =========================================== -->
+
+            <footer class="login-card__footer">
+
+                <span>
+
+                    ¿No tienes una cuenta?
+
+                </span>
+
+                <a href="./registro.html" class="button button--secondary button--full">
+
+                    Crear cuenta
+
+                </a>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="../src/js/login-theme.js" defer></script>
+    <script type="module" src="../src/js/main.js"></script>
+
+</body>
+
+</html>

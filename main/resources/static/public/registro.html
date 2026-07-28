@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AbrazaMente | Crear cuenta</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../src/styles/global.css?v=2">
+    <link rel="stylesheet" href="../src/styles/login-global.css?v=2">
+    <link rel="stylesheet" href="../src/styles/registro.css?v=2">
+
+</head>
+
+<body>
+
+    <div class="background"></div>
+
+    <!-- =========================
+         REGISTRO
+    ========================== -->
+
+    <main class="registro">
+
+        <!-- ===================================================
+             HERO
+        ==================================================== -->
+
+        <section class="hero">
+
+            <div class="hero__content">
+
+                <img
+                    src="../src/assets/images/AbrazaMente_Logo.svg"
+                    alt="AbrazaMente"
+                    class="hero__logo">
+
+                <div class="hero__badge">
+
+                    <span class="hero__badge-dot"></span>
+
+                    <span>
+                        Plataforma de bienestar emocional
+                    </span>
+
+                </div>
+
+                <h1 class="hero__title">
+                    Comienza tu proceso
+                    de bienestar hoy.
+                </h1>
+
+                <p class="hero__description">
+                    Crea tu cuenta para agendar terapia, acceder a
+                    herramientas de regulación emocional y unirte a
+                    comunidades moderadas por profesionales.
+                </p>
+
+                <!-- ==========================================
+                     ILUSTRACIÓN
+                =========================================== -->
+
+                <div class="hero__illustration">
+
+                    <div class="mind-core">
+                        <div class="mind-heart">❤</div>
+                    </div>
+
+                    <span class="orbit orbit--1"></span>
+                    <span class="orbit orbit--2"></span>
+                    <span class="orbit orbit--3"></span>
+                    <span class="orbit orbit--4"></span>
+                    <span class="orbit orbit--5"></span>
+                    <span class="orbit orbit--6"></span>
+
+                    <span class="particle particle--1"></span>
+                    <span class="particle particle--2"></span>
+                    <span class="particle particle--3"></span>
+                    <span class="particle particle--4"></span>
+                    <span class="particle particle--5"></span>
+
+                </div>
+
+                <ul class="hero__points">
+
+                    <li>
+                        <span class="hero__point-dot"></span>
+                        Terapia profesional a tu ritmo
+                    </li>
+
+                    <li>
+                        <span class="hero__point-dot"></span>
+                        Herramientas de regulación emocional
+                    </li>
+
+                    <li>
+                        <span class="hero__point-dot"></span>
+                        Comunidad moderada y segura
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================
+             REGISTRO CARD
+        ==================================================== -->
+
+        <section class="registro-card">
+
+            <header class="registro-card__header">
+
+                <button
+                    id="theme-toggle"
+                    class="theme-toggle"
+                    aria-label="Cambiar tema">
+
+                    <span class="theme-toggle__sun">🌙</span>
+                    <span class="theme-toggle__thumb"></span>
+                    <span class="theme-toggle__moon">☀</span>
+
+                </button>
+
+                <div class="registro-card__heading">
+
+                    <span class="registro-card__eyebrow">Crear cuenta</span>
+
+                    <h2 class="registro-card__title">
+                        Únete a AbrazaMente
+                    </h2>
+
+                    <p class="registro-card__subtitle">
+                        Completa tus datos para comenzar tu proceso
+                    </p>
+
+                </div>
+
+            </header>
+
+            <!-- ==========================================
+                 FORMULARIO
+            =========================================== -->
+
+            <form id="registroForm" class="form" action="/registro" method="POST" novalidate>
+
+                <div class="form__grid">
+
+                    <!-- Nombres -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="nombres">Nombres</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+
+                            <input id="nombres" name="nombres" type="text" placeholder="Ej. Juan Carlos" autocomplete="given-name" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Apellidos -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="apellidos">Apellidos</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+
+                            <input id="apellidos" name="apellidos" type="text" placeholder="Ej. Pérez Gómez" autocomplete="family-name" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- RUT -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="rut">RUT</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                <path d="M7 8h10M7 12h6M7 16h4"/>
+                            </svg>
+
+                            <input id="rut" name="rut" type="text" placeholder="Ej. 12.345.678-9" maxlength="12" autocomplete="off" required>
+
+                        </div>
+
+                        <span id="rut_error" class="error-message">RUT inválido, revisa el número.</span>
+
+                    </div>
+
+                    <!-- Fecha de nacimiento -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="fecha_nacimiento">Fecha de nacimiento</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M16 2v4M8 2v4M3 10h18"/>
+                            </svg>
+
+                            <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Correo -->
+                    <div class="form__group form__group--full">
+
+                        <label class="form__label" for="email">Correo electrónico</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M4 4h16v16H4z" opacity=".15"/>
+                                <path d="M22 6L12 13L2 6"/>
+                            </svg>
+
+                            <input id="email" name="email" type="email" placeholder="correo@ejemplo.com" autocomplete="email" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="telefono">Teléfono</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+
+                            <input id="telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678" autocomplete="tel">
+
+                        </div>
+
+                    </div>
+
+                    <!-- Ciudad -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="ciudad">Ciudad de residencia</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+
+                            <input id="ciudad" name="ciudad" type="text" placeholder="Ej. Concepción" autocomplete="address-level2">
+
+                        </div>
+
+                    </div>
+
+                    <!-- Género -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="genero">Género</label>
+
+                        <div class="input">
+
+                            <select id="genero" name="genero" required>
+                                <option value="" disabled selected>Selecciona tu género</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="femenino">Femenino</option>
+                                <option value="otro">Otro</option>
+                                <option value="prefiero_no_decir">Prefiero no decir</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Estado civil -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="estado_civil">Estado civil</label>
+
+                        <div class="input">
+
+                            <select id="estado_civil" name="estado_civil">
+                                <option value="" disabled selected>Selecciona...</option>
+                                <option value="soltero">Soltero/a</option>
+                                <option value="casado">Casado/a</option>
+                                <option value="divorciado">Divorciado/a</option>
+                                <option value="viudo">Viudo/a</option>
+                                <option value="otro">Otro</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="password">Contraseña</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                                <path d="M8 11V8a4 4 0 118 0v3"/>
+                            </svg>
+
+                            <input id="password" name="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" minlength="8" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Confirmar contraseña -->
+                    <div class="form__group">
+
+                        <label class="form__label" for="confirm_password">Confirmar contraseña</label>
+
+                        <div class="input">
+
+                            <svg class="input__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                                <path d="M8 11V8a4 4 0 118 0v3"/>
+                            </svg>
+
+                            <input id="confirm_password" type="password" placeholder="Repite tu contraseña" autocomplete="new-password" required>
+
+                        </div>
+
+                        <span id="password_error" class="error-message">Las contraseñas no coinciden.</span>
+
+                    </div>
+
+                </div>
+
+                <label class="checkbox checkbox--terms">
+
+                    <input type="checkbox" required>
+
+                    <span>
+                        Acepto los <a href="#">Términos del servicio</a> y la
+                        <a href="#">Política de privacidad</a>
+                    </span>
+
+                </label>
+
+                <button type="submit" class="button button--primary">
+                    Registrarse en AbrazaMente
+                </button>
+
+            </form>
+
+            <!-- ==========================================
+                 FOOTER
+            =========================================== -->
+
+            <footer class="registro-card__footer">
+
+                <span>¿Ya tienes una cuenta?</span>
+                <a href="./login.html">Iniciar sesión</a>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="../src/js/registro-theme.js" defer></script>
+    <script src="../src/js/registro-form.js" defer></script>
+
+</body>
+
+</html>

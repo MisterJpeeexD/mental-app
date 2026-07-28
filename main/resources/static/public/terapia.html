@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terapia | AbrazaMente</title>
+  <meta name="description" content="Terapias y especialistas en salud mental: encuentra acompañamiento profesional, técnicas terapéuticas y espacios de apoyo confidenciales.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles/global.css?v=2" />
+  <link rel="stylesheet" href="../src/styles/terapia.css?v=2" />
+</head>
+<body class="comunidad-page">
+  <div id="header-container"></div>
+
+  <section class="comunidad-hero">
+    <div class="mesh-background">
+      <div class="mesh-blob blob-blue"></div>
+      <div class="mesh-blob blob-orange"></div>
+      <div class="mesh-blob blob-teal"></div>
+    </div>
+
+    <div class="hero-container comunidad-hero-grid">
+      <div class="text-column reveal">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Terapia · Especialistas · Bienestar
+        </div>
+        <h1>
+          Descubre la terapia
+          <br>
+          <span class="gradient-text">que te acompaña mejor.</span>
+        </h1>
+        <p class="subtitle">
+          Explora terapias, filtra especialistas por enfoque, especialidad o perfil, y revisa comentarios anónimos de quienes ya iniciaron su proceso.
+        </p>
+        <div class="actions">
+          <a href="#especialistas" class="btn-primary">Ver terapias</a>
+          <a href="#orientacion" class="btn-secondary">Explorar opciones</a>
+        </div>
+        <div class="feature-cards comunidad-stats">
+          <div class="feat-card"><span class="feat-num">01</span><span class="feat-text">Sesiones seguras</span></div>
+          <div class="feat-card"><span class="feat-num">02</span><span class="feat-text">Especialistas expertos</span></div>
+          <div class="feat-card"><span class="feat-num">03</span><span class="feat-text">Acompañamiento confidencial</span></div>
+        </div>
+      </div>
+
+      <div class="visual-column reveal">
+        <div class="premium-glass-card comunidad-panel">
+          <div class="floating-badge badge-top-left"><span class="dot blue"></span> Seguro</div>
+          <div class="floating-badge badge-bottom-left"><span class="dot orange"></span> Cercano</div>
+          <div class="floating-badge badge-bottom-right"><span class="dot teal"></span> Guiado</div>
+          <div class="community-orbit">
+            <div class="community-avatar avatar-main">AM</div>
+            <div class="community-avatar avatar-one">DR</div>
+            <div class="community-avatar avatar-two">CM</div>
+            <div class="community-avatar avatar-three">SV</div>
+            <div class="community-line line-one"></div>
+            <div class="community-line line-two"></div>
+            <div class="community-line line-three"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="orientacion" class="services-section comunidad-section">
+    <div class="section-header reveal">
+      <div class="eyebrow center">Orientación</div>
+      <h2 class="section-title">¿Qué terapia puede acompañarte hoy?</h2>
+      <p class="section-subtitle">Una guía práctica para identificar enfoques terapéuticos útiles según lo que estás viviendo.</p>
+    </div>
+    <div class="bento-grid orientation-grid" id="orientationGrid"></div>
+  </section>
+
+  <section id="terapias" class="specialists-section comunidad-section comunidad-soft-bg">
+    <div class="section-header reveal">
+      <div class="eyebrow center">Red de terapeutas</div>
+      <h2 class="section-title" id="especialistas">Terapias y terapeutas disponibles</h2>
+      <p class="section-subtitle">Filtra por nombre, especialidad, tipo de terapia o perfil para encontrar un acompañamiento profesional adecuado.</p>
+    </div>
+
+    <div class="filters reveal" id="filters">
+      <div class="filter-group">
+        <label for="searchInput">Buscar por nombre</label>
+        <input type="text" id="searchInput" placeholder="Ej. Dra. Martínez">
+      </div>
+      <div class="filter-group">
+        <label for="filterEspecialidad">Especialidad</label>
+        <select id="filterEspecialidad"><option value="">Todas</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterTerapia">Tipo de terapia</label>
+        <select id="filterTerapia"><option value="">Todas</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterSexo">Sexo del terapeuta</label>
+        <select id="filterSexo"><option value="">Todos</option></select>
+      </div>
+      <button id="clearFilters" class="btn-secondary" type="button">Limpiar filtros</button>
+    </div>
+
+    <p class="results-count" id="resultsCount"></p>
+    <div class="cards-grid specialists-grid" id="cardsGrid"></div>
+    <p class="no-results" id="noResults" hidden>No se encontraron terapeutas con esos filtros.</p>
+  </section>
+
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+      <div class="modal-header">
+        <div class="modal-avatar" id="modalAvatar"></div>
+        <div>
+          <h3 id="modalName"></h3>
+          <p class="modal-role" id="modalEspecialidad"></p>
+        </div>
+      </div>
+      <div class="modal-badges" id="modalBadges"></div>
+      <p class="modal-desc" id="modalDescripcion"></p>
+      <div class="modal-section">
+        <h4>Enfoque terapéutico</h4>
+        <p id="modalEnfoque"></p>
+      </div>
+      <div class="modal-section">
+        <h4>Comentarios anónimos</h4>
+        <ul class="testimonial-list" id="modalComentarios"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <script type="module" src="../src/js/main.js"></script>
+  <script src="../src/js/terapia.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comunidad | AbrazaMente</title>
+  <meta name="description" content="Muro de la comunidad AbrazaMente: comparte, participa por temáticas, conecta con otras personas y chatea de forma privada en un espacio moderado.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles/global.css?v=2" />
+  <link rel="stylesheet" href="../src/styles/comunidad.css?v=2" />
+</head>
+<body class="comunidad-body">
+
+  <div id="header-container"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="social-hero">
+    <div class="mesh-background">
+      <div class="mesh-blob blob-blue"></div>
+      <div class="mesh-blob blob-orange"></div>
+      <div class="mesh-blob blob-teal"></div>
+    </div>
+
+    <div class="social-hero-inner">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Comunidad · Temáticas · Amistades
+      </div>
+      <h1>
+        Comparte tu proceso,
+        <br>
+        <span class="gradient-text">nunca estarás solo en esto.</span>
+      </h1>
+      <p class="subtitle">
+        Un muro moderado para intercambiar ideas por temática, conectar con otras personas que entienden tu proceso y conversar de forma privada cuando lo necesites.
+      </p>
+
+      <div class="social-stat-pills">
+        <div class="social-stat-pill"><strong id="statMembers">3.482</strong><span>&nbsp;miembros</span></div>
+        <div class="social-stat-pill"><strong id="statTopics">6</strong><span>&nbsp;temáticas</span></div>
+        <div class="social-stat-pill"><strong id="statPosts">128</strong><span>&nbsp;publicaciones hoy</span></div>
+        <div class="social-stat-pill"><strong>100%</strong><span>&nbsp;moderado por profesionales</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== APP: TEMÁTICAS + MURO + AMIGOS ===================== -->
+  <section class="social-app">
+
+    <!-- Columna izquierda: temáticas -->
+    <div class="social-col topics-col">
+      <div class="glass-panel mini-profile">
+        <div class="avatar avatar-blue">TÚ</div>
+        <div>
+          <div class="mini-profile-name">Tu perfil</div>
+          <div class="mini-profile-role">Miembro de la comunidad</div>
+        </div>
+      </div>
+
+      <div class="glass-panel topics-panel">
+        <div class="panel-title"><span>Temáticas</span></div>
+        <ul class="topic-list" id="topicList"></ul>
+      </div>
+    </div>
+
+    <!-- Columna central: muro -->
+    <div class="social-col feed-col">
+      <form class="glass-panel composer" id="composerForm">
+        <div class="composer-top">
+          <div class="avatar avatar-blue">TÚ</div>
+          <textarea id="composerText" placeholder="¿Qué estás pensando o sintiendo hoy? Compártelo con la comunidad…"></textarea>
+        </div>
+        <div class="composer-bottom">
+          <select id="composerTopic" class="composer-topic-select" aria-label="Elegir temática"></select>
+          <button type="submit" id="composerSubmit" class="btn-post">Publicar</button>
+        </div>
+      </form>
+
+      <div class="feed-filter-bar" id="feedFilterBar" hidden>
+        Mostrando publicaciones de <strong></strong>
+        <button type="button" class="feed-filter-clear" id="feedFilterClear">Ver todas</button>
+      </div>
+
+      <div class="feed-list" id="feedList"></div>
+    </div>
+
+    <!-- Columna derecha: comunidad y amigos -->
+    <div class="social-col friends-col">
+      <div class="glass-panel">
+        <div class="panel-title"><span>Comunidad y amigos</span></div>
+        <div class="friends-tabs">
+          <button type="button" class="friends-tab active" data-tab="sugerencias">Sugerencias</button>
+          <button type="button" class="friends-tab" data-tab="solicitudes">
+            Solicitudes
+            <span class="tab-badge" id="requestsBadge" hidden>0</span>
+          </button>
+          <button type="button" class="friends-tab" data-tab="amigos">Mis amigos</button>
+        </div>
+        <div class="friends-panel-body">
+          <div class="friends-view" data-view="sugerencias"></div>
+          <div class="friends-view" data-view="solicitudes" hidden></div>
+          <div class="friends-view" data-view="amigos" hidden></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================== CHAT PRIVADO (dock flotante) ===================== -->
+  <div class="chat-dock" id="chatDock"></div>
+
+  <div id="footer-container"></div>
+
+  <script type="module" src="../src/js/main.js"></script>
+  <script type="module" src="../src/js/comunidad.js"></script>
+</body>
+</html>
