@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: abrazamente
+
+  config:
+    import: optional:file:.env[.properties]
+
+  # .env file used for test only, original .env are stored on our server
+  # Archivo .env es usado solo como pruebas, el archivo .env original se encuentra alojado en nuestro servidor
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  sql:
+    init:
+      mode: never
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
