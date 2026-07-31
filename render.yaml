@@ -1,0 +1,47 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Backend: Spring Boot (API REST). Se conecta a una base de datos Neon externa
+  # a través de las variables de entorno definidas más abajo.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: abrazamente-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    
+    healthCheckPath: /error
+    envVars:
+      - key: DB_URL
+        sync: false # pega aquí la connection string de Neon (con ?sslmode=require)
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: JPA_SHOW_SQL
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: "3600000"
+      - key: FRONTEND_ORIGINS
+        sync: false # URL pública del frontend, ej: https://abrazamente-frontend.onrender.com
+
+  # ---------------------------------------------------------------------------
+  # Frontend: SPA de React compilada como sitio estático.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: abrazamente-frontend
+    runtime: static
+    plan: free
+    buildCommand: "npm ci && npm run build"
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # URL pública del backend, ej: https://abrazamente-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
