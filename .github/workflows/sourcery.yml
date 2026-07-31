@@ -3,7 +3,7 @@ name: Sourcery Code Review
 on:
   push:
     branches: [ "main" ]
-  pull_request_target:
+  pull_request:
     branches: [ "main" ]
 
 jobs:
