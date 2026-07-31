@@ -3,6 +3,7 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Landing from './pages/Landing';
+import ProtectedRoute from './components/ProtectedRoute';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -11,6 +12,8 @@ const GroundingWizard = React.lazy(() => import('./features/grounding/GroundingW
 const MoodTracker = React.lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = React.lazy(() => import('./features/professionals/ProfessionalDirectory'));
 const AuthModal = React.lazy(() => import('./features/auth/AuthModal'));
+const CommunityForum = React.lazy(() => import('./features/community/CommunityForum'));
+const ResourceLibrary = React.lazy(() => import('./features/resources/ResourceLibrary'));
 
 const FeatureLayout = ({ title, description, children, showTabs, currentTab }) => {
   const navigate = useNavigate();
@@ -137,6 +140,18 @@ export default function App() {
               <ProfessionalDirectory />
             </FeatureLayout>
           } />
+          <Route path="/recursos" element={
+            <FeatureLayout title="Recursos Psicoeducativos" description="Biblioteca de guías, artículos y contenidos psicoeducativos.">
+              <ResourceLibrary />
+            </FeatureLayout>
+          } />
+          <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/comunidad" element={
+              <FeatureLayout title="Foro de la Comunidad" description="Conecta, comparte y recibe apoyo en un ambiente seguro.">
+                <CommunityForum />
+              </FeatureLayout>
+            } />
+          </Route>
           <Route path="/auth" element={
             <FeatureLayout title={user ? 'Mi Cuenta' : 'Autenticación'} description="Accede a tu espacio personalizado de salud mental.">
               <AuthModal onLogin={handleLogin} />
