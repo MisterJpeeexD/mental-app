@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +37,10 @@ public class SecurityConfig {
             CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/**", "/usuarios", "/auth/**")
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
