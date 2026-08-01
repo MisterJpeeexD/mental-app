@@ -1,32 +1,3 @@
-<<<<<<< HEAD
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LoadingScreen from './components/common/LoadingScreen';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './routes/ProtectedRoute';
-
-const HomePage = lazy(() => import('./pages/HomePage'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const RegisterPage = lazy(() => import('./pages/RegisterPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Suspense fallback={<LoadingScreen />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registro" element={<RegisterPage />} />
-            <Route path="/perfil" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </AuthProvider>
-    </BrowserRouter>
-=======
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
@@ -36,7 +7,16 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
+import { AuthProvider } from './context/AuthContext';
 
+// Ariel's pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+// Main features
 const Landing = lazy(() => import('./pages/Landing'));
 const BreathingTimer = lazy(() => import('./features/breathing/BreathingTimer'));
 const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'));
@@ -179,13 +159,19 @@ export default function App() {
   };
 
   return (
-    <>
+    <AuthProvider>
       <Header user={user} handleLogout={handleLogout} />
 
       <main className="main-content">
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
             <Route path="/" element={<Landing />} />
+            
+            {/* Ariel's separate views */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registro" element={<RegisterPage />} />
+            <Route path="/perfil" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+
             <Route
               path="/botiquin/breathing"
               element={(
@@ -276,12 +262,12 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>
 
       <Footer />
-    </>
->>>>>>> upstream/main
+    </AuthProvider>
   );
 }
