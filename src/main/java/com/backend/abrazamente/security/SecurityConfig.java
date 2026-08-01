@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.time.OffsetDateTime;
@@ -32,7 +33,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            AuthenticationProvider authProvider,
+            AuthenticationManager authenticationManager,
             JwtAuthFilter jwtAuthFilter,
             CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
@@ -44,7 +45,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
-                .authenticationProvider(authProvider)
+                .authenticationManager(authenticationManager)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> writeError(
@@ -74,15 +75,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authProvider(UsuarioDetailsService usuarioDetailsService) {
+    public AuthenticationManager authenticationManager(
+            UsuarioDetailsService usuarioDetailsService,
+            PasswordEncoder passwordEncoder
+    ) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usuarioDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+        provider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(provider);
     }
 
     @Bean
