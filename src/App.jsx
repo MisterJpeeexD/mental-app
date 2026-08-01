@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { Link, Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from './components/layout/Header';
@@ -130,37 +130,9 @@ const FeatureLayout = ({ title, description, children, showTabs, currentTab, fal
 };
 
 export default function App() {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const saved = localStorage.getItem('user');
-    if (!saved) {
-      return;
-    }
-
-    try {
-      setUser(JSON.parse(saved));
-    } catch {
-      localStorage.removeItem('user');
-    }
-  }, []);
-
-  const handleLogin = (data) => {
-    setUser({ email: data.email || data.username, role: data.role });
-    navigate('/');
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/');
-  };
-
   return (
     <AuthProvider>
-      <Header user={user} handleLogout={handleLogout} />
+      <Header />
 
       <main className="main-content">
         <Suspense fallback={<RouteLoadingFallback />}>
@@ -236,7 +208,7 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
-            <Route element={<ProtectedRoute user={user} />}>
+            <Route element={<ProtectedRoute />}>
               <Route
                 path="/comunidad"
                 element={(
