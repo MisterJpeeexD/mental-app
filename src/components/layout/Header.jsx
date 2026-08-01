@@ -5,6 +5,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { Moon, Sun } from 'lucide-react';
 
 const navLinks = [
+  { label: 'Terapia', href: '/professionals' },
   { label: 'Botiquín', href: '/botiquin/breathing' },
   { label: 'Comunidad', href: '/comunidad' },
   { label: 'Recursos', href: '/recursos' },
