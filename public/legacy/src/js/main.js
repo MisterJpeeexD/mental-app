@@ -27,12 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Rutas actualizadas a src/components/common/
-  cargarComponente('../src/components/common/header.html', 'header-container', () => {
+  cargarComponente('src/components/common/header.html', 'header-container', () => {
     initThemeToggle();
     initMobileMenu();
   });
   
-  cargarComponente('../src/components/common/footer.html', 'footer-container', () => {
+  cargarComponente('src/components/common/footer.html', 'footer-container', () => {
     const footer = document.querySelector('.mente-footer.reveal');
     if (footer) {
       setTimeout(() => footer.classList.add('active'), 50);

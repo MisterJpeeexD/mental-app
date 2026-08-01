@@ -5,9 +5,9 @@ import Header from '../components/layout/Header';
 import { useReveal } from '../hooks/useReveal';
 
 const services = [
-  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/legacy/public/terapia.html', label: 'Saber más' },
-  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/legacy/public/recursos.html', label: 'Explorar recursos' },
-  { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/legacy/public/comunidad.html', label: 'Unirse al grupo' },
+  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/legacy/terapia.html', label: 'Saber más' },
+  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/legacy/recursos.html', label: 'Explorar recursos' },
+  { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/legacy/comunidad.html', label: 'Unirse al grupo' },
 ];
 
 const steps = [

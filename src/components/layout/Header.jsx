@@ -5,9 +5,9 @@ import { useTheme } from '../../hooks/useTheme';
 import { Moon, Sun } from 'lucide-react';
 
 const legacyLinks = [
-  { label: 'Terapia', href: '/legacy/public/terapia.html' },
-  { label: 'Comunidad', href: '/legacy/public/comunidad.html' },
-  { label: 'Recursos', href: '/legacy/public/recursos.html' },
+  { label: 'Terapia', href: '/legacy/terapia.html' },
+  { label: 'Comunidad', href: '/legacy/comunidad.html' },
+  { label: 'Recursos', href: '/legacy/recursos.html' },
 ];
 
 export default function Header() {
