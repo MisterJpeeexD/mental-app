@@ -7,6 +7,7 @@ export default function ProtectedRoute({ children }) {
   const location = useLocation();
 
   if (loading) return <LoadingScreen />;
-  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  // If not authenticated, still render children (public resources) but could show a notice
+  // Previously: redirect to /login. Updated to allow access.
   return children;
 }

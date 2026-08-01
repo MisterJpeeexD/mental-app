@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Footer from '../components/layout/Footer';
-import Header from '../components/layout/Header';
 import { useReveal } from '../hooks/useReveal';
 
+
 const services = [
-  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/botiquin/breathing', label: 'Saber más' },
+  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/professionals', label: 'Saber más' },
   { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/recursos', label: 'Explorar recursos' },
   { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/comunidad', label: 'Unirse al grupo' },
 ];
@@ -117,8 +116,7 @@ function FAQSection() {
 export default function HomePage() {
   useReveal();
   return (
-    <div className="home-page">
-      <Header />
+    <>
       <main>
         <Hero />
         <TrustStrip />
@@ -154,7 +152,6 @@ export default function HomePage() {
         <FAQSection />
         <section className="cta-section reveal"><div className="cta-container"><div className="cta-glow glow-blue" /><div className="cta-glow glow-orange" /><div className="cta-content"><h2>Tu bienestar emocional no tiene por qué esperar.</h2><p>Da el primer paso hoy. Crea tu cuenta y comienza a construir una vida más equilibrada con apoyo profesional.</p><div className="cta-actions"><Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link><a href="mailto:hola@menteconecta.cl" className="btn-secondary-dark">Hablar con soporte</a></div></div></div></section>
       </main>
-      <Footer />
-    </div>
+    </>
   );
 }
