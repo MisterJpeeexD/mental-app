@@ -4,10 +4,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 import { Moon, Sun } from 'lucide-react';
 
-const legacyLinks = [
-  { label: 'Terapia', href: '/legacy/terapia.html' },
-  { label: 'Comunidad', href: '/legacy/comunidad.html' },
-  { label: 'Recursos', href: '/legacy/recursos.html' },
+const navLinks = [
+  { label: 'Botiquín', href: '/botiquin/breathing' },
+  { label: 'Comunidad', href: '/comunidad' },
+  { label: 'Recursos', href: '/recursos' },
 ];
 
 export default function Header() {
@@ -26,13 +26,16 @@ export default function Header() {
 
         <nav id="main-nav" className={`main-nav ${menuOpen ? 'active' : ''}`} aria-label="Navegación principal">
           <NavLink to="/" className="nav-link" onClick={closeMenu}>Inicio</NavLink>
-          {legacyLinks.map((link) => (
+          {navLinks.map((link) => (
             <a key={link.label} href={link.href} className="nav-link" onClick={closeMenu}>{link.label}</a>
           ))}
           {user ? (
             <Link to="/perfil" className="btn-login mobile-login" onClick={closeMenu}>Mi perfil</Link>
           ) : (
-            <Link to="/login" className="btn-login mobile-login" onClick={closeMenu}>Iniciar sesión</Link>
+            <>
+              <Link to="/login" className="btn-login mobile-login" onClick={closeMenu}>Iniciar sesión</Link>
+              <Link to="/registro" className="btn-login mobile-login" onClick={closeMenu}>Registrarse</Link>
+            </>
           )}
         </nav>
 
@@ -46,7 +49,10 @@ export default function Header() {
               <button type="button" className="header-logout" onClick={logout}>Salir</button>
             </>
           ) : (
-            <Link to="/login" className="btn-login desktop-login">Iniciar sesión</Link>
+            <>
+              <Link to="/login" className="btn-login desktop-login" onClick={closeMenu}>Iniciar sesión</Link>
+              <Link to="/registro" className="btn-login desktop-login" onClick={closeMenu}>Registrarse</Link>
+            </>
           )}
           <button
             className={`hamburger-btn ${menuOpen ? 'active' : ''}`}

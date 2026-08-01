@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from './components/layout/Header';
@@ -250,18 +250,7 @@ export default function App() {
                 )}
               />
             </Route>
-            <Route
-              path="/auth"
-              element={(
-                <FeatureLayout
-                  title={user ? 'Mi Cuenta' : 'Autenticación'}
-                  description="Accede a tu espacio personalizado de salud mental."
-                  fallback={<CardSkeleton count={1} label="Cargando autenticación" />}
-                >
-                  <AuthModal onLogin={handleLogin} />
-                </FeatureLayout>
-              )}
-            />
+// Deprecated auth route removed; use /login and /registro pages
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
