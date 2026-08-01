@@ -8,8 +8,8 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# --- Etapa 2: Build del Backend (Maven / Java 17) ---
-FROM maven:3.9-eclipse-temurin-17-alpine AS backend-builder
+# --- Etapa 2: Build del Backend (Maven / Java 21) ---
+FROM maven:3.9-eclipse-temurin-21-alpine AS backend-builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
@@ -18,7 +18,7 @@ COPY --from=frontend-builder /app/src/main/resources/static ./src/main/resources
 RUN mvn clean package -DskipTests
 
 # --- Etapa 3: Runtime de Producción ---
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=backend-builder /app/target/mental-app-backend-0.0.1-SNAPSHOT.jar app.jar
 

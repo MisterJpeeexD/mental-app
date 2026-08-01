@@ -5,11 +5,9 @@ services:
   # ---------------------------------------------------------------------------
   - type: web
     name: mental-app-backend
-    runtime: java
+    runtime: docker
     plan: free
     region: oregon
-    buildCommand: "npm install && npm run build && ./mvnw clean package -DskipTests"
-    startCommand: "java -jar target/mental-app-backend-0.0.1-SNAPSHOT.jar"
     healthCheckPath: /error
     envVars:
       - key: DB_URL
