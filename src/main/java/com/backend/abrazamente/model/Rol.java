@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,7 +28,10 @@ public class Rol {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "permisos_json", columnDefinition = "jsonb")
+    
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "permisos_json")
     private String permisosJson;
 
     @Column(length = 20)

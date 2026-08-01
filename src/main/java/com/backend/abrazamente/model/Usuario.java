@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -29,6 +31,9 @@ public class Usuario {
 
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
+
+    @Column(name = "run", nullable = false, unique = true, length = 12)
+    private String run;
 
     @Column(nullable = false, length = 100)
     private String nombres;
@@ -57,10 +62,12 @@ public class Usuario {
     @Column(length = 20)
     private String estado = "activo";
 
-    @Column(name = "fecha_creacion", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private OffsetDateTime fechaCreacion;
 
-    @Column(name = "fecha_actualizacion", insertable = false, updatable = false)
+    @UpdateTimestamp
+    @Column(name = "fecha_actualizacion", nullable = false)
     private OffsetDateTime fechaActualizacion;
 
     @Column(name = "fecha_ultimo_login")

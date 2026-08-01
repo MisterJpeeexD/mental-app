@@ -24,6 +24,10 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     };
 
+    public long getExpiration() {
+        return expiration;
+    }
+
     public String generateToken(String username){
         return Jwts.builder()
                 .subject(username)

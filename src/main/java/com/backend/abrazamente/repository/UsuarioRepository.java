@@ -12,18 +12,48 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    // Metodo con JOIN FETCH para solucionar el LazyInitializationException de los roles
-    @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.usuarioRoles ur LEFT JOIN FETCH ur.rol WHERE u.email = :email")
+    @Query("""
+            SELECT DISTINCT usuario
+            FROM Usuario usuario
+            LEFT JOIN FETCH usuario.usuarioRoles usuarioRol
+            LEFT JOIN FETCH usuarioRol.rol rol
+            WHERE LOWER(usuario.email) = LOWER(:email)
+            """)
     Optional<Usuario> findByEmailWithRoles(@Param("email") String email);
 
-    Optional<Usuario> findByEmail(String email);
+
+    @Query("""
+            SELECT DISTINCT usuario
+            FROM Usuario usuario
+            LEFT JOIN FETCH usuario.usuarioRoles usuarioRol
+            LEFT JOIN FETCH usuarioRol.rol rol
+            """)
+    List<Usuario> findAllWithRoles();
+
+
+    Optional<Usuario> findByEmailIgnoreCase(String email);
+
+
+    Optional<Usuario> findByRun(String run);
+
 
     Optional<Usuario> findByTelefono(String telefono);
 
-    // 1. Metodo faltante para buscar por ciudad
-    List<Usuario> findByCiudad(String ciudad);
 
-    // 2. Query method para buscar por nombre o apellido
-    @Query("SELECT u FROM Usuario u WHERE u.nombres LIKE %:nombre% OR u.apellidos LIKE %:nombre%")
+    boolean existsByEmailIgnoreCase(String email);
+
+
+    boolean existsByRun(String run);
+
+
+    List<Usuario> findByCiudadIgnoreCase(String ciudad);
+
+
+    @Query("""
+            SELECT usuario
+            FROM Usuario usuario
+            WHERE LOWER(usuario.nombres) LIKE LOWER(CONCAT('%', :nombre, '%'))
+               OR LOWER(usuario.apellidos) LIKE LOWER(CONCAT('%', :nombre, '%'))
+            """)
     List<Usuario> buscarByNombre(@Param("nombre") String nombre);
 }

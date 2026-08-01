@@ -18,7 +18,7 @@ public class UsuarioDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Mapea la colección usuarioRoles a las autoridades de Spring Security
         return usuario.getUsuarioRoles().stream()
-                .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRol().getNombre()))
+                .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRol().getNombre().toUpperCase()))
                 .collect(Collectors.toList());
     }
 
