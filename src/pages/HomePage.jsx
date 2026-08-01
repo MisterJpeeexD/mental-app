@@ -5,9 +5,9 @@ import Header from '../components/layout/Header';
 import { useReveal } from '../hooks/useReveal';
 
 const services = [
-  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/legacy/terapia.html', label: 'Saber más' },
-  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/legacy/recursos.html', label: 'Explorar recursos' },
-  { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/legacy/comunidad.html', label: 'Unirse al grupo' },
+  { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/botiquin/breathing', label: 'Saber más' },
+  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/recursos', label: 'Explorar recursos' },
+  { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/comunidad', label: 'Unirse al grupo' },
 ];
 
 const steps = [
@@ -142,7 +142,7 @@ export default function HomePage() {
         <section className="specialists-section">
           <div className="section-header reveal"><div className="eyebrow center">Nuestra Red</div><h2 className="section-title">En las mejores manos</h2><p className="section-subtitle">Profesionales licenciados y con experiencia clínica, listos para acompañarte.</p></div>
           <div className="specialists-grid">
-            {specialists.map(([initials, color, name, specialty, description], index) => <article className="specialist-card reveal" style={{ transitionDelay: `${index * 0.1}s` }} key={name}><div className={`avatar-circle avatar-${color}`}>{initials}</div><div className="specialist-info"><h3>{name}</h3><span className="specialty-tag">{specialty}</span><p>{description}</p><a href="/legacy/public/terapia.html" className="card-link">Ver perfil <span>→</span></a></div></article>)}
+            {specialists.map(([initials, color, name, specialty, description], index) => <article className="specialist-card reveal" style={{ transitionDelay: `${index * 0.1}s` }} key={name}><div className={`avatar-circle avatar-${color}`}>{initials}</div><div className="specialist-info"><h3>{name}</h3><span className="specialty-tag">{specialty}</span><p>{description}</p><a href="/perfil" className="card-link">Ver perfil <span>→</span></a></div></article>)}
           </div>
         </section>
         <section className="testimonials-section">

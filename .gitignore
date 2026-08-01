@@ -64,5 +64,9 @@ src/main/resources/static/assets/
 src/main/resources/static/index.html
 
 REFAC-CLIENTE-A-USUARIO.md
+
+build/
+
+dist/
  
  
