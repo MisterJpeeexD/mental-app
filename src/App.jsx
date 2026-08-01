@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
@@ -165,7 +165,7 @@ export default function App() {
       <main className="main-content">
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<HomePage />} />
             
             {/* Ariel's separate views */}
             <Route path="/login" element={<LoginPage />} />
@@ -250,18 +250,7 @@ export default function App() {
                 )}
               />
             </Route>
-            <Route
-              path="/auth"
-              element={(
-                <FeatureLayout
-                  title={user ? 'Mi Cuenta' : 'Autenticación'}
-                  description="Accede a tu espacio personalizado de salud mental."
-                  fallback={<CardSkeleton count={1} label="Cargando autenticación" />}
-                >
-                  <AuthModal onLogin={handleLogin} />
-                </FeatureLayout>
-              )}
-            />
+// Deprecated auth route removed; use /login and /registro pages
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
