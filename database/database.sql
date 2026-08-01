@@ -1175,10 +1175,10 @@ ON CONFLICT DO NOTHING;
 
 -- Insertar profesionales (expandido)
 INSERT INTO profesionales (usuario_id, licencia_profesional, especialidad_principal_id, es_voluntario, tarifa_sesion, anos_experiencia) VALUES
-(11, 'LC-12345', 1, FALSE, 80.00, 15),
-(12, 'LC-67890', 4, FALSE, 60.00, 8),
-(13, 'LC-54321', 1, TRUE, 50.00, 5),
-(14, 'LC-98765', 2, FALSE, 75.00, 10)
+(11, 'LC-12345', (SELECT id FROM especialidades WHERE nombre = 'Psicología Clínica' LIMIT 1), FALSE, 80.00, 15),
+(12, 'LC-67890', (SELECT id FROM especialidades WHERE nombre = 'Mindfulness' LIMIT 1), FALSE, 60.00, 8),
+(13, 'LC-54321', (SELECT id FROM especialidades WHERE nombre = 'Psicología Clínica' LIMIT 1), TRUE, 50.00, 5),
+(14, 'LC-98765', (SELECT id FROM especialidades WHERE nombre = 'Psicología Organizacional' LIMIT 1), FALSE, 75.00, 10)
 ON CONFLICT DO NOTHING;
 
 -- Insertar logros
