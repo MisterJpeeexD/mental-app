@@ -20,7 +20,7 @@ RUN mvn clean package -DskipTests
 # --- Etapa 3: Runtime de Producción ---
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=backend-builder /app/target/mental-app-backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=backend-builder /app/target/abrazamente-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 ENV PORT=8080
