@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
-    outDir: process.env.VERCEL ? 'dist' : 'src/main/resources/static',
+    outDir: 'src/main/resources/static',
     emptyOutDir: true, // limpia el contenido previo al compilar
     rollupOptions: {
       output: {

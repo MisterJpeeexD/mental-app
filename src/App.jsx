@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
 import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
 
@@ -13,6 +14,8 @@ const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'
 const MoodTracker = lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = lazy(() => import('./features/professionals/ProfessionalDirectory'));
 const AuthModal = lazy(() => import('./features/auth/AuthModal'));
+const CommunityForum = lazy(() => import('./features/community/CommunityForum'));
+const ResourceLibrary = lazy(() => import('./features/resources/ResourceLibrary'));
 
 const RouteLoadingFallback = () => {
   const { pathname } = useLocation();
@@ -206,6 +209,32 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
+            <Route
+              path="/recursos"
+              element={(
+                <FeatureLayout
+                  title="Recursos Psicoeducativos"
+                  description="Biblioteca de guías, artículos y contenidos psicoeducativos."
+                  fallback={<CardSkeleton count={2} label="Cargando biblioteca de recursos" />}
+                >
+                  <ResourceLibrary />
+                </FeatureLayout>
+              )}
+            />
+            <Route element={<ProtectedRoute user={user} />}>
+              <Route
+                path="/comunidad"
+                element={(
+                  <FeatureLayout
+                    title="Foro de la Comunidad"
+                    description="Conecta, comparte y recibe apoyo en un ambiente seguro."
+                    fallback={<CardSkeleton count={4} label="Cargando foro de la comunidad" />}
+                  >
+                    <CommunityForum />
+                  </FeatureLayout>
+                )}
+              />
+            </Route>
             <Route
               path="/auth"
               element={(
