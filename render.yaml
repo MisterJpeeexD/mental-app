@@ -4,7 +4,7 @@ services:
   # Se conecta a Neon PostgreSQL a través de variables de entorno de Render.
   # ---------------------------------------------------------------------------
   - type: web
-    name: mental-app-backend
+    name: mental-app
     runtime: docker
     plan: free
     region: oregon

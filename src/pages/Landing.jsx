@@ -101,7 +101,7 @@ const Landing = () => {
             </p>
 
             <div className="actions">
-              <Link to="/auth" className="btn-primary">Comenzar ahora</Link>
+              <Link to="/registro" className="btn-primary">Comenzar ahora</Link>
               <button onClick={() => {document.getElementById('ecosistema').scrollIntoView({behavior: 'smooth'})}} className="btn-secondary" style={{cursor: 'pointer'}}>Conocer la app</button>
             </div>
 
@@ -411,7 +411,7 @@ const Landing = () => {
             <p>Da el primer paso hoy. Únete a nuestra comunidad y comienza a construir una vida más equilibrada con el apoyo de profesionales.</p>
             
             <div className="cta-actions">
-              <Link to="/auth" className="btn-primary-dark">Comenzar mi proceso</Link>
+              <Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link>
               <button onClick={() => {document.getElementById('ecosistema').scrollIntoView({behavior: 'smooth'})}} className="btn-secondary-dark" style={{cursor: 'pointer'}}>Explorar funciones</button>
             </div>
           </div>

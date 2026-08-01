@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 button, input, select { font: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(62,123,250,.35); outline-offset: 2px; }
 .header-logout { border: 0; background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; }
