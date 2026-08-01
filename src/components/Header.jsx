@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Header = ({ user, handleLogout }) => {
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'light');
@@ -19,6 +19,9 @@ const Header = ({ user, handleLogout }) => {
     }
   }, []);
 
+  const getNavLinkClass = ({ isActive }) =>
+    `nav-link ${isActive ? 'active' : ''}`;
+
   return (
     <header className="mente-header">
       <div className="header-container">
@@ -26,11 +29,11 @@ const Header = ({ user, handleLogout }) => {
           <img src="/images/AbrazaMente_Logo.svg" alt="AbrazaMente Logo" className="logo-img" />
         </Link>
         <nav className="main-nav" aria-label="Navegación principal">
-          <Link to="/" className="nav-link">Inicio</Link>
-          <Link to="/professionals" className="nav-link">Terapia</Link>
-          {/* <Link to="/comunidad" className="nav-link">Comunidad</Link> - TODO */}
-          <Link to="/journal" className="nav-link">Diario</Link>
-          <Link to="/botiquin/breathing" className="nav-link">Recursos</Link>
+          <NavLink to="/" className={getNavLinkClass} end>Inicio</NavLink>
+          <NavLink to="/professionals" className={getNavLinkClass}>Terapia</NavLink>
+          <NavLink to="/comunidad" className={getNavLinkClass}>Comunidad</NavLink>
+          <NavLink to="/journal" className={getNavLinkClass}>Diario</NavLink>
+          <NavLink to="/recursos" className={getNavLinkClass}>Recursos</NavLink>
         </nav>
         <div className="header-actions">
           <button id="theme-toggle" className="theme-toggle-btn" aria-label="Cambiar modo oscuro" type="button" onClick={toggleTheme}>
