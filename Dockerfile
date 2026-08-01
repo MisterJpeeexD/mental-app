@@ -1,25 +1,28 @@
-# Dockerfile opcional para el backend. Úsalo si prefieres desplegar el
-# servicio Spring Boot como contenedor (Render "Docker" runtime, Railway, etc.)
-# en lugar del runtime nativo de Java. El frontend NO se sirve desde aquí:
-# se despliega aparte (ver render.yaml / GUIA_DESPLIEGUE.md).
+# Multi-stage Dockerfile para AbrazaMente (React SPA + Spring Boot)
 
-# ---- Etapa 1: build ----
-FROM eclipse-temurin:21-jdk AS build
+# --- Etapa 1: Build del Frontend (Vite / React) ---
+FROM node:20-alpine AS frontend-builder
 WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
-
+# --- Etapa 2: Build del Backend (Maven / Java 17) ---
+FROM maven:3.9-eclipse-temurin-17-alpine AS backend-builder
+WORKDIR /app
+COPY pom.xml .
 COPY src ./src
-RUN ./mvnw -B clean package -DskipTests
+# Copiar el build del frontend a static resources
+COPY --from=frontend-builder /app/src/main/resources/static ./src/main/resources/static
+RUN mvn clean package -DskipTests
 
-# ---- Etapa 2: runtime ----
-FROM eclipse-temurin:21-jre
+# --- Etapa 3: Runtime de Producción ---
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/abrazamente-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=backend-builder /app/target/mental-app-backend-0.0.1-SNAPSHOT.jar app.jar
 
-# Render inyecta PORT en tiempo de ejecución; application.yaml ya lo respeta
-# mediante server.port: ${PORT:8080}.
 EXPOSE 8080
+ENV PORT=8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

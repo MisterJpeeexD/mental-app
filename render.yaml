@@ -1,47 +1,32 @@
 services:
   # ---------------------------------------------------------------------------
-  # Backend: Spring Boot (API REST). Se conecta a una base de datos Neon externa
-  # a través de las variables de entorno definidas más abajo.
+  # Service Backend + Static SPA: Spring Boot (API REST + Servidor SPA)
+  # Se conecta a Neon PostgreSQL a través de variables de entorno de Render.
   # ---------------------------------------------------------------------------
   - type: web
-    name: abrazamente-backend
-    runtime: docker
-    dockerfilePath: ./Dockerfile
+    name: mental-app-backend
+    runtime: java
     plan: free
     region: oregon
-    
+    buildCommand: "npm install && npm run build && ./mvnw clean package -DskipTests"
+    startCommand: "java -jar target/mental-app-backend-0.0.1-SNAPSHOT.jar"
     healthCheckPath: /error
     envVars:
       - key: DB_URL
-        sync: false # pega aquí la connection string de Neon (con ?sslmode=require)
+        sync: false # Pega aquí la connection string de Neon DB (con ?sslmode=require)
       - key: DB_USER
-        sync: false
+        sync: false # Usuario de Neon DB
       - key: DB_PASSWORD
-        sync: false
+        sync: false # Password de Neon DB
+      - key: DB_DRIVER
+        value: "org.postgresql.Driver"
       - key: JPA_DDL_AUTO
-        value: update
+        value: "update"
       - key: JPA_SHOW_SQL
         value: "false"
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION
-        value: "3600000"
+        value: "86400000"
       - key: FRONTEND_ORIGINS
-        sync: false # URL pública del frontend, ej: https://abrazamente-frontend.onrender.com
-
-  # ---------------------------------------------------------------------------
-  # Frontend: SPA de React compilada como sitio estático.
-  # ---------------------------------------------------------------------------
-  - type: web
-    name: abrazamente-frontend
-    runtime: static
-    plan: free
-    buildCommand: "npm ci && npm run build"
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false # URL pública del backend, ej: https://abrazamente-backend.onrender.com
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+        sync: false # URL pública de Render (ej: https://mental-app-backend.onrender.com)

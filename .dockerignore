@@ -1,6 +1,12 @@
-target/
-node_modules/
-dist/
-.git/
+.git
+.gitignore
+.agents
+.vscode
+.codegraph
+node_modules
+target
+dist
 .env
-*.log
+.env.local
+.env.development
+.env.production
