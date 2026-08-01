@@ -20,10 +20,10 @@ El proyecto está estructurado como una aplicación desacoplada en tres capas (F
 
 ```mermaid
 graph TD
-    subgraph Cliente [Capa de Cliente - React]
+    subgraph Usuario [Capa de Usuario - React]
         SPA["React SPA (Vite)"]
         Components["Componentes (Botiquín, Directorio, Portal)"]
-        APIClient["Cliente API (Fetch / Axios)"]
+        APIClient["Usuario API (Fetch / Axios)"]
         SPA --> Components
         Components --> APIClient
     end
