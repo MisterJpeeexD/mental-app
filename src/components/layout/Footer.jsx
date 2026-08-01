@@ -19,9 +19,9 @@ export default function Footer() {
           <h4 className="footer-heading">Plataforma</h4>
           <ul className="footer-links">
             <li><Link to="/">Inicio</Link></li>
-            <li><a href="/legacy/public/terapia.html">Especialistas</a></li>
-            <li><a href="/legacy/public/recursos.html">Herramientas</a></li>
-            <li><a href="/legacy/public/comunidad.html">Comunidad</a></li>
+            <li><Link to="/professionals">Especialistas</Link></li>
+            <li><Link to="/recursos">Herramientas</Link></li>
+            <li><Link to="/comunidad">Comunidad</Link></li>
           </ul>
         </div>
         <div className="footer-col">
