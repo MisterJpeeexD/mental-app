@@ -208,20 +208,18 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
-            <Route element={<ProtectedRoute />}>
-              <Route
-                path="/comunidad"
-                element={(
-                  <FeatureLayout
-                    title="Foro de la Comunidad"
-                    description="Conecta, comparte y recibe apoyo en un ambiente seguro."
-                    fallback={<CardSkeleton count={4} label="Cargando foro de la comunidad" />}
-                  >
-                    <CommunityForum />
-                  </FeatureLayout>
-                )}
-              />
-            </Route>
+            <Route
+              path="/comunidad"
+              element={(
+                <FeatureLayout
+                  title="Foro de la Comunidad"
+                  description="Conecta, comparte y recibe apoyo en un ambiente seguro."
+                  fallback={<CardSkeleton count={4} label="Cargando foro de la comunidad" />}
+                >
+                  <CommunityForum />
+                </FeatureLayout>
+              )}
+            />
 // Deprecated auth route removed; use /login and /registro pages
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
