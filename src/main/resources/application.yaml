@@ -27,6 +27,13 @@ jwt:
   secret: ${JWT_SECRET:supersecretkey_for_local_development_only}
   expiration: ${JWT_EXPIRATION:3600000}
 
+microsoft:
+  graph:
+    tenant-id: ${MS_GRAPH_TENANT_ID:mock-tenant-id}
+    client-id: ${MS_GRAPH_CLIENT_ID:mock-client-id}
+    client-secret: ${MS_GRAPH_CLIENT_SECRET:mock-client-secret}
+    user-id: ${MS_GRAPH_USER_ID:mock-user-id}
+
 app:
   cors:
     allowed-origins: ${FRONTEND_ORIGINS:http://localhost:5173}

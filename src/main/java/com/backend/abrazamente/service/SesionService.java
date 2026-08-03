@@ -24,6 +24,7 @@ public class SesionService {
     private final SesionTerapiaRepository sesionRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProfesionalRepository profesionalRepository;
+    private final TeamsMeetingService teamsMeetingService;
 
     @Transactional
     public SesionResponseDTO agendarSesion(String userEmail, SesionRequestDTO request) {
@@ -40,12 +41,11 @@ public class SesionService {
         sesion.setNotas(request.notas());
         sesion.setEstado("PENDIENTE");
         
-        // Mock de generacion de URL de Teams para el prototipo
-        // En una implementacion real, esto llamaria a Microsoft Graph API
-        String mockTeamsUrl = "https://teams.microsoft.com/l/meetup-join/19%3ameeting_" 
-                + UUID.randomUUID().toString().replace("-", "") 
-                + "%40thread.v2/0?context=%7b%22Tid%22%3a%22mock-tenant-id%22%2c%22Oid%22%3a%22mock-object-id%22%7d";
-        sesion.setTeamsMeetingUrl(mockTeamsUrl);
+        // Llamada real al servicio de integracion con Teams
+        String titulo = "Sesión Terapéutica - " + usuario.getNombres() + " y " + profesional.getUsuario().getNombres();
+        String teamsUrl = teamsMeetingService.createMeeting(titulo, request.fechaHora(), request.fechaHora().plusHours(1));
+        
+        sesion.setTeamsMeetingUrl(teamsUrl);
 
         SesionTerapia saved = sesionRepository.save(sesion);
         return mapToDTO(saved);
