@@ -9,7 +9,7 @@ import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
 import { AuthProvider } from './context/AuthContext';
 
-// Ariel's pages
+
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
@@ -22,6 +22,7 @@ const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'
 const MoodTracker = lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = lazy(() => import('./features/professionals/ProfessionalDirectory'));
 const CommunityForum = lazy(() => import('./features/community/CommunityForum'));
+const ComunidadPage = lazy(() => import('./pages/ComunidadPage'));
 const ResourceLibrary = lazy(() => import('./features/resources/ResourceLibrary'));
 
 const RouteLoadingFallback = () => {
@@ -237,7 +238,35 @@ export default function App() {
               <Route path="/registro" element={<RegisterPage />} />
               <Route path="/perfil" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
-              {/* Botiquín y Journal removidos temporalmente */}
+              {/* Botiquín & Journal */}
+              <Route
+                path="/botiquin/breathing"
+                element={(
+                  <FeatureLayout
+                    title="Botiquín de Apoyo Inmediato"
+                    description="Técnicas inmediatas para momentos de crisis y ansiedad."
+                    showTabs
+                    currentTab="breathing"
+                    fallback={<TimerSkeleton />}
+                  >
+                    <BreathingTimer />
+                  </FeatureLayout>
+                )}
+              />
+              <Route
+                path="/botiquin/grounding"
+                element={(
+                  <FeatureLayout
+                    title="Botiquín de Apoyo Inmediato"
+                    description="Técnicas inmediatas para momentos de crisis y ansiedad."
+                    showTabs
+                    currentTab="grounding"
+                    fallback={<CardSkeleton count={1} label="Cargando ejercicio de grounding" />}
+                  >
+                    <GroundingWizard />
+                  </FeatureLayout>
+                )}
+              />
               <Route
                 path="/journal"
                 element={(
