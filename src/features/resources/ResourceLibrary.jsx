@@ -11,32 +11,8 @@ const BRAND = {
   purple: '#BA68C8',
 };
 
-/* ─── Datos estáticos (migrados de recursos.js legacy) ─────── */
-const RECURSOS = [
-  { id:'r1',  tipo:'libro',     titulo:'Calma en la Tormenta: Herramientas Prácticas para la Ansiedad',       autor:'Dra. Renata Solís',        editorial:'Nimbus Editorial',         anio:2024, tag:'Ansiedad',         gratis:false, url:'https://www.amazon.com/s?k=Calma+Tormenta+Renata+Solis',           descargable:true  },
-  { id:'r2',  tipo:'protocolo', titulo:'Manual de Primeros Auxilios Psicológicos en Crisis',                   autor:'Abrazamente',               editorial:'Abrazamente Ediciones',    anio:2025, tag:'Crisis',           gratis:true,  url:'https://www.paho.org/es/temas/salud-mental',                       descargable:true  },
-  { id:'r3',  tipo:'libro',     titulo:'El Peso Invisible: Comprender la Depresión',                          autor:'Psic. Ignacio Farfán',      editorial:'Editorial Umbral',         anio:2023, tag:'Depresión',        gratis:false, url:'https://www.amazon.com/s?k=El+Peso+Invisible+Farfan',             descargable:true  },
-  { id:'r4',  tipo:'guia',      titulo:'Guía Breve de Grounding 5-4-3-2-1',                                   autor:'Abrazamente',               editorial:'Abrazamente Ediciones',    anio:2025, tag:'Regulación',       gratis:true,  url:'https://www.who.int/es/news-room/fact-sheets/detail/mental-health', descargable:true  },
-  { id:'r5',  tipo:'libro',     titulo:'Burnout: Cuando el Trabajo Agota el Alma',                            autor:'Dra. Marcela Iturra',       editorial:'Nimbus Editorial',         anio:2022, tag:'Burnout',          gratis:false, url:'https://www.amazon.com/s?k=Burnout+Iturra',                        descargable:false },
-  { id:'r6',  tipo:'guia',      titulo:'Salir del Silencio: Guía sobre Violencia en el Hogar',               autor:'Abrazamente',               editorial:'Abrazamente Ediciones',    anio:2025, tag:'Crisis',           gratis:true,  url:'https://www.sernameg.gob.cl',                                      descargable:true  },
-  { id:'r7',  tipo:'protocolo', titulo:'Señales de Alerta: Prevención del Suicidio para Comunidades',        autor:'Abrazamente',               editorial:'Abrazamente Ediciones',    anio:2025, tag:'Prevención',       gratis:true,  url:'https://www.who.int/es/health-topics/suicide',                     descargable:true  },
-  { id:'r8',  tipo:'guia',      titulo:'Regulación Emocional en 10 Técnicas Prácticas',                       autor:'Abrazamente',               editorial:'Abrazamente Ediciones',    anio:2025, tag:'Regulación',       gratis:true,  url:'https://www.who.int/es',                                           descargable:true  },
-  { id:'r9',  tipo:'libro',     titulo:'Duelo: Acompañar la Pérdida sin Prisa',                               autor:'Psic. Fernanda Ossa',       editorial:'Editorial Puente',         anio:2021, tag:'Duelo',            gratis:false, url:'https://www.amazon.com/s?k=Duelo+Fernanda+Ossa',                   descargable:true  },
-  { id:'r10', tipo:'libro',     titulo:'Reconstruir la Autoestima: Ejercicios Prácticos',                     autor:'Lic. Bárbara Concha',       editorial:'Nimbus Editorial',         anio:2024, tag:'Autoestima',       gratis:false, url:'https://www.amazon.com/s?k=Reconstruir+Autoestima+Concha',         descargable:false },
-  { id:'r11', tipo:'guia',      titulo:'Introducción a la Terapia de Aceptación y Compromiso (ACT)',          autor:'Lic. Carolina Bravo',       editorial:'Editorial Puente',         anio:2022, tag:'Terapia',          gratis:true,  url:'https://contextualscience.org/act',                                descargable:false },
-  { id:'r12', tipo:'protocolo', titulo:'DBT en la Práctica: Regulación Emocional y Crisis',                   autor:'Dra. Antonia Vergara',      editorial:'Editorial Umbral',         anio:2023, tag:'Regulación',       gratis:false, url:'https://behavioraltech.org',                                       descargable:true  },
-  { id:'r13', tipo:'libro',     titulo:'Terapia Cognitivo Conductual Paso a Paso',                            autor:'Dr. Ignacio Farfán',        editorial:'Nimbus Editorial',         anio:2023, tag:'TCC',              gratis:false, url:'https://www.amazon.com/s?k=TCC+paso+a+paso',                       descargable:true  },
-  { id:'r14', tipo:'podcast',   titulo:'Episodio 12: Hablemos de Ansiedad sin Filtros',                       autor:'Podcast Abrazamente',       editorial:'Abrazamente Media',        anio:2026, tag:'Ansiedad',         gratis:true,  url:'https://open.spotify.com/search/salud%20mental',                   descargable:false },
-  { id:'r15', tipo:'podcast',   titulo:'Episodio 7: Mindfulness para el Día a Día',                          autor:'Podcast Abrazamente',       editorial:'Abrazamente Media',        anio:2025, tag:'Mindfulness',      gratis:true,  url:'https://open.spotify.com/search/mindfulness%20salud%20mental',     descargable:false },
-  { id:'r16', tipo:'podcast',   titulo:'Episodio 3: Hablar de Salud Mental sin Tabúes',                      autor:'Podcast Abrazamente',       editorial:'Abrazamente Media',        anio:2025, tag:'Psicología',       gratis:true,  url:'https://open.spotify.com/search/podcast%20salud%20mental',         descargable:false },
-  { id:'r17', tipo:'video',     titulo:'Respirar para Calmar: Ejercicio Guiado de 8 Minutos',                 autor:'Lic. Josefa Peralta',       editorial:'Abrazamente Ediciones',    anio:2026, tag:'Regulación',       gratis:true,  url:'https://www.youtube.com/results?search_query=respiracion+diafragmatica+guiada', descargable:false },
-  { id:'r18', tipo:'video',     titulo:'Cerebro Bajo Presión: Neurociencia del Estrés',                       autor:'Dra. Paula Ibáñez',         editorial:'Abrazamente Media',        anio:2026, tag:'Neurociencia',     gratis:true,  url:'https://www.youtube.com/results?search_query=neurociencia+estres', descargable:false },
-  { id:'r19', tipo:'video',     titulo:'Meditación de Body Scan para Principiantes',                          autor:'Lic. Josefa Peralta',       editorial:'Abrazamente Media',        anio:2025, tag:'Mindfulness',      gratis:true,  url:'https://www.youtube.com/results?search_query=body+scan+meditacion', descargable:false },
-  { id:'r20', tipo:'protocolo', titulo:'Protocolo Clínico de Evaluación de Riesgo Suicida',                   autor:'Dr. Matías Cordero',        editorial:'Editorial Umbral',         anio:2024, tag:'Prevención',       gratis:false, url:'https://www.minsal.cl/salud-mental',                               descargable:true  },
-  { id:'r21', tipo:'guia',      titulo:'Mindfulness Clínico: 8 Semanas de Práctica Guiada',                   autor:'Lic. Josefa Peralta',       editorial:'Editorial Puente',         anio:2023, tag:'Mindfulness',      gratis:true,  url:'https://www.mindfulnesscenter.org',                                descargable:true  },
-  { id:'r22', tipo:'libro',     titulo:'Vivir con Autismo: Una Guía para Familias',                            autor:'Lic. Camila Duarte',        editorial:'Editorial Puente',         anio:2023, tag:'Autismo',          gratis:true,  url:'https://www.autismo.com.es',                                       descargable:true  },
-  { id:'r23', tipo:'libro',     titulo:'Adicciones: Comprender el Ciclo y Buscar Ayuda',                      autor:'Dr. Rodrigo Sepúlveda',     editorial:'Nimbus Editorial',         anio:2024, tag:'Adicciones',       gratis:false, url:'https://www.amazon.com/s?k=adicciones+Sepulveda',                  descargable:false },
-];
+/* ─── Datos obtenidos desde API ─────── */
+// La lista de recursos ahora se carga dinámicamente desde el backend
 
 /* ─── Configuración del menú lateral ──────────────────────── */
 const MENU_TIPO = [
@@ -222,6 +198,8 @@ function FilterGroup({ title, open, onToggle, children }) {
 }
 
 export default function ResourceLibrary() {
+  const [recursos, setRecursos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroAcceso, setFiltroAcceso] = useState('todos');
@@ -229,8 +207,36 @@ export default function ResourceLibrary() {
   const [grupoTipoOpen, setGrupoTipoOpen] = useState(true);
   const [grupoAccesoOpen, setGrupoAccesoOpen] = useState(true);
 
+  import('react').then(({ useEffect }) => {
+    useEffect(() => {
+      fetch('http://localhost:8080/api/recursos-digitales')
+        .then(res => res.json())
+        .then(data => {
+            // Mapeamos los datos del backend al formato que espera la vista
+            const mapped = data.map(r => ({
+                id: r.id.toString(),
+                tipo: r.tipoContenido?.toLowerCase() || 'guia',
+                titulo: r.titulo,
+                autor: r.autor,
+                editorial: 'Abrazamente API',
+                anio: new Date(r.fechaCreacion || Date.now()).getFullYear(),
+                tag: r.categorias?.[0]?.nombre || 'General',
+                gratis: !r.esPremium,
+                url: r.urlContenido,
+                descargable: true
+            }));
+            setRecursos(mapped);
+            setLoading(false);
+        })
+        .catch(err => {
+            console.error('Error fetching resources:', err);
+            setLoading(false);
+        });
+    }, []);
+  });
+
   const recursosFiltered = useMemo(() => {
-    return RECURSOS.filter(r => {
+    return recursos.filter(r => {
       const q = busqueda.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const haystack = `${r.titulo} ${r.autor} ${r.tag} ${r.tipo}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       if (busqueda && !haystack.includes(q)) return false;
@@ -239,9 +245,9 @@ export default function ResourceLibrary() {
       if (filtroAcceso === 'pago' && r.gratis) return false;
       return true;
     });
-  }, [busqueda, filtroTipo, filtroAcceso]);
+  }, [busqueda, filtroTipo, filtroAcceso, recursos]);
 
-  const statGratis = RECURSOS.filter(r => r.gratis).length;
+  const statGratis = recursos.filter(r => r.gratis).length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0', width: '100%' }}>
@@ -275,7 +281,7 @@ export default function ResourceLibrary() {
       {/* ── Stat pills ───────────────────────────────────────── */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {[
-          [`${RECURSOS.length}`, 'Recursos'],
+          [`${recursos.length}`, 'Recursos'],
           [`${statGratis}`, 'Gratuitos'],
           ['100%', 'Curado por clínicos'],
         ].map(([num, label]) => (
@@ -390,9 +396,10 @@ export default function ResourceLibrary() {
           {/* Toolbar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
-              {recursosFiltered.length === RECURSOS.length
-                ? `${RECURSOS.length} recursos disponibles`
-                : `${recursosFiltered.length} de ${RECURSOS.length} recursos`}
+              {loading ? 'Cargando recursos desde APIs...' : 
+               (recursosFiltered.length === recursos.length
+                ? `${recursos.length} recursos disponibles`
+                : `${recursosFiltered.length} de ${recursos.length} recursos`)}
             </p>
             <button
               onClick={() => setSidebarOpen(v => !v)}

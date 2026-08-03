@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, Calendar } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { apiRequest } from '../../services/apiClient';
 
 /* ─── Paleta ─────────────────────────────────────────────── */
 const BRAND = {
@@ -111,6 +113,40 @@ function EspecialistaCard({ esp, onClick }) {
 }
 
 function Modal({ esp, onClose }) {
+  const { isAuthenticated, user } = useAuth();
+  const [agendando, setAgendando] = useState(false);
+  const [mensaje, setMensaje] = useState(null);
+
+  const handleAgendar = async () => {
+    if (!isAuthenticated) {
+      setMensaje({ error: true, texto: 'Inicia sesión para agendar' });
+      return;
+    }
+    setAgendando(true);
+    setMensaje(null);
+    try {
+      // Calculamos una fecha mock: mañana a las 10:00 AM
+      const manana = new Date();
+      manana.setDate(manana.getDate() + 1);
+      manana.setHours(10, 0, 0, 0);
+
+      await apiRequest('/api/sesiones', {
+        method: 'POST',
+        body: JSON.stringify({
+          profesionalId: esp.id,
+          fechaHora: manana.toISOString(),
+          notas: 'Primera sesión desde el directorio'
+        })
+      });
+
+      setMensaje({ error: false, texto: 'Sesión agendada con éxito. Revisa tu perfil.' });
+    } catch (err) {
+      setMensaje({ error: true, texto: err.message || 'Error al agendar sesión' });
+    } finally {
+      setAgendando(false);
+    }
+  };
+
   if (!esp) return null;
   return (
     <div
@@ -177,6 +213,35 @@ function Modal({ esp, onClose }) {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Acciones */}
+        <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {mensaje && (
+            <div style={{ 
+              padding: '12px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600,
+              background: mensaje.error ? 'rgba(255, 138, 101, 0.15)' : 'rgba(77, 208, 225, 0.15)',
+              color: mensaje.error ? '#c75e35' : '#009aab', border: `1px solid ${mensaje.error ? 'rgba(255, 138, 101, 0.3)' : 'rgba(77, 208, 225, 0.3)'}`
+            }}>
+              {mensaje.texto}
+            </div>
+          )}
+          
+          <button 
+            onClick={handleAgendar}
+            disabled={agendando}
+            style={{
+              width: '100%', padding: '14px', borderRadius: '16px', border: 'none',
+              background: 'linear-gradient(135deg, var(--brand-blue), #5a91f5)',
+              color: 'white', fontSize: '1rem', fontWeight: 700, cursor: agendando ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              boxShadow: '0 8px 24px rgba(62,123,250,0.25)', transition: 'transform 0.2s, box-shadow 0.2s',
+              opacity: agendando ? 0.7 : 1
+            }}
+          >
+            <Calendar style={{ width: '18px', height: '18px' }} />
+            {agendando ? 'Agendando...' : `Agendar Sesión con ${esp.nombre.split(' ')[1]}`}
+          </button>
         </div>
       </div>
     </div>
