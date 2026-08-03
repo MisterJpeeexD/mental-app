@@ -40,7 +40,7 @@ public class RecursoSyncServiceTest {
 
     @BeforeEach
     void setUp() {
-        syncService = new RecursoSyncService(recursoRepository, categoriaRepository, new ObjectMapper(), httpClient);
+        syncService = new RecursoSyncService(recursoRepository, categoriaRepository, new ObjectMapper(), httpClient, "mock-youtube-key", "mock-spotify-id", "mock-spotify-secret");
     }
 
     @Test

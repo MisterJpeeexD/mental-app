@@ -27,14 +27,27 @@ public class RecursoSyncService {
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
 
+    private final String youtubeApiKey;
+    private final String spotifyClientId;
+    private final String spotifyClientSecret;
+
     private static final String OPENLIBRARY_API = "https://openlibrary.org/search.json?q=";
+    private static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=";
+    private static final String SPOTIFY_TOKEN_API = "https://accounts.spotify.com/api/token";
+    private static final String SPOTIFY_SEARCH_API = "https://api.spotify.com/v1/search?type=episode&limit=";
 
     public RecursoSyncService(RecursoDigitalRepository recursoRepository,
                               CategoriaRecursoRepository categoriaRepository,
-                              ObjectMapper objectMapper) {
+                              ObjectMapper objectMapper,
+                              @org.springframework.beans.factory.annotation.Value("${youtube.api-key}") String youtubeApiKey,
+                              @org.springframework.beans.factory.annotation.Value("${spotify.client-id}") String spotifyClientId,
+                              @org.springframework.beans.factory.annotation.Value("${spotify.client-secret}") String spotifyClientSecret) {
         this.recursoRepository = recursoRepository;
         this.categoriaRepository = categoriaRepository;
         this.objectMapper = objectMapper;
+        this.youtubeApiKey = youtubeApiKey;
+        this.spotifyClientId = spotifyClientId;
+        this.spotifyClientSecret = spotifyClientSecret;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -44,11 +57,17 @@ public class RecursoSyncService {
     public RecursoSyncService(RecursoDigitalRepository recursoRepository,
                               CategoriaRecursoRepository categoriaRepository,
                               ObjectMapper objectMapper,
-                              HttpClient httpClient) {
+                              HttpClient httpClient,
+                              String youtubeApiKey,
+                              String spotifyClientId,
+                              String spotifyClientSecret) {
         this.recursoRepository = recursoRepository;
         this.categoriaRepository = categoriaRepository;
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
+        this.youtubeApiKey = youtubeApiKey;
+        this.spotifyClientId = spotifyClientId;
+        this.spotifyClientSecret = spotifyClientSecret;
     }
 
     @Transactional
@@ -100,6 +119,136 @@ public class RecursoSyncService {
 
         } catch (Exception e) {
             log.error("Excepcion al sincronizar libros", e);
+        }
+    }
+
+    @Transactional
+    public void sincronizarVideos(String tema, int limite) {
+        if ("mock-youtube-api-key".equals(youtubeApiKey)) {
+            log.warn("Saltando sincronización de YouTube por falta de API key real.");
+            return;
+        }
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(YOUTUBE_API + limite + "&q=" + tema.replace(" ", "%20") + "&key=" + youtubeApiKey))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                JsonNode root = objectMapper.readTree(response.body());
+                JsonNode items = root.path("items");
+
+                CategoriaRecurso categoria = getOrCreateCategoria("Videos", "Material audiovisual educativo");
+
+                for (JsonNode item : items) {
+                    JsonNode snippet = item.path("snippet");
+                    String videoId = item.path("id").path("videoId").asText("");
+                    if (videoId.isEmpty() || videoId.equals("null")) continue;
+
+                    String titulo = snippet.path("title").asText("Sin título");
+                    String autor = snippet.path("channelTitle").asText("Canal desconocido");
+                    String url = "https://www.youtube.com/watch?v=" + videoId;
+                    
+                    if (!recursoRepository.existsByUrlContenido(url)) {
+                        RecursoDigital recurso = new RecursoDigital();
+                        recurso.setTitulo(titulo);
+                        recurso.setAutor(autor);
+                        recurso.setTipoContenido("Video");
+                        recurso.setUrlContenido(url);
+                        recurso.setImagenPortadaUrl(snippet.path("thumbnails").path("high").path("url").asText(""));
+                        recurso.setDescripcion(snippet.path("description").asText(""));
+                        recurso.setEsPremium(false);
+                        recurso.setPrecio(BigDecimal.ZERO);
+                        recurso.getCategorias().add(categoria);
+
+                        recursoRepository.save(recurso);
+                        log.info("Sincronizado video: {}", titulo);
+                    }
+                }
+            } else {
+                log.error("Error al consultar YouTube API: {}", response.statusCode());
+            }
+        } catch (Exception e) {
+            log.error("Excepcion al sincronizar videos", e);
+        }
+    }
+
+    private String getSpotifyAccessToken() throws Exception {
+        String auth = java.util.Base64.getEncoder().encodeToString((spotifyClientId + ":" + spotifyClientSecret).getBytes());
+        
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(SPOTIFY_TOKEN_API))
+                .header("Authorization", "Basic " + auth)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString("grant_type=client_credentials"))
+                .build();
+                
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            JsonNode root = objectMapper.readTree(response.body());
+            return root.path("access_token").asText();
+        }
+        throw new RuntimeException("No se pudo obtener token de Spotify: " + response.statusCode());
+    }
+
+    @Transactional
+    public void sincronizarPodcasts(String tema, int limite) {
+        if ("mock-spotify-client-id".equals(spotifyClientId)) {
+            log.warn("Saltando sincronización de Spotify por falta de credenciales reales.");
+            return;
+        }
+
+        try {
+            String token = getSpotifyAccessToken();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(SPOTIFY_SEARCH_API + limite + "&q=" + tema.replace(" ", "%20")))
+                    .header("Authorization", "Bearer " + token)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                JsonNode root = objectMapper.readTree(response.body());
+                JsonNode items = root.path("episodes").path("items");
+
+                CategoriaRecurso categoria = getOrCreateCategoria("Podcasts", "Episodios de audio y entrevistas");
+
+                for (JsonNode item : items) {
+                    if (item.isNull()) continue;
+                    
+                    String titulo = item.path("name").asText("Sin título");
+                    String externalUrl = item.path("external_urls").path("spotify").asText("");
+                    
+                    if (!recursoRepository.existsByUrlContenido(externalUrl) && !externalUrl.isEmpty()) {
+                        RecursoDigital recurso = new RecursoDigital();
+                        recurso.setTitulo(titulo);
+                        recurso.setAutor("Spotify Podcast");
+                        recurso.setTipoContenido("Podcast");
+                        recurso.setUrlContenido(externalUrl);
+                        
+                        JsonNode images = item.path("images");
+                        if (images.isArray() && images.size() > 0) {
+                            recurso.setImagenPortadaUrl(images.get(0).path("url").asText(""));
+                        }
+                        
+                        recurso.setDescripcion(item.path("description").asText(""));
+                        recurso.setEsPremium(false);
+                        recurso.setPrecio(BigDecimal.ZERO);
+                        recurso.getCategorias().add(categoria);
+
+                        recursoRepository.save(recurso);
+                        log.info("Sincronizado podcast: {}", titulo);
+                    }
+                }
+            } else {
+                log.error("Error al consultar Spotify API: {}", response.statusCode());
+            }
+        } catch (Exception e) {
+            log.error("Excepcion al sincronizar podcasts", e);
         }
     }
 
