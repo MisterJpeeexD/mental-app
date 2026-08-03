@@ -8,4 +8,5 @@ import java.util.List;
 public interface RecursoDigitalRepository extends JpaRepository<RecursoDigital, Integer> {
     // Query Method
     List<RecursoDigital> findByTitulo(String titulo);
+    boolean existsByUrlContenido(String urlContenido);
 }
