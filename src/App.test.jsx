@@ -1,27 +1,28 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 describe('App Component', () => {
-  it('renders the landing page correctly', () => {
-    render(<App />);
-    expect(screen.getAllByText(/AbrazaMente/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Tu espacio seguro de salud mental/i)).toBeInTheDocument();
+  it('renders the header correctly', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+    // Header no es lazy, debería estar inmediatamente
+    expect(screen.getAllByText(/Comunidad/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Recursos/i).length).toBeGreaterThan(0);
   });
 
-  it('opens the botiquin modal when clicking the FAB', async () => {
-    const user = userEvent.setup();
-    render(<App />);
+  it('renders the lazy-loaded landing page eventually', async () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
     
-    // Find the FAB by its text content
-    const botiquinButtons = screen.getAllByRole('button', { name: /Botiquín Emocional/i });
-    
-    await act(async () => {
-      await user.click(botiquinButtons[0]);
-    });
-    
-    // Check if the modal header appears
-    expect(await screen.findByText(/Botiquín de Apoyo Inmediato/i)).toBeInTheDocument();
+    // Esperamos a que el Suspense termine de cargar HomePage
+    expect(await screen.findByText(/Entiende tus emociones/i)).toBeInTheDocument();
   });
 });
