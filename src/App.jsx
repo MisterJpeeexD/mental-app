@@ -17,25 +17,20 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // Main features
-const Landing = lazy(() => import('./pages/Landing'));
 const BreathingTimer = lazy(() => import('./features/breathing/BreathingTimer'));
 const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'));
 const MoodTracker = lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = lazy(() => import('./features/professionals/ProfessionalDirectory'));
-const AuthModal = lazy(() => import('./features/auth/AuthModal'));
 const CommunityForum = lazy(() => import('./features/community/CommunityForum'));
 const ResourceLibrary = lazy(() => import('./features/resources/ResourceLibrary'));
 
 const RouteLoadingFallback = () => {
   const { pathname } = useLocation();
-
-  if (pathname === '/botiquin/breathing') {
-    return <TimerSkeleton />;
-  }
-
+  if (pathname === '/botiquin/breathing') return <TimerSkeleton />;
   return <CardSkeleton count={pathname === '/' ? 3 : 2} />;
 };
 
+/* ─── FeatureLayout: card oscuro para Botiquín/Diario ──────── */
 const FeatureLayout = ({ title, description, children, showTabs, currentTab, fallback }) => {
   const navigate = useNavigate();
 
@@ -69,18 +64,7 @@ const FeatureLayout = ({ title, description, children, showTabs, currentTab, fal
           <button
             onClick={() => navigate('/')}
             aria-label="Cerrar y volver al inicio"
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#A1A1A6',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A1A1A6', border: 'none', cursor: 'pointer' }}
           >
             <X className="w-5 h-5" />
           </button>
@@ -88,32 +72,10 @@ const FeatureLayout = ({ title, description, children, showTabs, currentTab, fal
 
         {showTabs && (
           <div style={{ display: 'flex', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', padding: '0 24px', gap: '24px' }}>
-            <Link
-              to="/botiquin/breathing"
-              style={{
-                padding: '14px 0',
-                fontSize: '0.85rem',
-                fontWeight: 'bold',
-                borderBottom: '2px solid',
-                textDecoration: 'none',
-                borderColor: currentTab === 'breathing' ? '#3E7BFA' : 'transparent',
-                color: currentTab === 'breathing' ? '#3E7BFA' : '#A1A1A6',
-              }}
-            >
+            <Link to="/botiquin/breathing" style={{ padding: '14px 0', fontSize: '0.85rem', fontWeight: 'bold', borderBottom: '2px solid', textDecoration: 'none', borderColor: currentTab === 'breathing' ? '#3E7BFA' : 'transparent', color: currentTab === 'breathing' ? '#3E7BFA' : '#A1A1A6' }}>
               Respiración Guiada
             </Link>
-            <Link
-              to="/botiquin/grounding"
-              style={{
-                padding: '14px 0',
-                fontSize: '0.85rem',
-                fontWeight: 'bold',
-                borderBottom: '2px solid',
-                textDecoration: 'none',
-                borderColor: currentTab === 'grounding' ? '#3E7BFA' : 'transparent',
-                color: currentTab === 'grounding' ? '#3E7BFA' : '#A1A1A6',
-              }}
-            >
+            <Link to="/botiquin/grounding" style={{ padding: '14px 0', fontSize: '0.85rem', fontWeight: 'bold', borderBottom: '2px solid', textDecoration: 'none', borderColor: currentTab === 'grounding' ? '#3E7BFA' : 'transparent', color: currentTab === 'grounding' ? '#3E7BFA' : '#A1A1A6' }}>
               Grounding 5-4-3-2-1
             </Link>
           </div>
@@ -129,6 +91,43 @@ const FeatureLayout = ({ title, description, children, showTabs, currentTab, fal
   );
 };
 
+/* ─── PageLayout: vista completa con hero (Terapia, Recursos, Comunidad) ─ */
+const PageLayout = ({ heroTitle, heroSubtitle, eyebrow, children, fallback }) => {
+  return (
+    <>
+      {/* Hero section — fiel al diseño legacy */}
+      <section className="page-hero" aria-label="Encabezado de sección">
+        <div className="mesh-background" aria-hidden="true">
+          <div className="mesh-blob blob-blue" />
+          <div className="mesh-blob blob-orange" />
+          <div className="mesh-blob blob-teal" />
+        </div>
+        <div className="page-hero-inner">
+          <div className="eyebrow">
+            <span className="eyebrow-dot" />
+            {eyebrow}
+          </div>
+          <h1>
+            {heroTitle[0]}
+            <br />
+            <span className="gradient-text">{heroTitle[1]}</span>
+          </h1>
+          <p className="subtitle" style={{ maxWidth: '640px' }}>{heroSubtitle}</p>
+        </div>
+      </section>
+
+      {/* Contenido de la feature */}
+      <section className="page-body">
+        <div className="page-body-inner">
+          <Suspense fallback={fallback ?? <CardSkeleton count={3} />}>
+            {children}
+          </Suspense>
+        </div>
+      </section>
+    </>
+  );
+};
+
 export default function App() {
   return (
     <AuthProvider>
@@ -138,12 +137,13 @@ export default function App() {
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            
-            {/* Ariel's separate views */}
+
+            {/* Auth pages */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registro" element={<RegisterPage />} />
             <Route path="/perfil" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
+            {/* Botiquín — card oscuro */}
             <Route
               path="/botiquin/breathing"
               element={(
@@ -184,43 +184,52 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
+
+            {/* Terapia — página completa */}
             <Route
               path="/professionals"
               element={(
-                <FeatureLayout
-                  title="Directorio de Terapeutas"
-                  description="Agenda atención con profesionales verificados."
-                  fallback={<CardSkeleton count={3} label="Cargando profesionales" />}
+                <PageLayout
+                  eyebrow="Terapia · Especialistas · Bienestar"
+                  heroTitle={['Descubre la terapia', 'que te acompaña mejor.']}
+                  heroSubtitle="Explora terapias, filtra especialistas por enfoque, especialidad o perfil, y revisa comentarios anónimos de quienes ya iniciaron su proceso."
+                  fallback={<CardSkeleton count={3} label="Cargando especialistas" />}
                 >
                   <ProfessionalDirectory />
-                </FeatureLayout>
+                </PageLayout>
               )}
             />
+
+            {/* Recursos — página completa */}
             <Route
               path="/recursos"
               element={(
-                <FeatureLayout
-                  title="Recursos Psicoeducativos"
-                  description="Biblioteca de guías, artículos y contenidos psicoeducativos."
-                  fallback={<CardSkeleton count={2} label="Cargando biblioteca de recursos" />}
+                <PageLayout
+                  eyebrow="Biblioteca · Material clínico · Autoayuda"
+                  heroTitle={['Recursos para entender,', 'aprender y acompañar.']}
+                  heroSubtitle="Libros, guías clínicas, podcasts y videos seleccionados y validados por profesionales de la salud mental."
+                  fallback={<CardSkeleton count={2} label="Cargando biblioteca" />}
                 >
                   <ResourceLibrary />
-                </FeatureLayout>
+                </PageLayout>
               )}
             />
+
+            {/* Comunidad — página completa */}
             <Route
               path="/comunidad"
               element={(
-                <FeatureLayout
-                  title="Foro de la Comunidad"
-                  description="Conecta, comparte y recibe apoyo en un ambiente seguro."
-                  fallback={<CardSkeleton count={4} label="Cargando foro de la comunidad" />}
+                <PageLayout
+                  eyebrow="Comunidad · Temáticas · Apoyo"
+                  heroTitle={['Comparte tu proceso,', 'nunca estarás solo en esto.']}
+                  heroSubtitle="Un espacio moderado para intercambiar experiencias por temática y conectar con otras personas que entienden tu proceso."
+                  fallback={<CardSkeleton count={4} label="Cargando comunidad" />}
                 >
                   <CommunityForum />
-                </FeatureLayout>
+                </PageLayout>
               )}
             />
-// Deprecated auth route removed; use /login and /registro pages
+
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

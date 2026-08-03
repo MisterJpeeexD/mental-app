@@ -1,203 +1,173 @@
-import React, { useState } from 'react';
-import { MessageSquare, PlusCircle, Heart, ThumbsUp, Lock, LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
 
-// Datos de muestra para mostrar el foro en modo lectura a visitantes
-const SAMPLE_POSTS = [
-  {
-    id: 1,
-    author: 'Sofía M.',
-    avatar: '🌸',
-    time: 'hace 2 horas',
-    title: '¿Cómo manejan la ansiedad antes de eventos importantes?',
-    body: 'Últimamente he estado practicando la respiración 4-7-8 y me ha ayudado mucho. ¿Qué técnicas usan ustedes?',
-    likes: 14,
-    comments: 6,
-    tags: ['ansiedad', 'técnicas'],
-  },
-  {
-    id: 2,
-    author: 'Carlos R.',
-    avatar: '🌿',
-    time: 'hace 5 horas',
-    title: 'Compartiendo mi experiencia con el journaling diario',
-    body: 'Llevar un diario emocional me cambió la vida. Al principio se sentía raro, pero después de un mes noté patrones en mis emociones.',
-    likes: 22,
-    comments: 9,
-    tags: ['journaling', 'hábitos'],
-  },
-  {
-    id: 3,
-    author: 'Ana L.',
-    avatar: '🦋',
-    time: 'hace 1 día',
-    title: 'Recursos para el manejo del duelo',
-    body: 'Estoy atravesando un momento difícil y me gustaría conocer qué recursos encontraron útiles. Cualquier recomendación es bienvenida.',
-    likes: 31,
-    comments: 15,
-    tags: ['duelo', 'apoyo'],
-  },
-];
+/* ─── Paleta ─────────────────────────────────────────────── */
+const BRAND = {
+  blue:   '#3E7BFA',
+  orange: '#FF8A65',
+  teal:   '#4DD0E1',
+};
 
-function AuthGate({ children, label }) {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  if (isAuthenticated) return children;
-
+/* ─── Overlay para visitantes no autenticados ─────────────── */
+function GuestOverlay() {
   return (
-    <button
-      onClick={() => navigate('/login')}
-      title="Inicia sesión para participar"
-      className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-blue-400 transition-colors cursor-pointer"
-      aria-label={`${label} — inicia sesión para participar`}
-    >
-      <Lock className="w-3 h-3" />
-      {label}
-    </button>
-  );
-}
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 10,
+      background: 'rgba(18,18,18,0.55)',
+      backdropFilter: 'blur(14px)',
+      WebkitBackdropFilter: 'blur(14px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px',
+      borderRadius: '24px',
+    }}>
+      <div style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255,255,255,0.8)',
+        borderRadius: '28px',
+        padding: '40px 36px',
+        maxWidth: '420px',
+        width: '100%',
+        textAlign: 'center',
+        boxShadow: '0 30px 60px rgba(0,0,0,0.15)',
+      }}>
+        {/* Ícono */}
+        <div style={{
+          width: '64px', height: '64px', borderRadius: '50%', margin: '0 auto 20px',
+          background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.teal})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 12px 28px rgba(62,123,250,0.3)',
+        }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
 
-function PostCard({ post }) {
-  const { isAuthenticated } = useAuth();
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(post.likes);
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 10px', letterSpacing: '-0.03em' }}>
+          Únete a la comunidad
+        </h2>
+        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 28px' }}>
+          Crea una cuenta para acceder al espacio de comunidad: un lugar moderado para compartir tu proceso y conectar con personas que entienden lo que vives.
+        </p>
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes(prev => liked ? prev - 1 : prev + 1);
-  };
-
-  return (
-    <article className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3 hover:border-white/20 transition-colors">
-      {/* Header del post */}
-      <div className="flex items-center gap-3">
-        <span className="text-2xl" role="img" aria-label="avatar">{post.avatar}</span>
-        <div>
-          <p className="text-sm font-semibold text-white">{post.author}</p>
-          <p className="text-xs text-gray-500">{post.time}</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <Link
+            to="/registro"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '48px', borderRadius: '14px',
+              background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.teal})`,
+              color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '0.92rem',
+              boxShadow: '0 8px 20px rgba(62,123,250,0.3)',
+              transition: 'opacity 0.2s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          >
+            Crear cuenta gratis
+          </Link>
+          <Link
+            to="/login"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '44px', borderRadius: '14px',
+              background: 'rgba(62,123,250,0.08)',
+              border: '1px solid rgba(62,123,250,0.2)',
+              color: BRAND.blue, textDecoration: 'none', fontWeight: 600, fontSize: '0.88rem',
+              transition: 'background 0.2s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(62,123,250,0.14)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(62,123,250,0.08)'}
+          >
+            Ya tengo cuenta → Iniciar sesión
+          </Link>
         </div>
       </div>
-
-      {/* Contenido */}
-      <div>
-        <h4 className="text-base font-bold text-white mb-1">{post.title}</h4>
-        <p className="text-sm text-gray-300 leading-relaxed">{post.body}</p>
-      </div>
-
-      {/* Tags */}
-      <div className="flex gap-2 flex-wrap">
-        {post.tags.map(tag => (
-          <span
-            key={tag}
-            className="text-xs bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded-full px-2 py-0.5"
-          >
-            #{tag}
-          </span>
-        ))}
-      </div>
-
-      {/* Acciones */}
-      <div className="flex items-center gap-4 pt-2 border-t border-white/5">
-        {isAuthenticated ? (
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-1.5 text-xs transition-colors ${
-              liked ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'
-            }`}
-          >
-            <Heart className={`w-4 h-4 ${liked ? 'fill-pink-400' : ''}`} />
-            {likes}
-          </button>
-        ) : (
-          <AuthGate label={`${likes} Me gusta`}>
-            <span />
-          </AuthGate>
-        )}
-
-        {isAuthenticated ? (
-          <button className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-blue-400 transition-colors">
-            <MessageSquare className="w-4 h-4" />
-            {post.comments} Respuestas
-          </button>
-        ) : (
-          <AuthGate label={`${post.comments} Respuestas`}>
-            <span />
-          </AuthGate>
-        )}
-      </div>
-    </article>
+    </div>
   );
 }
 
+/* ─── Vista principal ─────────────────────────────────────── */
 export default function CommunityForum() {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center pb-4 border-b border-white/10">
-        <div>
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-blue-400" />
-            Foro de la Comunidad
-          </h3>
-          <p className="text-sm text-gray-400 mt-1">
-            Espacio seguro y moderado para compartir experiencias y apoyarse mutuamente.
-          </p>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-        {isAuthenticated ? (
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-2 rounded-xl transition">
-            <PlusCircle className="w-4 h-4" />
-            Nuevo Tema
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate('/login')}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/15 text-gray-300 text-sm px-4 py-2 rounded-xl transition border border-white/10"
-            title="Inicia sesión para crear un tema"
-          >
-            <LogIn className="w-4 h-4" />
-            Únete para participar
-          </button>
-        )}
-      </div>
+      {/* Contenedor con posición relativa para el overlay */}
+      <div style={{ position: 'relative', minHeight: '420px' }}>
 
-      {/* Banner informativo para visitantes */}
-      {!isAuthenticated && (
-        <div className="flex items-start gap-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4">
-          <Lock className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="text-sm font-semibold text-blue-300">Estás viendo en modo lectura</p>
-            <p className="text-xs text-gray-400 mt-1">
-              Puedes explorar los temas de la comunidad.{' '}
-              <button
-                onClick={() => navigate('/login')}
-                className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
-              >
-                Inicia sesión
-              </button>{' '}
-              o{' '}
-              <button
-                onClick={() => navigate('/registro')}
-                className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
-              >
-                regístrate
-              </button>{' '}
-              para comentar y reaccionar.
-            </p>
+        {/* Vista preview (siempre visible, pero borrosa sin auth) */}
+        <div style={{
+          display: 'flex', gap: '20px',
+          filter: isAuthenticated ? 'none' : 'blur(4px)',
+          pointerEvents: isAuthenticated ? 'auto' : 'none',
+          userSelect: 'none',
+        }}>
+
+          {/* Columna temáticas */}
+          <div style={{ width: '220px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.62)', backdropFilter: 'blur(22px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '24px', padding: '20px', boxShadow: '0 20px 45px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: '12px' }}>Temáticas</div>
+              {['Ansiedad', 'Depresión', 'Autoestima', 'Estrés', 'Duelo', 'Relaciones'].map((t, i) => {
+                const colors = [BRAND.blue, BRAND.orange, BRAND.teal, BRAND.purple, '#E57373', '#81C784'];
+                return (
+                  <div key={t} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '12px', marginBottom: '2px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: colors[i], flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>{t}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Feed central */}
+          <div style={{ flex: 1 }}>
+            {isAuthenticated ? (
+              <>
+                {/* Compositor */}
+                <div style={{ background: 'rgba(255,255,255,0.62)', backdropFilter: 'blur(22px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '24px', padding: '20px', marginBottom: '16px', boxShadow: '0 20px 45px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.teal})`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
+                      {user?.nombres?.[0]?.toUpperCase() || '?'}
+                    </div>
+                    <textarea
+                      placeholder="¿Qué estás pensando o sintiendo hoy? Compártelo con la comunidad…"
+                      rows={3}
+                      style={{ flex: 1, border: '1px solid rgba(134,134,139,0.18)', borderRadius: '14px', padding: '10px 14px', resize: 'none', fontFamily: 'inherit', fontSize: '0.88rem', color: 'var(--text-main)', background: 'rgba(255,255,255,0.7)', outline: 'none' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                    <button style={{ padding: '8px 20px', borderRadius: '12px', background: BRAND.blue, color: 'white', border: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                      Publicar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Estado vacío */}
+                <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.4)', borderRadius: '24px', border: '1px dashed rgba(134,134,139,0.25)' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>💬</div>
+                  <p style={{ fontWeight: 600, fontSize: '1rem', margin: '0 0 6px', color: 'var(--text-main)' }}>La comunidad está creciendo</p>
+                  <p style={{ fontSize: '0.85rem', margin: 0 }}>Sé el primero en compartir algo con la comunidad.</p>
+                </div>
+              </>
+            ) : (
+              /* Preview borroso de placeholder posts */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[1, 2, 3].map(i => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.62)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '20px', padding: '20px', height: `${80 + i * 20}px` }} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      )}
 
-      {/* Lista de posts */}
-      <div className="space-y-4">
-        {SAMPLE_POSTS.map(post => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {/* Overlay para no autenticados */}
+        {!isAuthenticated && <GuestOverlay />}
       </div>
     </div>
   );
