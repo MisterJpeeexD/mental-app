@@ -22,6 +22,3 @@ const ProtectedRoute = ({ children, redirectPath = '/login' }) => {
 };
 
 export default ProtectedRoute;
-};
-
-export default ProtectedRoute;
