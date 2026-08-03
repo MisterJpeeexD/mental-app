@@ -24,7 +24,7 @@ public class RecursoSyncService {
 
     private final RecursoDigitalRepository recursoRepository;
     private final CategoriaRecursoRepository categoriaRepository;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient;
 
     private final String youtubeApiKey;
@@ -36,15 +36,14 @@ public class RecursoSyncService {
     private static final String SPOTIFY_TOKEN_API = "https://accounts.spotify.com/api/token";
     private static final String SPOTIFY_SEARCH_API = "https://api.spotify.com/v1/search?type=episode&limit=";
 
+    @org.springframework.beans.factory.annotation.Autowired
     public RecursoSyncService(RecursoDigitalRepository recursoRepository,
                               CategoriaRecursoRepository categoriaRepository,
-                              ObjectMapper objectMapper,
                               @org.springframework.beans.factory.annotation.Value("${youtube.api-key}") String youtubeApiKey,
                               @org.springframework.beans.factory.annotation.Value("${spotify.client-id}") String spotifyClientId,
                               @org.springframework.beans.factory.annotation.Value("${spotify.client-secret}") String spotifyClientSecret) {
         this.recursoRepository = recursoRepository;
         this.categoriaRepository = categoriaRepository;
-        this.objectMapper = objectMapper;
         this.youtubeApiKey = youtubeApiKey;
         this.spotifyClientId = spotifyClientId;
         this.spotifyClientSecret = spotifyClientSecret;
@@ -56,14 +55,12 @@ public class RecursoSyncService {
     // Constructor para inyectar HttpClient (útil para tests)
     public RecursoSyncService(RecursoDigitalRepository recursoRepository,
                               CategoriaRecursoRepository categoriaRepository,
-                              ObjectMapper objectMapper,
                               HttpClient httpClient,
                               String youtubeApiKey,
                               String spotifyClientId,
                               String spotifyClientSecret) {
         this.recursoRepository = recursoRepository;
         this.categoriaRepository = categoriaRepository;
-        this.objectMapper = objectMapper;
         this.httpClient = httpClient;
         this.youtubeApiKey = youtubeApiKey;
         this.spotifyClientId = spotifyClientId;

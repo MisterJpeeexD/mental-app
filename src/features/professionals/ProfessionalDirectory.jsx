@@ -292,48 +292,50 @@ export default function ProfessionalDirectory() {
 
       {/* Filtros */}
       <div id="especialistas" style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr)) auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
         gap: '14px', alignItems: 'end',
         background: 'rgba(255,255,255,0.62)', backdropFilter: 'blur(22px)',
+        WebkitBackdropFilter: 'blur(22px)',
         border: '1px solid rgba(255,255,255,0.72)', borderRadius: '24px',
         padding: '20px', marginBottom: '24px',
         boxShadow: '0 20px 45px rgba(0,0,0,0.04)',
       }}>
         {/* Búsqueda */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Buscar</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Buscar</label>
           <div style={{ position: 'relative' }}>
-            <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '14px', height: '14px', color: 'var(--text-muted)' }} />
-            <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Nombre o descripción…" style={{ width: '100%', minHeight: '44px', paddingLeft: '34px', paddingRight: '12px', border: '1px solid rgba(134,134,139,0.18)', borderRadius: '14px', background: 'rgba(255,255,255,0.72)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.88rem', outline: 'none' }} />
+            <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: 'var(--text-muted)' }} />
+            <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Nombre o descripción…" style={{ width: '100%', minHeight: '48px', paddingLeft: '42px', paddingRight: '16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)', transition: 'all 0.2s' }} />
           </div>
         </div>
         {/* Especialidad */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Especialidad</label>
-          <select value={filterEsp} onChange={e => setFilterEsp(e.target.value)} style={{ minHeight: '44px', padding: '0 12px', border: '1px solid rgba(134,134,139,0.18)', borderRadius: '14px', background: 'rgba(255,255,255,0.72)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.88rem', outline: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Especialidad</label>
+          <select value={filterEsp} onChange={e => setFilterEsp(e.target.value)} style={{ minHeight: '48px', padding: '0 16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
             <option value="">Todas</option>
             {especialidades.map(e => <option key={e} value={e}>{e}</option>)}
           </select>
         </div>
         {/* Tipo de terapia */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Tipo de terapia</label>
-          <select value={filterTer} onChange={e => setFilterTer(e.target.value)} style={{ minHeight: '44px', padding: '0 12px', border: '1px solid rgba(134,134,139,0.18)', borderRadius: '14px', background: 'rgba(255,255,255,0.72)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.88rem', outline: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Tipo de terapia</label>
+          <select value={filterTer} onChange={e => setFilterTer(e.target.value)} style={{ minHeight: '48px', padding: '0 16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
             <option value="">Todas</option>
             {terapias.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         {/* Perfil */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Perfil</label>
-          <select value={filterSexo} onChange={e => setFilterSexo(e.target.value)} style={{ minHeight: '44px', padding: '0 12px', border: '1px solid rgba(134,134,139,0.18)', borderRadius: '14px', background: 'rgba(255,255,255,0.72)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.88rem', outline: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Perfil</label>
+          <select value={filterSexo} onChange={e => setFilterSexo(e.target.value)} style={{ minHeight: '48px', padding: '0 16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
             <option value="">Todos</option>
             <option value="Mujer">Mujer</option>
             <option value="Hombre">Hombre</option>
           </select>
         </div>
         {/* Limpiar */}
-        <button onClick={limpiar} disabled={!hayFiltros} style={{ minHeight: '44px', padding: '0 20px', borderRadius: '14px', border: '1px solid rgba(134,134,139,0.2)', background: hayFiltros ? 'rgba(62,123,250,0.08)' : 'rgba(134,134,139,0.06)', color: hayFiltros ? BRAND.blue : 'var(--text-muted)', fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 600, cursor: hayFiltros ? 'pointer' : 'default', whiteSpace: 'nowrap' }}>
+        <button onClick={limpiar} disabled={!hayFiltros} style={{ minHeight: '48px', padding: '0 24px', borderRadius: '16px', border: `1px solid ${hayFiltros ? 'rgba(62,123,250,0.3)' : 'rgba(134,134,139,0.2)'}`, background: hayFiltros ? 'rgba(62,123,250,0.08)' : 'rgba(134,134,139,0.06)', color: hayFiltros ? BRAND.blue : 'var(--text-muted)', fontFamily: 'inherit', fontSize: '0.88rem', fontWeight: 700, cursor: hayFiltros ? 'pointer' : 'default', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
           Limpiar
         </button>
       </div>

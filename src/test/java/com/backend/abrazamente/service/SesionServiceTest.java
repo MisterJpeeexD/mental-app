@@ -50,7 +50,7 @@ public class SesionServiceTest {
     @BeforeEach
     void setUp() {
         usuarioMock = new Usuario();
-        usuarioMock.setId(UUID.randomUUID());
+        usuarioMock.setId(1);
         usuarioMock.setEmail(userEmail);
         usuarioMock.setNombres("Juan");
         usuarioMock.setApellidos("Perez");
@@ -60,7 +60,7 @@ public class SesionServiceTest {
         usuarioPro.setApellidos("");
 
         profesionalMock = new Profesional();
-        profesionalMock.setId(UUID.randomUUID());
+        profesionalMock.setId(2);
         profesionalMock.setUsuario(usuarioPro);
 
         requestMock = new SesionRequestDTO(
@@ -73,14 +73,14 @@ public class SesionServiceTest {
     @Test
     void agendarSesion_Exito() {
         // Arrange
-        when(usuarioRepository.findByEmail(userEmail)).thenReturn(Optional.of(usuarioMock));
+        when(usuarioRepository.findByEmailIgnoreCase(userEmail)).thenReturn(Optional.of(usuarioMock));
         when(profesionalRepository.findById(profesionalMock.getId())).thenReturn(Optional.of(profesionalMock));
         when(teamsMeetingService.createMeeting(anyString(), any(OffsetDateTime.class), any(OffsetDateTime.class)))
                 .thenReturn("https://teams.mock.url");
 
         when(sesionRepository.save(any(SesionTerapia.class))).thenAnswer(i -> {
             SesionTerapia s = i.getArgument(0);
-            s.setId(UUID.randomUUID());
+            s.setId(1);
             return s;
         });
 
@@ -98,7 +98,7 @@ public class SesionServiceTest {
     @Test
     void agendarSesion_UsuarioNoEncontrado_LanzaExcepcion() {
         // Arrange
-        when(usuarioRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmailIgnoreCase(userEmail)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(RecursoNoEncontradoException.class, () -> {
@@ -112,7 +112,7 @@ public class SesionServiceTest {
     @Test
     void agendarSesion_ProfesionalNoEncontrado_LanzaExcepcion() {
         // Arrange
-        when(usuarioRepository.findByEmail(userEmail)).thenReturn(Optional.of(usuarioMock));
+        when(usuarioRepository.findByEmailIgnoreCase(userEmail)).thenReturn(Optional.of(usuarioMock));
         when(profesionalRepository.findById(profesionalMock.getId())).thenReturn(Optional.empty());
 
         // Act & Assert

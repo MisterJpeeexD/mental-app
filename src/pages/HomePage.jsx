@@ -35,7 +35,7 @@ const faqs = [
 
 function Hero() {
   return (
-    <section className="apple-hero">
+    <section className="apple-hero pt-[140px]">
       <div className="mesh-background" aria-hidden="true">
         <div className="mesh-blob blob-blue" />
         <div className="mesh-blob blob-orange" />

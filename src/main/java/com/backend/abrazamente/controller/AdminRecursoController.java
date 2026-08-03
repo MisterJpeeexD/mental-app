@@ -19,6 +19,8 @@ public class AdminRecursoController {
     public ResponseEntity<String> sincronizarRecursos(@RequestParam(defaultValue = "ansiedad") String tema,
                                                       @RequestParam(defaultValue = "5") int limite) {
         recursoSyncService.sincronizarLibros(tema, limite);
-        return ResponseEntity.ok("Sincronización iniciada para el tema: " + tema);
+        recursoSyncService.sincronizarVideos(tema, limite);
+        recursoSyncService.sincronizarPodcasts(tema, limite);
+        return ResponseEntity.ok("Sincronización iniciada para el tema: " + tema + ". (Revisa la consola si faltan API Keys)");
     }
 }

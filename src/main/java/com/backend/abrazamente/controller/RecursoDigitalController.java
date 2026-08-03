@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/recursos-digitales")
+@RequestMapping("/api/recursos-digitales")
 @RequiredArgsConstructor
 public class RecursoDigitalController {
 

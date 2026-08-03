@@ -28,7 +28,7 @@ public class SesionService {
 
     @Transactional
     public SesionResponseDTO agendarSesion(String userEmail, SesionRequestDTO request) {
-        Usuario usuario = usuarioRepository.findByEmail(userEmail)
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         Profesional profesional = profesionalRepository.findById(request.profesionalId())
@@ -53,7 +53,7 @@ public class SesionService {
 
     @Transactional(readOnly = true)
     public List<SesionResponseDTO> obtenerMisSesiones(String userEmail) {
-        Usuario usuario = usuarioRepository.findByEmail(userEmail)
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         return sesionRepository.findByUsuarioIdOrderByFechaHoraDesc(usuario.getId())
