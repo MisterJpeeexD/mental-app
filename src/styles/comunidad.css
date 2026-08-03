@@ -141,6 +141,37 @@
 }
 .topic-btn.active .topic-count { color: var(--brand-blue); background: rgba(62, 123, 250, 0.14); }
 
+.topic-add-btn {
+  color: var(--text-muted);
+  border: 1px dashed rgba(134, 134, 139, 0.35);
+  margin: 4px 12px 0;
+  width: calc(100% - 24px);
+}
+.topic-add-btn:hover { color: var(--text-main); border-color: var(--brand-blue); }
+
+.topic-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 12px 2px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(134, 134, 139, 0.08);
+}
+.topic-add-form input {
+  border: 1px solid rgba(134, 134, 139, 0.3);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--text-main);
+  background: var(--bg-base);
+}
+.topic-add-form input:focus { outline: none; border-color: var(--brand-blue); }
+.topic-add-actions { display: flex; align-items: center; gap: 8px; }
+.topic-add-actions .btn-post { padding: 6px 16px; font-size: 0.8rem; }
+.topic-add-actions .post-action-btn { padding: 6px 10px; font-size: 0.8rem; }
+
 .mini-profile {
   display: flex;
   align-items: center;
@@ -269,6 +300,9 @@
 .post-action-btn svg { width: 17px; height: 17px; }
 .post-action-btn.liked { color: var(--brand-orange); }
 .post-action-btn.liked svg { fill: var(--brand-orange); stroke: var(--brand-orange); }
+
+.post-action-btn.delete-btn { margin-left: auto; }
+.post-action-btn.delete-btn:hover { background: rgba(220, 53, 69, 0.12); color: #c0392b; }
 
 .post-comments { display: flex; flex-direction: column; gap: 10px; }
 .post-comments[hidden] { display: none; }

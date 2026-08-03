@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EyeOff } from 'lucide-react';
+import { EyeOff, Trash2, Plus } from 'lucide-react';
 import '../styles/comunidad.css';
 
 // ---------- Íconos (copia exacta de los SVG usados en la versión legacy) ----------
@@ -27,7 +27,7 @@ const IconEmptyPeople = (props) => (
 );
 
 // ---------- Datos (mock, en memoria — a la espera de una API real) ----------
-const TOPICS = [
+const INITIAL_TOPICS = [
   { id: 'todos', name: 'Todas las temáticas', color: 'blue', desc: 'Todo el muro' },
   { id: 'ansiedad', name: 'Ansiedad y estrés', color: 'blue', desc: 'Herramientas y apoyo diario' },
   { id: 'duelo', name: 'Duelo y pérdidas', color: 'purple', desc: 'Acompañamiento en el proceso' },
@@ -36,7 +36,8 @@ const TOPICS = [
   { id: 'autoestima', name: 'Autoestima', color: 'orange', desc: 'Autoconocimiento' },
   { id: 'mindfulness', name: 'Mindfulness y hábitos', color: 'teal', desc: 'Presencia y calma' },
 ];
-const TOPIC_MAP = Object.fromEntries(TOPICS.map((t) => [t.id, t]));
+// Colores disponibles para asignar (de forma cíclica) a las temáticas que cree la persona usuaria.
+const TOPIC_COLOR_CYCLE = ['blue', 'orange', 'teal', 'purple'];
 
 const CHIP_COLORS = {
   blue: ['rgba(62,123,250,0.14)', 'var(--brand-blue)'],
@@ -47,7 +48,7 @@ const CHIP_COLORS = {
 
 const INITIAL_POSTS = [
   {
-    id: 'p1', author: 'Camila R.', initials: 'CR', color: 'teal', topic: 'ansiedad', time: 'hace 2 h', anonymous: false,
+    id: 'p1', author: 'Camila R.', initials: 'CR', color: 'teal', topic: 'ansiedad', time: 'hace 2 h', anonymous: false, isMine: false,
     text: 'Hoy tuve un día difícil, pero practiqué la respiración 4-7-8 antes de la reunión y me ayudó muchísimo a bajar el ritmo cardíaco. Si alguien más la usa, ¿qué variante les funciona mejor?',
     likes: 14, liked: false,
     comments: [{ author: 'Martín V.', text: 'A mí me funciona mejor contar hasta 6 en vez de 7, ¡cada cuerpo es distinto!', anonymous: false }],
@@ -137,14 +138,18 @@ export default function ComunidadPage() {
   const { toasts, showToast } = useToasts();
 
   const [posts, setPosts] = useState(INITIAL_POSTS);
+  const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [activeTopic, setActiveTopic] = useState('todos');
   const [composerText, setComposerText] = useState('');
-  const [composerTopic, setComposerTopic] = useState(TOPICS[1].id);
+  const [composerTopic, setComposerTopic] = useState(INITIAL_TOPICS[1].id);
   const [composerAnonymous, setComposerAnonymous] = useState(false);
   const [openComments, setOpenComments] = useState({});
   const [commentDrafts, setCommentDrafts] = useState({});
   const [commentAnonDrafts, setCommentAnonDrafts] = useState({});
+  const [isAddingTopic, setIsAddingTopic] = useState(false);
+  const [newTopicName, setNewTopicName] = useState('');
 
+  const TOPIC_MAP = Object.fromEntries(topics.map((t) => [t.id, t]));
   const filteredPosts = activeTopic === 'todos' ? posts : posts.filter((p) => p.topic === activeTopic);
 
   function toggleLike(postId) {
@@ -153,6 +158,40 @@ export default function ComunidadPage() {
 
   function toggleComments(postId) {
     setOpenComments((m) => ({ ...m, [postId]: !m[postId] }));
+  }
+
+  function deletePost(postId) {
+    if (!window.confirm('¿Eliminar esta publicación? Esta acción no se puede deshacer.')) return;
+    setPosts((list) => list.filter((p) => p.id !== postId));
+    showToast('Tu publicación fue eliminada');
+  }
+
+  function addTopic(e) {
+    e.preventDefault();
+    const name = newTopicName.trim();
+    if (!name) return;
+
+    // Genera un id simple a partir del nombre (sin tildes, en minúsculas, guiones por espacios)
+    const baseId = name
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || 'tematica';
+    let id = baseId;
+    let n = 2;
+    while (topics.some((t) => t.id === id)) {
+      id = `${baseId}-${n}`;
+      n += 1;
+    }
+
+    const color = TOPIC_COLOR_CYCLE[topics.length % TOPIC_COLOR_CYCLE.length];
+    const newTopic = { id, name, color, desc: 'Temática creada por ti' };
+
+    setTopics((list) => [...list, newTopic]);
+    setComposerTopic(id);
+    setNewTopicName('');
+    setIsAddingTopic(false);
+    showToast('Nueva temática añadida');
   }
 
   function submitComment(postId, e) {
@@ -180,6 +219,7 @@ export default function ComunidadPage() {
       initials: composerAnonymous ? '' : 'TÚ',
       color: 'blue',
       anonymous: composerAnonymous,
+      isMine: true,
       topic: composerTopic,
       time: 'justo ahora', text, likes: 0, liked: false, comments: [],
     };
@@ -215,7 +255,6 @@ export default function ComunidadPage() {
 
           <div className="social-stat-pills">
             <div className="social-stat-pill"><strong>6</strong><span>&nbsp;temáticas</span></div>
-            <div className="social-stat-pill"><strong>128</strong><span>&nbsp;publicaciones hoy</span></div>
             <div className="social-stat-pill"><strong>100%</strong><span>&nbsp;moderado por profesionales</span></div>
           </div>
         </div>
@@ -236,7 +275,7 @@ export default function ComunidadPage() {
           <div className="glass-panel topics-panel">
             <div className="panel-title"><span>Temáticas</span></div>
             <ul className="topic-list">
-              {TOPICS.map((topic) => {
+              {topics.map((topic) => {
                 const count = topic.id === 'todos' ? posts.length : posts.filter((p) => p.topic === topic.id).length;
                 return (
                   <li key={topic.id}>
@@ -252,6 +291,34 @@ export default function ComunidadPage() {
                 );
               })}
             </ul>
+
+            {isAddingTopic ? (
+              <form className="topic-add-form" onSubmit={addTopic}>
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Nombre de la temática…"
+                  maxLength={40}
+                  value={newTopicName}
+                  onChange={(e) => setNewTopicName(e.target.value)}
+                />
+                <div className="topic-add-actions">
+                  <button type="submit" className="btn-post" disabled={newTopicName.trim().length === 0}>Crear</button>
+                  <button
+                    type="button"
+                    className="post-action-btn"
+                    onClick={() => { setIsAddingTopic(false); setNewTopicName(''); }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button type="button" className="topic-btn topic-add-btn" onClick={() => setIsAddingTopic(true)}>
+                <Plus size={16} />
+                <span className="topic-info"><span className="topic-name">Añadir temática</span></span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -278,7 +345,7 @@ export default function ComunidadPage() {
 
             <div className="composer-bottom">
               <select className="composer-topic-select" aria-label="Elegir temática" value={composerTopic} onChange={(e) => setComposerTopic(e.target.value)}>
-                {TOPICS.filter((t) => t.id !== 'todos').map((t) => (
+                {topics.filter((t) => t.id !== 'todos').map((t) => (
                   <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
@@ -328,6 +395,11 @@ export default function ComunidadPage() {
                       <button type="button" className="post-action-btn share-btn" onClick={() => showToast('Publicación compartida en tu muro')}>
                         <IconShare /><span>Compartir</span>
                       </button>
+                      {post.isMine && (
+                        <button type="button" className="post-action-btn delete-btn" onClick={() => deletePost(post.id)}>
+                          <Trash2 size={16} /><span>Eliminar</span>
+                        </button>
+                      )}
                     </div>
 
                     {commentsOpen && (
