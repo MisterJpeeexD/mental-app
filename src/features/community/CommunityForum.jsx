@@ -1,14 +1,56 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
 import { useState } from 'react';
-import { Search, MoreHorizontal, MessageSquare, Heart, Share2 } from 'lucide-react';
+import { Search, MoreHorizontal, MessageSquare, Heart, Share2, Plus, Trash2, ShieldCheck, UserCheck } from 'lucide-react';
 
 /* ─── Paleta ─────────────────────────────────────────────── */
 const BRAND = {
   blue:   '#3E7BFA',
   orange: '#FF8A65',
   teal:   '#4DD0E1',
+  purple: '#BA68C8'
 };
+
+const INITIAL_TOPICS = [
+  { id: 'todos', name: 'Todas las temáticas', desc: 'Todo el muro', count: 4, color: 'bg-blue-500' },
+  { id: 'ansiedad', name: 'Ansiedad y estrés', desc: 'Herramientas y apoyo diario', count: 1, color: 'bg-orange-500' },
+  { id: 'duelo', name: 'Duelo y pérdidas', desc: 'Acompañamiento en el proceso', count: 1, color: 'bg-purple-500' },
+  { id: 'autoestima', name: 'Autoestima', desc: 'Amor propio y aceptación', count: 0, color: 'bg-teal-400' },
+  { id: 'relaciones', name: 'Relaciones', desc: 'Vínculos sanos', count: 0, color: 'bg-green-500' }
+];
+
+const INITIAL_POSTS = [
+  {
+    id: 1,
+    author: 'Camila R.',
+    initials: 'CR',
+    color: 'from-teal-300 to-teal-500',
+    anonymous: false,
+    isMine: false,
+    topic: 'ansiedad',
+    time: 'hace 2 h',
+    text: 'Hoy tuve un día difícil, pero practiqué la respiración 4-7-8 antes de la reunión y me ayudó a calmar los latidos. Un pequeño paso pero estoy orgullosa.',
+    likes: 12,
+    liked: false,
+    comments: [
+      { id: 101, author: 'Martín V.', text: '¡Excelente técnica! A mí me sirve mucho contar despacio.', time: 'hace 1 h' }
+    ]
+  },
+  {
+    id: 2,
+    author: 'Anónimo',
+    initials: 'AN',
+    color: 'from-purple-400 to-purple-600',
+    anonymous: true,
+    isMine: false,
+    topic: 'duelo',
+    time: 'hace 5 h',
+    text: 'A veces el duelo se siente como olas. Algunos días están tranquilos y de pronto viene una muy fuerte. Gracias a todos en esta comunidad por ser un refugio seguro.',
+    likes: 24,
+    liked: true,
+    comments: []
+  }
+];
 
 /* ─── Overlay para visitantes no autenticados ─────────────── */
 function GuestOverlay() {
@@ -63,17 +105,94 @@ function GuestOverlay() {
 /* ─── Vista principal ─────────────────────────────────────── */
 export default function CommunityForum() {
   const { isAuthenticated, user } = useAuth();
-  const [activeTopic, setActiveTopic] = useState('Todas las temáticas');
+  const [activeTopic, setActiveTopic] = useState('todos');
   const [activeFriendTab, setActiveFriendTab] = useState('sugerencias');
 
-  const topics = [
-    { name: 'Todas las temáticas', desc: 'Todo el muro', count: 4, color: 'bg-blue-500' },
-    { name: 'Ansiedad y estrés', desc: 'Herramientas y apoyo diario', count: 1, color: 'bg-orange-500' },
-    { name: 'Duelo y pérdidas', desc: 'Acompañamiento en el proceso', count: 1, color: 'bg-purple-500' },
-    { name: 'Autoestima', desc: 'Amor propio y aceptación', count: 0, color: 'bg-teal-400' },
-    { name: 'Relaciones', desc: 'Vínculos sanos', count: 0, color: 'bg-green-500' }
-  ];
+  const [topics, setTopics] = useState(INITIAL_TOPICS);
+  const [posts, setPosts] = useState(INITIAL_POSTS);
 
+  const [composerText, setComposerText] = useState('');
+  const [composerTopic, setComposerTopic] = useState('ansiedad');
+  const [composerAnon, setComposerAnon] = useState(false);
+
+  const [isAddingTopic, setIsAddingTopic] = useState(false);
+  const [newTopicName, setNewTopicName] = useState('');
+
+  const [toastMsg, setToastMsg] = useState('');
+
+  function showToast(msg) {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 3000);
+  }
+
+  function handleCreatePost(e) {
+    e.preventDefault();
+    if (!composerText.trim()) return;
+
+    const newPost = {
+      id: Date.now(),
+      author: composerAnon ? 'Anónimo' : (user?.nombres || 'Tú'),
+      initials: composerAnon ? 'AN' : (user?.nombres?.[0]?.toUpperCase() || 'TÚ'),
+      color: composerAnon ? 'from-purple-400 to-purple-600' : 'from-blue-400 to-blue-600',
+      anonymous: composerAnon,
+      isMine: true,
+      topic: composerTopic,
+      time: 'justo ahora',
+      text: composerText.trim(),
+      likes: 0,
+      liked: false,
+      comments: []
+    };
+
+    setPosts([newPost, ...posts]);
+    setComposerText('');
+    showToast('Tu publicación se ha compartido en la comunidad');
+  }
+
+  function toggleLike(postId) {
+    setPosts(list => list.map(p => {
+      if (p.id === postId) {
+        return {
+          ...p,
+          liked: !p.liked,
+          likes: p.liked ? p.likes - 1 : p.likes + 1
+        };
+      }
+      return p;
+    }));
+  }
+
+  function deletePost(postId) {
+    if (!window.confirm('¿Eliminar esta publicación? Esta acción no se puede deshacer.')) return;
+    setPosts(list => list.filter(p => p.id !== postId));
+    showToast('Publicación eliminada correctamente');
+  }
+
+  function handleAddTopic(e) {
+    e.preventDefault();
+    const name = newTopicName.trim();
+    if (!name) return;
+
+    const baseId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'tematica';
+    let id = baseId;
+    let counter = 2;
+    while (topics.some(t => t.id === id)) {
+      id = `${baseId}-${counter}`;
+      counter++;
+    }
+
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-teal-400', 'bg-orange-500', 'bg-pink-500', 'bg-green-500'];
+    const color = colors[topics.length % colors.length];
+
+    const newTopic = { id, name, desc: 'Temática creada por la comunidad', count: 0, color };
+    setTopics([...topics, newTopic]);
+    setComposerTopic(id);
+    setNewTopicName('');
+    setIsAddingTopic(false);
+    showToast(`Nueva temática "${name}" creada`);
+  }
+
+  const filteredPosts = activeTopic === 'todos' ? posts : posts.filter(p => p.topic === activeTopic);
   const friends = [
     { name: 'Camila Reyes', desc: 'Comunidad de Ansiedad', initials: 'CR', color: 'from-teal-300 to-teal-400' },
     { name: 'Daniela Muñoz', desc: '5 amigos en común', initials: 'DM', color: 'from-orange-200 to-orange-300' },
@@ -84,8 +203,16 @@ export default function CommunityForum() {
 
   return (
     <div className="flex flex-col gap-6 relative min-h-[600px] w-full max-w-[1400px] mx-auto px-4 md:px-0">
+      
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div className="fixed bottom-8 right-8 z-50 bg-gray-900/90 text-white px-5 py-3 rounded-2xl shadow-xl backdrop-blur-md text-sm font-semibold animate-fade-in">
+          {toastMsg}
+        </div>
+      )}
+
       <div 
-        className={`grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_340px] gap-6 w-full ${!isAuthenticated ? 'blur-[4px] pointer-events-none select-none' : ''}`}
+        className={`grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_340px] gap-6 w-full ${!isAuthenticated ? 'blur-[4px] pointer-events-none select-none' : ''}`}
       >
         {/* Columna Izquierda: Perfil y Temáticas */}
         <div className="flex flex-col gap-5 lg:sticky lg:top-24 h-max min-w-0">
@@ -95,40 +222,73 @@ export default function CommunityForum() {
                 {user?.nombres?.[0]?.toUpperCase() || 'TÚ'}
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-[0.92rem] text-gray-900">Tu perfil</span>
+                <span className="font-bold text-[0.92rem] text-gray-900">{user?.nombres || 'Miembro Activo'}</span>
                 <span className="text-[0.76rem] text-gray-500">Miembro de la comunidad</span>
               </div>
             </div>
           )}
 
           <div className={`${glassPanelClass} pb-3`}>
-            <div className="flex items-center justify-between px-5 pt-5 pb-1 text-[0.78rem] font-extrabold uppercase tracking-wider text-gray-400">
+            <div className="flex items-center justify-between px-5 pt-5 pb-2 text-[0.78rem] font-extrabold uppercase tracking-wider text-gray-400">
               <span>Temáticas</span>
             </div>
             <ul className="flex flex-col gap-1 p-2.5">
               {topics.map(t => {
-                const isActive = activeTopic === t.name;
+                const isActive = activeTopic === t.id;
+                const count = t.id === 'todos' ? posts.length : posts.filter(p => p.topic === t.id).length;
                 return (
-                  <li key={t.name}>
+                  <li key={t.id}>
                     <button 
-                      onClick={() => setActiveTopic(t.name)}
-                      className={`flex w-full items-center gap-3 px-3 py-2.5 rounded-2xl text-left transition-all ${isActive ? 'bg-blue-500/10' : 'hover:bg-gray-500/5'}`}
+                      onClick={() => setActiveTopic(t.id)}
+                      className={`flex w-full items-center gap-3 px-3 py-2.5 rounded-2xl text-left transition-all ${isActive ? 'bg-blue-500/10 border border-blue-500/20' : 'hover:bg-gray-500/5'}`}
                     >
                       <span className={`w-2.5 h-2.5 rounded-full shrink-0 shadow-[0_0_0_4px_rgba(0,0,0,0.03)] ${t.color}`} />
                       <div className="flex flex-col min-w-0 flex-1 pr-1">
                         <span className="font-semibold text-[0.88rem] text-gray-900 truncate">{t.name}</span>
                         <span className="text-[0.7rem] text-gray-500 truncate">{t.desc}</span>
                       </div>
-                      {t.count > 0 && (
-                        <span className={`text-[0.68rem] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-blue-500/15 text-blue-600' : 'bg-gray-500/10 text-gray-500'}`}>
-                          {t.count}
-                        </span>
-                      )}
+                      <span className={`text-[0.68rem] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-blue-500/15 text-blue-600' : 'bg-gray-500/10 text-gray-500'}`}>
+                        {count}
+                      </span>
                     </button>
                   </li>
                 );
               })}
             </ul>
+
+            {/* Añadir temática dinámica */}
+            <div className="px-3 pt-2">
+              {isAddingTopic ? (
+                <form onSubmit={handleAddTopic} className="flex flex-col gap-2 p-3 bg-gray-500/5 rounded-2xl border border-gray-200/60">
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="Nueva temática…"
+                    maxLength={30}
+                    value={newTopicName}
+                    onChange={(e) => setNewTopicName(e.target.value)}
+                    className="w-full px-3 py-2 text-[0.82rem] bg-white rounded-xl border border-gray-200 outline-none focus:border-blue-500 text-gray-900"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button type="submit" disabled={!newTopicName.trim()} className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[0.75rem] rounded-xl disabled:opacity-50 transition-colors">
+                      Crear
+                    </button>
+                    <button type="button" onClick={() => { setIsAddingTopic(false); setNewTopicName(''); }} className="px-3 py-1.5 bg-gray-200 text-gray-700 font-semibold text-[0.75rem] rounded-xl hover:bg-gray-300 transition-colors">
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingTopic(true)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-dashed border-gray-300/80 rounded-2xl text-[0.82rem] font-semibold text-gray-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/50 transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Añadir temática</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -137,64 +297,128 @@ export default function CommunityForum() {
           {isAuthenticated ? (
             <>
               {/* Composer */}
-              <form className={`${glassPanelClass} p-5 flex flex-col gap-3.5 overflow-hidden`}>
+              <form onSubmit={handleCreatePost} className={`${glassPanelClass} p-5 flex flex-col gap-3.5 overflow-hidden`}>
                 <div className="flex gap-3.5 items-start w-full">
                   <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm shrink-0 bg-gradient-to-br from-blue-400 to-blue-600 shadow-sm">
                     {user?.nombres?.[0]?.toUpperCase() || 'TÚ'}
                   </div>
                   <textarea
+                    value={composerText}
+                    onChange={(e) => setComposerText(e.target.value)}
                     placeholder="¿Qué estás pensando o sintiendo hoy? Compártelo con la comunidad…"
-                    className="flex-1 min-w-0 min-h-[56px] resize-none border-none outline-none bg-gray-500/5 focus:bg-gray-500/10 focus:ring-[3px] focus:ring-blue-500/15 rounded-2xl p-3.5 text-[0.95rem] text-gray-900 transition-all placeholder:text-gray-400"
+                    className="flex-1 min-w-0 min-h-[64px] resize-none border-none outline-none bg-gray-500/5 focus:bg-gray-500/10 focus:ring-[3px] focus:ring-blue-500/15 rounded-2xl p-3.5 text-[0.95rem] text-gray-900 transition-all placeholder:text-gray-400"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-3 flex-wrap w-full">
-                  <select className="border border-gray-300/40 bg-white/70 rounded-full px-3.5 py-2 text-[0.82rem] font-semibold text-gray-800 outline-none hover:bg-white transition-colors max-w-full">
-                    <option>Ansiedad y estrés</option>
-                    <option>Depresión</option>
-                    <option>Autoestima</option>
-                    <option>Duelo y pérdidas</option>
-                    <option>Relaciones</option>
-                  </select>
-                  <button type="button" className="inline-flex items-center justify-center h-10 px-6 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[0.88rem] shadow-[0_8px_18px_rgba(62,123,250,0.25)] transition-all hover:scale-[1.03]">
+                <div className="flex items-center justify-between gap-3 flex-wrap w-full pt-1 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <select 
+                      value={composerTopic}
+                      onChange={(e) => setComposerTopic(e.target.value)}
+                      className="border border-gray-300/40 bg-white/70 rounded-full px-3.5 py-1.5 text-[0.82rem] font-semibold text-gray-800 outline-none hover:bg-white transition-colors"
+                    >
+                      {topics.filter(t => t.id !== 'todos').map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                    <label className="flex items-center gap-1.5 text-[0.8rem] text-gray-500 font-medium cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={composerAnon}
+                        onChange={(e) => setComposerAnon(e.target.checked)}
+                        className="rounded text-blue-600 focus:ring-blue-500"
+                      />
+                      <span>Modo Incógnito</span>
+                    </label>
+                  </div>
+                  <button 
+                    type="submit" 
+                    disabled={!composerText.trim()}
+                    className="inline-flex items-center justify-center h-10 px-6 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-[0.88rem] shadow-[0_8px_18px_rgba(62,123,250,0.25)] transition-all hover:scale-[1.03]"
+                  >
                     Publicar
                   </button>
                 </div>
               </form>
 
-              {/* Feed Filter */}
+              {/* Feed Filter Indicator */}
               <div className="flex items-center gap-2.5 px-1 py-1 text-gray-500 text-[0.85rem]">
-                Mostrando publicaciones de <strong className="text-gray-900">{activeTopic.toLowerCase()}</strong>
-                <button type="button" className="ml-auto text-blue-600 font-bold text-[0.8rem] hover:underline">Ver todas</button>
+                <span>Mostrando temáticas:</span>
+                <strong className="text-gray-900 font-bold">
+                  {topics.find(t => t.id === activeTopic)?.name || 'Todas'}
+                </strong>
+                {activeTopic !== 'todos' && (
+                  <button type="button" onClick={() => setActiveTopic('todos')} className="ml-auto text-blue-600 font-bold text-[0.8rem] hover:underline">
+                    Ver todas
+                  </button>
+                )}
               </div>
 
-              {/* Feed Posts placeholder - using the same visual as legacy */}
+              {/* Feed Posts */}
               <div className="flex flex-col gap-4">
-                <div className={`${glassPanelClass} p-5 flex flex-col gap-3.5`}>
-                  <div className="flex gap-3 items-start">
-                    <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm shrink-0 bg-gradient-to-br from-teal-300 to-teal-500 shadow-sm">
-                      CR
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-bold text-[0.94rem] text-gray-900">Camila R.</span>
-                      <div className="flex items-center gap-1.5 text-[0.76rem] text-gray-500 flex-wrap">
-                        <span>hace 2 h</span>
-                        <span>·</span>
-                        <span className="font-bold px-2 py-0.5 rounded-full text-[0.68rem] bg-blue-500/10 text-blue-600">Ansiedad y estrés</span>
+                {filteredPosts.length === 0 ? (
+                  <div className={`${glassPanelClass} p-8 text-center text-gray-500 text-sm`}>
+                    No hay publicaciones en esta temática todavía. ¡Sé el primero en compartir!
+                  </div>
+                ) : (
+                  filteredPosts.map(post => {
+                    const topicObj = topics.find(t => t.id === post.topic);
+                    return (
+                      <div key={post.id} className={`${glassPanelClass} p-5 flex flex-col gap-3.5 hover:shadow-[0_24px_50px_rgba(0,0,0,0.07)] transition-shadow`}>
+                        <div className="flex gap-3 items-start justify-between">
+                          <div className="flex gap-3 items-start">
+                            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm shrink-0 bg-gradient-to-br ${post.color} shadow-sm`}>
+                              {post.initials}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="font-bold text-[0.94rem] text-gray-900">{post.author}</span>
+                              <div className="flex items-center gap-1.5 text-[0.76rem] text-gray-500 flex-wrap">
+                                <span>{post.time}</span>
+                                <span>·</span>
+                                {topicObj && (
+                                  <span className="font-bold px-2 py-0.5 rounded-full text-[0.68rem] bg-blue-500/10 text-blue-600">
+                                    {topicObj.name}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Trash button for owned posts */}
+                          {post.isMine && (
+                            <button 
+                              onClick={() => deletePost(post.id)}
+                              title="Eliminar publicación"
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        <p className="text-[0.96rem] leading-relaxed text-gray-800 whitespace-pre-wrap">
+                          {post.text}
+                        </p>
+
+                        <div className="flex items-center gap-3 border-t border-gray-200/60 pt-2.5 mt-1">
+                          <button 
+                            onClick={() => toggleLike(post.id)}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[0.82rem] font-semibold transition-colors ${post.liked ? 'bg-red-500/10 text-red-500' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
+                          >
+                            <Heart className={`w-[17px] h-[17px] ${post.liked ? 'fill-red-500' : ''}`} /> 
+                            <span>{post.likes}</span>
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[0.82rem] font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                            <MessageSquare className="w-[17px] h-[17px]" /> 
+                            <span>{post.comments?.length || 0}</span>
+                          </button>
+                          <button onClick={() => showToast('Enlace copiado al portapapeles')} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[0.82rem] font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors ml-auto">
+                            <Share2 className="w-[17px] h-[17px]" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <p className="text-[0.96rem] leading-relaxed text-gray-800 whitespace-pre-wrap">
-                    Hoy tuve un día difícil, pero practiqué la respiración 4-7-8 antes de la reunión y me ayudó a calmar los latidos. Un pequeño paso pero estoy orgullosa.
-                  </p>
-                  <div className="flex items-center gap-1.5 border-t border-gray-200 pt-2.5 mt-1">
-                    <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.82rem] font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                      <Heart className="w-[17px] h-[17px]" /> 12
-                    </button>
-                    <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.82rem] font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                      <MessageSquare className="w-[17px] h-[17px]" /> 4
-                    </button>
-                  </div>
-                </div>
+                    );
+                  })
+                )}
               </div>
             </>
           ) : (
@@ -237,7 +461,7 @@ export default function CommunityForum() {
                     <span className="font-bold text-[0.84rem] text-gray-900 truncate">{f.name}</span>
                     <span className="text-[0.72rem] text-gray-500 truncate">{f.desc}</span>
                   </div>
-                  <button className="shrink-0 max-w-[85px] border-none rounded-full px-2.5 py-1.5 text-[0.7rem] font-bold bg-blue-600 text-white hover:scale-105 hover:bg-blue-700 transition-all whitespace-nowrap">
+                  <button onClick={() => showToast(`Solicitud enviada a ${f.name}`)} className="shrink-0 max-w-[85px] border-none rounded-full px-2.5 py-1.5 text-[0.7rem] font-bold bg-blue-600 text-white hover:scale-105 hover:bg-blue-700 transition-all whitespace-nowrap">
                     + Agregar
                   </button>
                 </div>
