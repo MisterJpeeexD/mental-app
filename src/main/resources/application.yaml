@@ -34,6 +34,13 @@ microsoft:
     client-secret: ${MS_GRAPH_CLIENT_SECRET:mock-client-secret}
     user-id: ${MS_GRAPH_USER_ID:mock-user-id}
 
+youtube:
+  api-key: ${YOUTUBE_API_KEY:mock-youtube-api-key}
+
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID:mock-spotify-client-id}
+  client-secret: ${SPOTIFY_CLIENT_SECRET:mock-spotify-client-secret}
+
 app:
   cors:
     allowed-origins: ${FRONTEND_ORIGINS:http://localhost:5173}
