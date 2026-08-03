@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS profesionales (
     licencia_profesional VARCHAR(255),
     especialidad_principal_id INTEGER,
     descripcion_profesional TEXT,
+    sexo_profesional varchar(255),
     es_voluntario BOOLEAN DEFAULT FALSE,
     tarifa_sesion DECIMAL(10,2),
     biografia_profesional TEXT,
