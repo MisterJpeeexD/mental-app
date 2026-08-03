@@ -19,29 +19,47 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class RecursoSyncService {
 
     private final RecursoDigitalRepository recursoRepository;
     private final CategoriaRecursoRepository categoriaRepository;
     private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
 
     private static final String OPENLIBRARY_API = "https://openlibrary.org/search.json?q=";
+
+    public RecursoSyncService(RecursoDigitalRepository recursoRepository,
+                              CategoriaRecursoRepository categoriaRepository,
+                              ObjectMapper objectMapper) {
+        this.recursoRepository = recursoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.objectMapper = objectMapper;
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+    }
+    
+    // Constructor para inyectar HttpClient (útil para tests)
+    public RecursoSyncService(RecursoDigitalRepository recursoRepository,
+                              CategoriaRecursoRepository categoriaRepository,
+                              ObjectMapper objectMapper,
+                              HttpClient httpClient) {
+        this.recursoRepository = recursoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.objectMapper = objectMapper;
+        this.httpClient = httpClient;
+    }
 
     @Transactional
     public void sincronizarLibros(String tema, int limite) {
         try {
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .build();
-
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(OPENLIBRARY_API + tema + "&limit=" + limite))
                     .GET()
                     .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 JsonNode root = objectMapper.readTree(response.body());
