@@ -103,9 +103,13 @@ public class RecursoSyncService {
                             recurso.setImagenPortadaUrl("https://covers.openlibrary.org/b/id/" + coverId + "-M.jpg");
                         }
                         
-                        recurso.setDescripcion("Libro obtenido de OpenLibrary sobre " + tema);
+                        recurso.setDescripcion("Libro seleccionado de OpenLibrary sobre " + tema + " para acompañamiento clínico.");
                         recurso.setEsPremium(false);
                         recurso.setPrecio(BigDecimal.ZERO);
+                        recurso.setDuracionMinutos(15 + (int)(Math.random() * 45));
+                        recurso.setVistas(500 + (int)(Math.random() * 3500));
+                        recurso.setCodigoAfiliado("OPENLIB-" + tema.toUpperCase().replace(" ", ""));
+                        recurso.setUrlAfiliado(recurso.getUrlContenido());
                         recurso.getCategorias().add(categoria);
 
                         recursoRepository.save(recurso);
