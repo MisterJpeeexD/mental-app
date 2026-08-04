@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, MoreHorizontal, MessageSquare, Heart, Share2, Plus, Trash2, ShieldCheck, UserCheck } from 'lucide-react';
 
 /* ─── Paleta ─────────────────────────────────────────────── */
@@ -13,10 +13,10 @@ const BRAND = {
 
 const INITIAL_TOPICS = [
   { id: 'todos', name: 'Todas las temáticas', desc: 'Todo el muro', count: 4, color: 'bg-blue-500' },
-  { id: 'ansiedad', name: 'Ansiedad y estrés', desc: 'Herramientas y apoyo diario', count: 1, color: 'bg-orange-500' },
-  { id: 'duelo', name: 'Duelo y pérdidas', desc: 'Acompañamiento en el proceso', count: 1, color: 'bg-purple-500' },
-  { id: 'autoestima', name: 'Autoestima', desc: 'Amor propio y aceptación', count: 0, color: 'bg-teal-400' },
-  { id: 'relaciones', name: 'Relaciones', desc: 'Vínculos sanos', count: 0, color: 'bg-green-500' }
+  { id: '1', name: 'Ansiedad y Estrés', desc: 'Herramientas y apoyo diario', count: 142, color: 'bg-orange-500' },
+  { id: '2', name: 'Depresión y Ánimo', desc: 'Acompañamiento en el proceso', count: 98, color: 'bg-purple-500' },
+  { id: '3', name: 'Desarrollo Personal', desc: 'Hábitos y autoestima', count: 215, color: 'bg-teal-400' },
+  { id: '4', name: 'Mindfulness y Meditación', desc: 'Atención plena cotidiana', count: 120, color: 'bg-green-500' }
 ];
 
 const INITIAL_POSTS = [
@@ -27,7 +27,7 @@ const INITIAL_POSTS = [
     color: 'from-teal-300 to-teal-500',
     anonymous: false,
     isMine: false,
-    topic: 'ansiedad',
+    topic: '1',
     time: 'hace 2 h',
     text: 'Hoy tuve un día difícil, pero practiqué la respiración 4-7-8 antes de la reunión y me ayudó a calmar los latidos. Un pequeño paso pero estoy orgullosa.',
     likes: 12,
@@ -43,7 +43,7 @@ const INITIAL_POSTS = [
     color: 'from-purple-400 to-purple-600',
     anonymous: true,
     isMine: false,
-    topic: 'duelo',
+    topic: '2',
     time: 'hace 5 h',
     text: 'A veces el duelo se siente como olas. Algunos días están tranquilos y de pronto viene una muy fuerte. Gracias a todos en esta comunidad por ser un refugio seguro.',
     likes: 24,
@@ -110,6 +110,50 @@ export default function CommunityForum() {
 
   const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [posts, setPosts] = useState(INITIAL_POSTS);
+
+  useEffect(() => {
+    fetch('/api/foros')
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const apiTopics = [
+            { id: 'todos', name: 'Todas las temáticas', desc: 'Todo el muro', count: 0, color: 'bg-blue-500' },
+            ...data.map((f, i) => ({
+              id: f.id.toString(),
+              name: f.nombre,
+              desc: f.descripcion || 'Espacio de acompañamiento',
+              count: f.numeroMiembros || 0,
+              color: ['bg-orange-500', 'bg-purple-500', 'bg-teal-400', 'bg-green-500', 'bg-pink-500'][i % 5]
+            }))
+          ];
+          setTopics(apiTopics);
+        }
+      })
+      .catch(err => console.warn('Usando foros por defecto:', err));
+
+    fetch('/api/foros/temas/recientes')
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const apiPosts = data.map(t => ({
+            id: t.id,
+            author: t.usuario ? `${t.usuario.nombres} ${t.usuario.apellidos?.[0] || ''}.` : 'Comunidad AbrazaMente',
+            initials: t.usuario ? `${t.usuario.nombres?.[0] || 'A'}${t.usuario.apellidos?.[0] || 'M'}` : 'AM',
+            color: 'from-blue-400 to-blue-600',
+            anonymous: false,
+            isMine: user && t.usuario?.id === user.id,
+            topic: t.foro ? t.foro.id.toString() : 'todos',
+            time: 'reciente',
+            text: `${t.titulo}\n\n${t.contenido || ''}`,
+            likes: t.vistas || 5,
+            liked: false,
+            comments: []
+          }));
+          setPosts(apiPosts);
+        }
+      })
+      .catch(err => console.warn('Usando publicaciones por defecto:', err));
+  }, [user]);
 
   const [composerText, setComposerText] = useState('');
   const [composerTopic, setComposerTopic] = useState('ansiedad');
