@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Cross } from 'lucide-react';
+import { Cross, Heart } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
 
 
@@ -79,7 +79,9 @@ function Hero() {
               <div className="orb orb-purple" data-emotion="Reflexión" title="Reflexión"><div className="orb-face face-reflexion"><div className="eyes-row"><span className="eye" /><span className="eye" /></div><div className="mouth" /></div></div>
               <div className="orb orb-orange" data-emotion="Energía" title="Energía"><div className="orb-face face-energia"><div className="eyes-row"><span className="eye" /><span className="eye" /></div><div className="mouth" /></div></div>
               <div className="orb orb-teal" data-emotion="Serenidad" title="Serenidad"><div className="orb-face face-serenidad"><span className="eye" /><span className="eye" /></div></div>
-              <div className="center-heart-orb"><span className="heart-icon" aria-hidden="true">♥</span></div>
+              {/* SVG y no el glifo ♥: el carácter se salía de su caja de 24px hacia
+                  la derecha, así que la caja quedaba centrada y el corazón no */}
+              <div className="center-heart-orb"><Heart className="heart-icon" aria-hidden="true" fill="currentColor" strokeWidth={0} /></div>
             </div>
           </div>
         </div>

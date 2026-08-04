@@ -33,7 +33,7 @@
 .dot-a { left: 29.4%; top: 20.5%; background: #65a1ff; }
 .dot-b { left: 85.9%; top: 46.9%; background: #c67ada; }
 .dot-c { left: 34.8%; top: 82.6%; background: #4dd0e1; }
-.auth-points { list-style: none; display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 30px; color: var(--text-muted); font-size: .9rem; font-weight: 600; }
+.auth-points { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; margin-top: 30px; color: var(--text-muted); font-size: .9rem; font-weight: 600; }
 [data-theme="dark"] .auth-points { color: #c3c3ca; }
 .auth-points li::before { content: '✓'; margin-right: 7px; color: var(--brand-blue); }
 .auth-card-wrap { display: grid; place-items: center; padding: 140px clamp(24px, 5vw, 72px) 42px; min-width: 0; }
@@ -87,6 +87,8 @@
 
 @media (max-width: 660px) {
   .auth-visual { padding: 32px 22px 84px; }
+  /* sin órbita que los ancle, vuelven a alinearse con el texto */
+  .auth-points { justify-content: flex-start; }
   .auth-visual h1 { font-size: clamp(2rem, 9vw, 2.65rem); }
   .auth-orbit { display: none; }
   .auth-card-wrap { padding: 0 12px 32px; }

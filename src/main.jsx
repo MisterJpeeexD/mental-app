@@ -7,6 +7,7 @@ import './styles/app.css';
 import './styles/auth.css';
 import './styles/terapia.css';
 import './styles/botiquin.css';
+import './styles/journal.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
