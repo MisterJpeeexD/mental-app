@@ -262,10 +262,19 @@ function ResourceModal({ recurso, onClose }) {
         {/* Modal Top Header */}
         <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 mb-6">
           <div 
-            className="h-[180px] md:h-[240px] rounded-3xl flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
+            className="h-[180px] md:h-[240px] rounded-3xl flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.12)] overflow-hidden relative"
             style={{ background: config.bg || config.color }}
           >
-             <Icon style={{ width: '64px', height: '64px', color: 'rgba(255,255,255,0.92)' }} strokeWidth={1.5} />
+             {recurso.imagenPortadaUrl ? (
+               <img 
+                 src={recurso.imagenPortadaUrl} 
+                 alt={recurso.titulo}
+                 className="w-full h-full object-cover"
+                 onError={(e) => { e.target.style.display = 'none'; }}
+               />
+             ) : (
+               <Icon style={{ width: '64px', height: '64px', color: 'rgba(255,255,255,0.92)' }} strokeWidth={1.5} />
+             )}
           </div>
           
           <div className="flex flex-col gap-2.5">
@@ -294,7 +303,7 @@ function ResourceModal({ recurso, onClose }) {
                 onClick={handleAction}
                 className="h-11 px-6 rounded-full text-[0.88rem] font-bold border-none cursor-pointer transition-transform bg-blue-600 text-white shadow-[0_8px_18px_rgba(62,123,250,0.25)] hover:bg-blue-700 hover:scale-[1.02] flex items-center justify-center gap-2"
               >
-                {recurso.tipo === 'video' || recurso.tipo === 'podcast' ? 'Escuchar / Ver en Vivo' : 'Descargar PDF'}
+                {recurso.tipo === 'video' || recurso.tipo === 'podcast' ? 'Escuchar / Ver en Vivo' : recurso.url?.endsWith('.pdf') ? 'Descargar PDF' : 'Consultar Libro / Recurso'}
               </button>
               {recurso.url && recurso.url !== '#' && (
                 <a

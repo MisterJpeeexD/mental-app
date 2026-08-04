@@ -70,8 +70,9 @@ public class RecursoSyncService {
     @Transactional
     public void sincronizarLibros(String tema, int limite) {
         try {
+            String queryEncoded = java.net.URLEncoder.encode(tema, java.nio.charset.StandardCharsets.UTF_8);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(OPENLIBRARY_API + tema + "&limit=" + limite))
+                    .uri(URI.create(OPENLIBRARY_API + queryEncoded + "&limit=" + limite))
                     .GET()
                     .build();
 
