@@ -437,19 +437,28 @@ export default function ResourceLibrary() {
             let spotifyEmbedUrl = undefined;
 
             if (r.urlContenido) {
-              if (r.urlContenido.includes('youtube.com/watch?v=')) {
-                const videoId = r.urlContenido.split('watch?v=')[1]?.split('&')[0];
-                youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
-              } else if (r.urlContenido.includes('youtu.be/')) {
-                const videoId = r.urlContenido.split('youtu.be/')[1]?.split('?')[0];
-                youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
-              } else if (r.urlContenido.includes('youtube.com/embed/')) {
-                youtubeEmbedUrl = r.urlContenido;
-              }
+              try {
+                const parsedUrl = new URL(r.urlContenido);
+                const host = parsedUrl.hostname.toLowerCase();
 
-              if (r.urlContenido.includes('spotify.com/')) {
-                const spotifyPath = r.urlContenido.split('spotify.com/')[1];
-                spotifyEmbedUrl = `https://open.spotify.com/embed/${spotifyPath}`;
+                if (host === 'spotify.com' || host.endsWith('.spotify.com')) {
+                  const spotifyPath = parsedUrl.pathname + parsedUrl.search;
+                  spotifyEmbedUrl = `https://open.spotify.com/embed${spotifyPath}`;
+                } else if (host === 'youtube.com' || host.endsWith('.youtube.com')) {
+                  const videoId = parsedUrl.searchParams.get('v');
+                  if (videoId) {
+                    youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
+                  } else if (parsedUrl.pathname.startsWith('/embed/')) {
+                    youtubeEmbedUrl = r.urlContenido;
+                  }
+                } else if (host === 'youtu.be' || host.endsWith('.youtu.be')) {
+                  const videoId = parsedUrl.pathname.replace(/^\//, '');
+                  if (videoId) {
+                    youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
+                  }
+                }
+              } catch (err) {
+                console.warn('URL de contenido no válida:', err);
               }
             }
 
