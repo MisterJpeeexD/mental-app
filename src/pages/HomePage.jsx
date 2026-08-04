@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Cross } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
 
 
@@ -34,6 +35,8 @@ const faqs = [
 ];
 
 function Hero() {
+  const location = useLocation();
+
   return (
     <section className="apple-hero pt-[140px]">
       <div className="mesh-background" aria-hidden="true">
@@ -49,6 +52,15 @@ function Hero() {
           <div className="actions">
             <Link to="/registro" className="btn-primary">Comenzar ahora</Link>
             <a href="#ecosistema" className="btn-secondary">Conocer la app</a>
+            <Link
+              to="/botiquin/breathing"
+              state={{ backgroundLocation: location }}
+              className="btn-emergency"
+              aria-label="Botiquín de apoyo inmediato"
+              title="Botiquín de apoyo inmediato"
+            >
+              <Cross aria-hidden="true" strokeWidth={2.5} />
+            </Link>
           </div>
           <div className="feature-cards">
             {['Terapia profesional', 'Herramientas emocionales', 'Comunidad moderada'].map((text, index) => (
@@ -105,7 +117,8 @@ function FAQSection() {
             <button className="faq-question" type="button" aria-expanded={openIndex === index} onClick={() => setOpenIndex(openIndex === index ? -1 : index)}>
               <span>{question}</span><div className="faq-icon">⌄</div>
             </button>
-            <div className="faq-answer"><p>{answer}</p></div>
+            {/* el div interior no lleva padding: es lo que permite colapsar a 0 */}
+            <div className="faq-answer"><div><p>{answer}</p></div></div>
           </div>
         ))}
       </div>

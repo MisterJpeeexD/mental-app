@@ -1,11 +1,9 @@
-import { Link } from 'react-router-dom';
-
 export default function AuthVisual({ register = false }) {
   return (
     <section className="auth-visual" aria-label="Presentación de AbrazaMente">
+      {/* Sin logo: el header global ya lo muestra y aquí quedaba tapado debajo */}
       <div className="auth-topbar">
-      <Link to="/" className="auth-logo-link"><img src="/assets/AbrazaMente_Logo.svg" alt="AbrazaMente" /></Link>
-      <div className="auth-badge"><span /> Tu espacio seguro</div>
+        <div className="auth-badge"><span /> Tu espacio seguro</div>
       </div>
       <h1>{register ? 'Comienza a cuidar tu bienestar emocional.' : 'Tu bienestar emocional, en un solo lugar.'}</h1>
       <p>{register ? 'Crea una cuenta para acceder a profesionales, recursos y una comunidad moderada.' : 'Accede a tus herramientas, sesiones y recursos con una experiencia privada y cercana.'}</p>

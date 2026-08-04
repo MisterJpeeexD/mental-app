@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, Cross } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -9,12 +9,12 @@ import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
 import { AuthProvider } from './context/AuthContext';
 
-
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const TerapiaPage = lazy(() => import('./pages/TerapiaPage'));
 
 // Main features
 const BreathingTimer = lazy(() => import('./features/breathing/BreathingTimer'));
@@ -22,8 +22,13 @@ const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'
 const MoodTracker = lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = lazy(() => import('./features/professionals/ProfessionalDirectory'));
 const CommunityForum = lazy(() => import('./features/community/CommunityForum'));
-const ComunidadPage = lazy(() => import('./pages/ComunidadPage'));
 const ResourceLibrary = lazy(() => import('./features/resources/ResourceLibrary'));
+
+const botiquinIcon = (
+  <span className="feature-card__badge" aria-hidden="true">
+    <Cross strokeWidth={2.5} />
+  </span>
+);
 
 const RouteLoadingFallback = () => {
   const { pathname } = useLocation();
@@ -39,7 +44,7 @@ function ScrollToTop() {
   return null;
 }
 
-/* ─── FeatureLayout: card oscuro para Botiquín/Diario ──────── */
+/* ─── FeatureLayout: card para Botiquín/Diario ──────── */
 const FeatureLayout = ({ title, description, children, showTabs, currentTab, fallback }) => {
   const navigate = useNavigate();
 
@@ -219,7 +224,7 @@ function PageLayout({ eyebrow, heroTitle, heroSubtitle, heroVisual, heroActions,
       </section>
     </>
   );
-};
+}
 
 export default function App() {
   return (
@@ -280,9 +285,10 @@ export default function App() {
                 )}
               />
 
-              {/* Terapia — página completa */}
+              {/* Terapia — TerapiaPage de Upstream / Directorio */}
+              <Route path="/terapia" element={<TerapiaPage />} />
               <Route
-                path="/terapia"
+                path="/professionals"
                 element={(
                   <PageLayout
                     eyebrow="Terapia · Especialistas · Bienestar"
@@ -294,52 +300,9 @@ export default function App() {
                           <a href="#especialistas" className="btn-primary">Ver terapias</a>
                           <a href="#orientacion" className="btn-secondary">Explorar opciones</a>
                         </div>
-                        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-blue)' }}>01</span>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sesiones seguras</span>
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-blue)' }}>02</span>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Especialistas expertos</span>
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-blue)' }}>03</span>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Acompañamiento confidencial</span>
-                          </div>
-                        </div>
                       </>
                     }
                     fallback={<CardSkeleton count={3} label="Cargando especialistas" />}
-                    heroVisual={
-                      <div className="premium-glass-card comunidad-panel" style={{ position: 'relative', width: '100%', maxWidth: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-                        <div className="floating-badge badge-top-left">
-                          <span className="dot blue" />
-                          Seguro
-                        </div>
-                        <div className="floating-badge badge-bottom-left">
-                          <span className="dot orange" />
-                          Cercano
-                        </div>
-                        <div className="floating-badge badge-bottom-right">
-                          <span className="dot teal" />
-                          Guiado
-                        </div>
-                        <div className="community-orbit" style={{ position: 'relative', width: 'min(390px, 74vw)', height: 'min(390px, 74vw)', borderRadius: '50%', background: 'radial-gradient(circle at center, rgba(255,255,255,0.9), rgba(255,255,255,0.18) 58%, transparent 68%)' }}>
-                          <div style={{ position: 'absolute', inset: '12%', borderRadius: '50%', border: '1px solid rgba(134,134,139,0.22)' }} />
-                          <div style={{ position: 'absolute', inset: '26%', borderRadius: '50%', border: '1px dashed rgba(134,134,139,0.22)' }} />
-                          
-                          <div className="community-avatar avatar-main" style={{ position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, borderRadius: '50%', zIndex: 3, width: '118px', height: '118px', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-purple))', fontSize: '1.6rem' }}>AM</div>
-                          <div className="community-avatar avatar-one" style={{ position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, borderRadius: '50%', zIndex: 3, width: '72px', height: '72px', left: '8%', top: '22%', background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-teal))' }}>DR</div>
-                          <div className="community-avatar avatar-two" style={{ position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, borderRadius: '50%', zIndex: 3, width: '72px', height: '72px', right: '7%', top: '28%', background: 'linear-gradient(135deg, var(--brand-orange), var(--brand-purple))' }}>CM</div>
-                          <div className="community-avatar avatar-three" style={{ position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, borderRadius: '50%', zIndex: 3, width: '72px', height: '72px', left: '36%', bottom: '4%', background: 'linear-gradient(135deg, var(--brand-teal), var(--brand-blue))' }}>SV</div>
-                          
-                          <div className="community-line line-one" style={{ position: 'absolute', height: '2px', background: 'linear-gradient(90deg, transparent, rgba(62,123,250,0.35), transparent)', transformOrigin: 'left center', zIndex: 1, width: '150px', left: '27%', top: '38%', transform: 'rotate(28deg)' }} />
-                          <div className="community-line line-two" style={{ position: 'absolute', height: '2px', background: 'linear-gradient(90deg, transparent, rgba(62,123,250,0.35), transparent)', transformOrigin: 'left center', zIndex: 1, width: '138px', left: '49%', top: '42%', transform: 'rotate(-21deg)' }} />
-                          <div className="community-line line-three" style={{ position: 'absolute', height: '2px', background: 'linear-gradient(90deg, transparent, rgba(62,123,250,0.35), transparent)', transformOrigin: 'left center', zIndex: 1, width: '120px', left: '43%', bottom: '34%', transform: 'rotate(88deg)' }} />
-                        </div>
-                      </div>
-                    }
                   >
                     <ProfessionalDirectory />
                   </PageLayout>
@@ -365,22 +328,6 @@ export default function App() {
                     heroTitle={['Comparte tu proceso,', 'nunca estarás solo en esto.']}
                     heroSubtitle="Un espacio moderado para intercambiar experiencias por temática y conectar con otras personas que entienden tu proceso."
                     fallback={<CardSkeleton count={4} label="Cargando comunidad" />}
-                    heroBottom={
-                      <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '40px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: '100px', padding: '6px 18px', backdropFilter: 'blur(12px)', fontSize: '0.85rem' }}>
-                          <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>3.482</strong> <span style={{ color: 'var(--text-muted)' }}>miembros</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: '100px', padding: '6px 18px', backdropFilter: 'blur(12px)', fontSize: '0.85rem' }}>
-                          <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>6</strong> <span style={{ color: 'var(--text-muted)' }}>temáticas</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: '100px', padding: '6px 18px', backdropFilter: 'blur(12px)', fontSize: '0.85rem' }}>
-                          <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>128</strong> <span style={{ color: 'var(--text-muted)' }}>publicaciones hoy</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: '100px', padding: '6px 18px', backdropFilter: 'blur(12px)', fontSize: '0.85rem' }}>
-                          <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>100%</strong> <span style={{ color: 'var(--text-muted)' }}>moderado por profesionales</span>
-                        </div>
-                      </div>
-                    }
                   >
                     <CommunityForum />
                   </PageLayout>

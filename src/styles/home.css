@@ -23,10 +23,15 @@
   --orb-shadow: inset -10px -10px 20px rgba(0,0,0,0.5), inset 10px 10px 20px rgba(255,255,255,0.2), 0 15px 30px rgba(0,0,0,0.4);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* En @layer base para que las utilidades de Tailwind (@layer utilities) puedan
+   ganarle: una regla sin capa vence a una con capa sin importar la
+   especificidad, y sin esto el reset anulaba todo padding y margin de Tailwind. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 body {
@@ -77,6 +82,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 14px;
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem 4vw;
@@ -91,6 +97,7 @@ body {
 .logo-img {
   height: 3rem;
   width: auto;
+  max-width: 100%;
 }
 
 .main-nav {
@@ -254,6 +261,14 @@ body {
   }
 }
 
+/* Va después del bloque de 960px: bajo ~380px el logo y la cruz de emergencia
+   quedaban pegados, sin ninguna holgura entre ambos. */
+@media (max-width: 380px) {
+  .logo-img { height: 30px; }
+  .header-actions { gap: 10px; }
+  .header-container { padding: 1.1rem 3vw; }
+}
+
 /* --- Fondo Mesh Premium --- */
 .apple-hero {
   position: relative;
@@ -352,6 +367,8 @@ h1 {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
   margin-top: 8px;
 }
@@ -389,6 +406,51 @@ h1 {
   color: #fff;
 }
 .btn-secondary:hover { transform: scale(1.02); }
+
+/* Acceso al botiquín: mismo control en el hero y en el header, solo cambia el
+   tamaño. Sin texto, así que depende de aria-label + title. */
+.btn-emergency {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.10);
+  color: #dc2626;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-emergency svg { width: 22px; height: 22px; }
+
+.btn-emergency:hover {
+  background: #dc2626;
+  color: #fff;
+  transform: scale(1.06);
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.28);
+}
+
+.btn-emergency--header { width: 40px; height: 40px; }
+.btn-emergency--header svg { width: 19px; height: 19px; }
+
+[data-theme="dark"] .btn-emergency {
+  border-color: rgba(248, 113, 113, 0.30);
+  background: rgba(248, 113, 113, 0.14);
+  color: #f87171;
+}
+
+[data-theme="dark"] .btn-emergency:hover {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.32);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-emergency:hover { transform: none; }
+}
 
 .feature-cards {
   display: grid;
@@ -557,6 +619,8 @@ h1 {
 @media (max-width: 960px) {
   .hero-container { grid-template-columns: 1fr; gap: 40px; }
   .text-column { align-items: center; text-align: center; }
+  /* con el texto centrado, los botones envueltos no pueden quedar a la izquierda */
+  .actions { justify-content: center; }
   .subtitle { max-width: 100%; }
   h1 { font-size: clamp(2rem, 8vw, 3rem); }
   .feature-cards { flex-wrap: wrap; justify-content: center; }
@@ -605,8 +669,11 @@ h1 {
 .divider { width: 1px; height: 32px; background: rgba(0, 0, 0, 0.06); }
 [data-theme="dark"] .divider { background: rgba(255, 255, 255, 0.1); }
 
+/* El padding vertical se adapta al alto de pantalla: en un portátil de 13"
+   los 120px fijos dejaban un tercio del viewport en blanco entre secciones.
+   El clamp tope en 120px, así que en pantallas altas nada cambia. */
 .services-section {
-  padding: 120px 4vw;
+  padding: clamp(64px, 9vh, 120px) 4vw;
   background-color: var(--bg-base);
   position: relative;
 }
@@ -614,7 +681,7 @@ h1 {
 .section-header {
   text-align: center;
   max-width: 600px;
-  margin: 0 auto 64px auto;
+  margin: 0 auto clamp(36px, 5vh, 64px) auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -667,7 +734,7 @@ h1 {
   .bento-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .trust-wrapper { margin-top: -20px; }
   .trust-glass-pill { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; padding: 24px; }
   .trust-item { justify-content: flex-start; }
@@ -683,7 +750,7 @@ h1 {
 }
 .reveal.active { opacity: 1; transform: translateY(0); }
 
-.how-it-works-section { padding: 80px 4vw 120px 4vw; background-color: var(--bg-base); max-width: 1280px; margin: 0 auto; }
+.how-it-works-section { padding: clamp(48px, 6vh, 80px) 4vw clamp(64px, 9vh, 120px) 4vw; background-color: var(--bg-base); max-width: 1280px; margin: 0 auto; }
 .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; }
 .steps-grid::before { content: ''; position: absolute; top: 40px; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.12), transparent); z-index: 0; }
 [data-theme="dark"] .steps-grid::before { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent); }
@@ -728,7 +795,7 @@ h1 {
 
 /* --- SECCIÓN ESPECIALISTAS (CORREGIDA) --- */
 .specialists-section { 
-  padding: 120px 4vw; /* Espaciado simétrico arriba y abajo */
+  padding: clamp(64px, 9vh, 120px) 4vw; /* Espaciado simétrico arriba y abajo */
   background-color: transparent; /* Fluye de manera natural con el fondo del sitio */
 }
 
@@ -754,7 +821,7 @@ h1 {
 .specialist-card h3 { font-size: 1.2rem; color: var(--text-main); font-weight: 700; }
 .specialist-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; flex-grow: 1; }
 
-.testimonials-section { padding: 120px 4vw; background-color: var(--bg-base); }
+.testimonials-section { padding: clamp(64px, 9vh, 120px) 4vw; background-color: var(--bg-base); }
 .testimonials-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .testimonial-card {
   background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -773,13 +840,13 @@ h1 {
   .steps-grid::before { display: none; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .steps-grid, .specialists-grid, .testimonials-grid { grid-template-columns: 1fr; gap: 32px; }
   .specialists-section { border-radius: 40px 40px 0 0; padding: 80px 4vw; }
   .testimonial-card, .specialist-card { padding: 32px 24px; }
 }
 
-.faq-section { padding: 100px 4vw; background-color: var(--bg-base); max-width: 800px; margin: 0 auto; }
+.faq-section { padding: clamp(56px, 8vh, 100px) 4vw; background-color: var(--bg-base); max-width: 800px; margin: 0 auto; }
 .faq-container { display: flex; flex-direction: column; gap: 16px; }
 .faq-item {
   background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 20px;
@@ -795,12 +862,22 @@ h1 {
 }
 .faq-icon { width: 24px; height: 24px; color: var(--text-muted); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; margin-left: 16px; }
 .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--brand-blue); }
-.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+/* El legacy abría la respuesta por JS (maxHeight = scrollHeight). En React esa
+   parte no existe, así que la respuesta quedaba siempre en max-height: 0.
+   Con grid 0fr -> 1fr anima hasta la altura real, sin número mágico que la
+   recorte si el texto crece. */
+.faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+.faq-item.active .faq-answer { grid-template-rows: 1fr; }
+.faq-answer > div { overflow: hidden; min-height: 0; }
 .faq-answer p { padding: 0 24px 24px 24px; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-answer { transition: none; }
+}
 
 /* --- SECCIÓN CTA Y AJUSTES DE COLOR --- */
 .cta-section { 
-  padding: 60px 4vw 120px 4vw; 
+  padding: clamp(40px, 5vh, 60px) 4vw clamp(64px, 9vh, 120px) 4vw;
   max-width: 1280px; 
   margin: 0 auto; 
 }
@@ -924,7 +1001,7 @@ h1 {
 }
 
 /* Responsividad general del CTA */
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .cta-container { padding: 60px 24px; border-radius: 32px; }
   .cta-actions { flex-direction: column; width: 100%; }
   .cta-actions a { width: 100%; }
@@ -996,7 +1073,7 @@ h1 {
   .brand-col { grid-column: span 2; padding-right: 0; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .mente-footer { padding: 60px 4vw 30px 4vw; }
   .footer-container { grid-template-columns: 1fr; gap: 32px; }
   .brand-col { grid-column: span 1; }

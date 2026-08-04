@@ -5,6 +5,8 @@ import App from './App';
 import './styles/home.css';
 import './styles/app.css';
 import './styles/auth.css';
+import './styles/terapia.css';
+import './styles/botiquin.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
