@@ -81,11 +81,23 @@ function ResourceCard({ recurso, onClick }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden'
       }}>
+        {recurso.imagenPortadaUrl ? (
+          <img 
+            src={recurso.imagenPortadaUrl} 
+            alt={recurso.titulo} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        ) : (
+          <Icon style={{ width: '48px', height: '48px', color: 'rgba(255,255,255,0.85)' }} strokeWidth={1.5} />
+        )}
+
         {/* Type pill top-left */}
         <div style={{
-           position: 'absolute', top: '16px', left: '16px',
-           background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(4px)',
+           position: 'absolute', top: '16px', left: '16px', zIndex: 2,
+           background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)',
            color: 'white', fontSize: '0.65rem', fontWeight: 800, padding: '4px 10px',
            borderRadius: '100px', letterSpacing: '0.05em'
         }}>
@@ -93,7 +105,7 @@ function ResourceCard({ recurso, onClick }) {
         </div>
         {/* Heart icon top-right */}
         <button style={{
-           position: 'absolute', top: '16px', right: '16px',
+           position: 'absolute', top: '16px', right: '16px', zIndex: 2,
            background: 'rgba(255,255,255,0.9)', border: 'none',
            width: '28px', height: '28px', borderRadius: '50%',
            display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -102,12 +114,9 @@ function ResourceCard({ recurso, onClick }) {
            <span style={{ fontSize: '14px' }}>♡</span>
         </button>
 
-        {/* Center Icon */}
-        <Icon style={{ width: '48px', height: '48px', color: 'rgba(255,255,255,0.85)' }} strokeWidth={1.5} />
-
         {/* Recomendado Pill */}
         <div style={{
-           position: 'absolute', bottom: '-12px', left: '20px',
+           position: 'absolute', bottom: '-12px', left: '20px', zIndex: 2,
            background: 'white', border: '1px solid rgba(0,0,0,0.05)',
            borderRadius: '100px', padding: '4px 10px',
            fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-main)',
@@ -245,15 +254,15 @@ function ResourceModal({ recurso, onClose }) {
       >
         <button 
           onClick={onClose}
-          className="absolute top-5 right-5 z-10 w-[38px] h-[38px] rounded-full border-none bg-black/5 hover:bg-black/10 text-gray-800 flex items-center justify-center transition-colors"
+          className="absolute top-5 right-5 z-10 w-[38px] h-[38px] rounded-full border-none bg-black/5 hover:bg-black/10 text-gray-800 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X strokeWidth={2} style={{ width: '16px', height: '16px' }} />
         </button>
 
-        {/* Modal Top */}
-        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 mb-8">
+        {/* Modal Top Header */}
+        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 mb-6">
           <div 
-            className="h-[200px] md:h-[280px] rounded-3xl flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
+            className="h-[180px] md:h-[240px] rounded-3xl flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
             style={{ background: config.bg || config.color }}
           >
              <Icon style={{ width: '64px', height: '64px', color: 'rgba(255,255,255,0.92)' }} strokeWidth={1.5} />
@@ -276,7 +285,7 @@ function ResourceModal({ recurso, onClose }) {
               Por <strong className="text-gray-900">{recurso.autor}</strong> · {recurso.editorial} · {recurso.anio}
             </p>
             
-            <div className="flex items-center gap-4 text-[0.86rem] text-gray-500 mt-2">
+            <div className="flex items-center gap-4 text-[0.86rem] text-gray-500 mt-1">
                <span className="flex items-center gap-1"><Download style={{ width: '14px', height: '14px' }}/> {Math.floor(recurso.vistas / 2)} descargas</span>
             </div>
 
@@ -285,54 +294,84 @@ function ResourceModal({ recurso, onClose }) {
                 onClick={handleAction}
                 className="h-11 px-6 rounded-full text-[0.88rem] font-bold border-none cursor-pointer transition-transform bg-blue-600 text-white shadow-[0_8px_18px_rgba(62,123,250,0.25)] hover:bg-blue-700 hover:scale-[1.02] flex items-center justify-center gap-2"
               >
-                {recurso.tipo === 'video' || recurso.tipo === 'podcast' ? 'Ver contenido' : 'Descargar'}
+                {recurso.tipo === 'video' || recurso.tipo === 'podcast' ? 'Escuchar / Ver en Vivo' : 'Descargar PDF'}
               </button>
-              <button className="w-11 h-11 rounded-full inline-flex items-center justify-center border border-black/10 bg-white/60 text-gray-800 cursor-pointer transition-colors hover:bg-black/5">
-                <span className="text-[17px]">♡</span>
-              </button>
-              <button className="w-11 h-11 rounded-full inline-flex items-center justify-center border border-black/10 bg-white/60 text-gray-800 cursor-pointer transition-colors hover:bg-black/5">
-                <ExternalLink style={{ width: '17px', height: '17px' }} />
-              </button>
+              {recurso.url && recurso.url !== '#' && (
+                <a
+                  href={recurso.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-11 px-5 rounded-full inline-flex items-center justify-center gap-2 border border-black/10 bg-white/80 text-gray-800 text-xs font-bold cursor-pointer transition-colors hover:bg-black/5 text-decoration-none"
+                >
+                  <ExternalLink style={{ width: '15px', height: '15px' }} /> Abrir Enlace
+                </a>
+              )}
             </div>
           </div>
         </div>
 
+        {/* Embedded Spotify Player if Podcast */}
+        {recurso.tipo === 'podcast' && (
+          <div className="mb-6 w-full rounded-2xl overflow-hidden shadow-md border border-black/10 bg-black/5">
+            <iframe
+              src={recurso.spotifyEmbedUrl || "https://open.spotify.com/embed/show/4rOoJ6Egrf8K2I8jTFTT03?utm_source=generator"}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              title="Spotify Player"
+            ></iframe>
+          </div>
+        )}
+
+        {/* Embedded YouTube Player if Video */}
+        {recurso.tipo === 'video' && (
+          <div className="mb-6 w-full aspect-video rounded-2xl overflow-hidden shadow-md border border-black/10 bg-black">
+            <iframe
+              src={recurso.youtubeEmbedUrl || "https://www.youtube.com/embed/gz4G31LGyog"}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="YouTube Video Player"
+            ></iframe>
+          </div>
+        )}
+
         {/* Sections */}
-        <div className="mb-7">
-          <h4 className="text-[0.95rem] font-bold mb-2.5 text-gray-900">Descripción</h4>
-          <p className="text-[0.95rem] leading-[1.7] text-gray-500">
+        <div className="mb-6">
+          <h4 className="text-[0.95rem] font-bold mb-2 text-gray-900">Descripción</h4>
+          <p className="text-[0.92rem] leading-[1.65] text-gray-600">
             {recurso.descripcion}
           </p>
         </div>
 
-        <div className="mb-7">
-          <h4 className="text-[0.95rem] font-bold mb-3.5 text-gray-900">Información del recurso</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6">
+        <div className="mb-6">
+          <h4 className="text-[0.95rem] font-bold mb-3 text-gray-900">Ficha del recurso</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 bg-white/50 border border-white/80 p-4 rounded-2xl">
             <div className="flex flex-col gap-0.5">
-              <span className="text-[0.72rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Autor</span>
-              <span className="text-[0.9rem] text-gray-800 font-semibold">{recurso.autor}</span>
+              <span className="text-[0.68rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Autor</span>
+              <span className="text-[0.85rem] text-gray-800 font-semibold">{recurso.autor}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-[0.72rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Editorial</span>
-              <span className="text-[0.9rem] text-gray-800 font-semibold">{recurso.editorial}</span>
+              <span className="text-[0.68rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Editorial</span>
+              <span className="text-[0.85rem] text-gray-800 font-semibold">{recurso.editorial}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-[0.72rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Idioma</span>
-              <span className="text-[0.9rem] text-gray-800 font-semibold">Español</span>
+              <span className="text-[0.68rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Formato</span>
+              <span className="text-[0.85rem] text-gray-800 font-semibold">{config.label}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-[0.72rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Tipo</span>
-              <span className="text-[0.9rem] text-gray-800 font-semibold">{config.label}</span>
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[0.72rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Acceso</span>
-              <span className="text-[0.9rem] text-gray-800 font-semibold">{recurso.gratis ? "Gratuito" : "De pago"}</span>
+              <span className="text-[0.68rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Acceso</span>
+              <span className="text-[0.85rem] text-gray-800 font-semibold">{recurso.gratis ? "Gratuito" : "De pago"}</span>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 className="text-[0.95rem] font-bold mb-2.5 text-gray-900">Etiquetas</h4>
+          <h4 className="text-[0.95rem] font-bold mb-2 text-gray-900">Etiquetas</h4>
           <div className="flex flex-wrap gap-2">
             {recurso.tags.map(t => (
               <span key={t} className="bg-black/5 text-gray-800 text-[0.68rem] font-bold uppercase tracking-[0.03em] px-[9px] py-[3px] rounded-full">
@@ -359,50 +398,75 @@ export default function ResourceLibrary() {
   const [selectedResource, setSelectedResource] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/recursos-digitales')
-      .then(res => {
+    const fetchApi = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/recursos-digitales');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-          if (!Array.isArray(data)) {
-            throw new Error('La respuesta no es un arreglo de recursos');
-          }
+        const data = await res.json();
+        if (Array.isArray(data)) {
           const mapped = data.map(r => {
-              const tipoBruto = r.tipoContenido?.toLowerCase() || 'guia';
-              let tipoMapped = tipoBruto;
-              if (tipoBruto === 'libros') tipoMapped = 'libro';
-              if (tipoBruto === 'videos') tipoMapped = 'video';
-              if (tipoBruto === 'podcasts') tipoMapped = 'podcast';
-              
-              const allTags = r.categorias && r.categorias.length > 0 
-                ? r.categorias.map(c => c.nombre) 
-                : ['General'];
+            const tipoBruto = r.tipoContenido?.toLowerCase() || 'guia';
+            let tipoMapped = tipoBruto;
+            if (tipoBruto === 'libros' || tipoBruto === 'libro') tipoMapped = 'libro';
+            if (tipoBruto === 'videos' || tipoBruto === 'video') tipoMapped = 'video';
+            if (tipoBruto === 'podcasts' || tipoBruto === 'podcast') tipoMapped = 'podcast';
+            
+            const allTags = r.categorias && r.categorias.length > 0 
+              ? r.categorias.map(c => c.nombre) 
+              : ['Salud Mental'];
 
-              return {
-                  id: r.id.toString(),
-                  tipo: tipoMapped,
-                  titulo: r.titulo,
-                  autor: r.autor,
-                  editorial: 'Abrazamente API',
-                  anio: new Date(r.fechaCreacion || Date.now()).getFullYear(),
-                  tags: allTags,
-                  gratis: !r.esPremium,
-                  url: r.urlContenido,
-                  descargable: true,
-                  descripcion: r.descripcion || 'Material seleccionado por el equipo clínico, pensado para autogestión y acompañamiento integral.',
-                  vistas: r.vistas || Math.floor(Math.random() * 2000) + 1000,
-                  duracion: r.duracionMinutos
-              };
+            let youtubeEmbedUrl = undefined;
+            let spotifyEmbedUrl = undefined;
+
+            if (r.urlContenido) {
+              if (r.urlContenido.includes('youtube.com/watch?v=')) {
+                const videoId = r.urlContenido.split('watch?v=')[1]?.split('&')[0];
+                youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
+              } else if (r.urlContenido.includes('youtu.be/')) {
+                const videoId = r.urlContenido.split('youtu.be/')[1]?.split('?')[0];
+                youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
+              } else if (r.urlContenido.includes('youtube.com/embed/')) {
+                youtubeEmbedUrl = r.urlContenido;
+              }
+
+              if (r.urlContenido.includes('spotify.com/')) {
+                const spotifyPath = r.urlContenido.split('spotify.com/')[1];
+                spotifyEmbedUrl = `https://open.spotify.com/embed/${spotifyPath}`;
+              }
+            }
+
+            return {
+                id: r.id.toString(),
+                tipo: tipoMapped,
+                titulo: r.titulo,
+                autor: r.autor || 'Equipo Clínico',
+                editorial: r.editorial || 'Abrazamente API',
+                anio: new Date(r.fechaCreacion || Date.now()).getFullYear(),
+                tags: allTags,
+                gratis: !r.esPremium,
+                url: r.urlContenido || '#',
+                spotifyEmbedUrl,
+                youtubeEmbedUrl,
+                imagenPortadaUrl: r.imagenPortadaUrl || undefined,
+                descargable: true,
+                descripcion: r.descripcion || 'Material seleccionado por el equipo clínico, pensado para autogestión y acompañamiento integral.',
+                vistas: r.vistas || Math.floor(Math.random() * 2000) + 1000,
+                duracion: r.duracionMinutos || 15
+            };
           });
           setRecursos(mapped);
-          setLoading(false);
-      })
-      .catch(err => {
-          console.error('Error fetching resources:', err);
-          setRecursos([]); // Evitar que falle en cascada
-          setLoading(false);
-      });
+        } else {
+          setRecursos([]);
+        }
+      } catch (err) {
+        console.warn('Error fetching API resources:', err);
+        setRecursos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApi();
   }, []);
 
   const recursosFiltered = useMemo(() => {
@@ -474,54 +538,16 @@ export default function ResourceLibrary() {
             </div>
           </div>
 
-          {/* Quick Format Filter Pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
-            {[
-              { id: 'todos', label: 'Todos los formatos', icon: BookOpen },
-              { id: 'video', label: 'Videos (YouTube)', icon: Video },
-              { id: 'podcast', label: 'Podcasts (Spotify)', icon: Headphones },
-              { id: 'guia', label: 'Guías & Lecturas', icon: FileText },
-              { id: 'protocolo', label: 'Protocolos', icon: ClipboardList },
-            ].map(f => {
-              const active = filtroTipo === f.id;
-              const IconComp = f.icon;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => setFiltroTipo(f.id)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    padding: '8px 16px',
-                    borderRadius: '100px',
-                    border: active ? `1.5px solid ${BRAND.blue}` : '1px solid rgba(255,255,255,0.8)',
-                    background: active ? 'rgba(62,123,250,0.14)' : 'rgba(255,255,255,0.6)',
-                    color: active ? BRAND.blue : 'var(--text-main)',
-                    backdropFilter: 'blur(12px)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <IconComp style={{ width: '14px', height: '14px' }} />
-                  <span>{f.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Stat pills */}
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '18px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
               <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.blue }}>{recursosFiltered.length}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{recursosFiltered.length === 1 ? 'Recurso visible' : 'Recursos visibles'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
-              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.orange }}>28</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Temáticas</span>
+              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.orange }}>{[...new Set(recursos.flatMap(r => r.tags))].length}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Temáticas</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
-              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.teal }}>{statGratis}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Gratuitos</span>
+              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.teal }}>{recursos.filter(r => r.gratis).length}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Gratuitos</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
               <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.purple }}>100%</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Curado por clínicos</span>

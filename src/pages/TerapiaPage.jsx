@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useReveal } from '../hooks/useReveal';
-import { especialistas, orientacionGuia } from '../features/therapy/therapyData';
+import { orientacionGuia } from '../features/therapy/therapyData';
 import TherapistCard from '../features/therapy/TherapistCard';
 import TherapistFilters from '../features/therapy/TherapistFilters';
 import TherapistModal from '../features/therapy/TherapistModal';
@@ -87,8 +87,41 @@ function OrientacionSection() {
 
 export default function TerapiaPage() {
   useReveal();
+  const [especialistas, setEspecialistas] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [seleccionado, setSeleccionado] = useState(null);
+
+  useEffect(() => {
+    const fetchEspecialistas = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/profesionales');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setEspecialistas(data.map(p => ({
+            id: p.id,
+            nombre: p.nombre || `${p.nombres || ''} ${p.apellidos || ''}`.trim(),
+            sexo: p.sexo || 'Mujer',
+            especialidad: p.especialidad || 'Psicología Clínica',
+            terapia: p.terapia || 'Terapia General',
+            descripcion: p.descripcion || p.biografia || 'Profesional certificado de la salud mental.',
+            enfoque: p.enfoque || 'Acompañamiento personalizado basado en evidencia.',
+            comentarios: p.comentarios || []
+          })));
+        } else {
+          setEspecialistas([]);
+        }
+      } catch (err) {
+        console.warn('Error al cargar profesionales desde la API:', err);
+        setEspecialistas([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEspecialistas();
+  }, []);
 
   const filtrados = useMemo(() => {
     const texto = filtros.texto.trim().toLowerCase();
@@ -98,7 +131,7 @@ export default function TerapiaPage() {
       && (!filtros.terapia || esp.terapia === filtros.terapia)
       && (!filtros.sexo || esp.sexo === filtros.sexo)
     ));
-  }, [filtros]);
+  }, [filtros, especialistas]);
 
   return (
     <div className="terapia-page">
