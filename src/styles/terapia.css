@@ -13,10 +13,11 @@
 .terapia-hero {
   position: relative;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 120px 4vw 72px;
+  /* grid en vez de flex: centrando con flex el contenido se colaba bajo el
+     header fijo en pantallas de 800px de alto, ignorando el padding superior */
+  display: grid;
+  place-items: center;
+  padding: clamp(104px, 15vh, 120px) 4vw clamp(48px, 9vh, 72px);
   overflow: hidden;
 }
 
@@ -37,33 +38,43 @@
 .terapia-page .community-orbit {
   position: relative;
   width: min(390px, 74vw);
-  height: min(390px, 74vw);
+  /* aspect-ratio + flex-shrink:0: bajo 500px la tarjeta pasa a columna y el
+     círculo se aplastaba a 278x214, dejando de ser redondo */
+  aspect-ratio: 1;
+  flex-shrink: 0;
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.18) 58%, transparent 68%);
 }
 
+/* Toda la órbita es proporcional al contenedor: antes los avatares medían
+   118/72px fijos y las líneas 150/138/120px, así que al encoger la pantalla el
+   avatar central ocupaba el 42% del círculo y las líneas quedaban sueltas.
+   Los satélites van sobre el anillo ::before, separados 120°, y cada línea es
+   un radio anclado en el centro que apunta a uno de ellos. */
 .terapia-page .community-orbit::before,
 .terapia-page .community-orbit::after {
   content: "";
   position: absolute;
-  inset: 12%;
+  inset: 16%; /* radio 34%: el mismo en el que se sitúan los satélites */
   border-radius: 50%;
   border: 1px solid rgba(134, 134, 139, 0.22);
 }
 
 .terapia-page .community-orbit::after {
-  inset: 26%;
+  inset: 30%;
   border-style: dashed;
 }
 
 .terapia-page .community-avatar {
   position: absolute;
-  width: 72px;
-  height: 72px;
+  width: 19%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: clamp(0.78rem, 3.4vw, 1.05rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   color: white;
@@ -72,30 +83,32 @@
 }
 
 .terapia-page .avatar-main {
-  width: 118px;
-  height: 118px;
+  width: 30%;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
   background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
-  font-size: 1.6rem;
+  font-size: clamp(1.05rem, 5.5vw, 1.6rem);
 }
 
-.terapia-page .avatar-one { left: 8%; top: 22%; background: linear-gradient(135deg, var(--brand-blue), var(--brand-teal)); }
-.terapia-page .avatar-two { right: 7%; top: 28%; background: linear-gradient(135deg, var(--brand-orange), var(--brand-purple)); }
-.terapia-page .avatar-three { left: 36%; bottom: 4%; background: linear-gradient(135deg, var(--brand-teal), var(--brand-blue)); }
+/* 130°, 10° y 250°: exactamente 120° entre sí sobre el anillo de radio 34% */
+.terapia-page .avatar-one { left: 28.2%; top: 24%; background: linear-gradient(135deg, var(--brand-blue), var(--brand-teal)); }
+.terapia-page .avatar-two { left: 83.5%; top: 44.1%; background: linear-gradient(135deg, var(--brand-orange), var(--brand-purple)); }
+.terapia-page .avatar-three { left: 38.4%; top: 82%; background: linear-gradient(135deg, var(--brand-teal), var(--brand-blue)); }
 
 .terapia-page .community-line {
   position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34%;
   height: 2px;
   background: linear-gradient(90deg, transparent, rgba(62, 123, 250, 0.35), transparent);
   transform-origin: left center;
   z-index: 1;
 }
 
-.terapia-page .line-one { width: 150px; left: 27%; top: 38%; transform: rotate(28deg); }
-.terapia-page .line-two { width: 138px; left: 49%; top: 42%; transform: rotate(-21deg); }
-.terapia-page .line-three { width: 120px; left: 43%; bottom: 34%; transform: rotate(88deg); }
+.terapia-page .line-one { transform: rotate(-130deg); }
+.terapia-page .line-two { transform: rotate(-10deg); }
+.terapia-page .line-three { transform: rotate(110deg); }
 
 .terapia-stats .feat-card {
   backdrop-filter: blur(18px);

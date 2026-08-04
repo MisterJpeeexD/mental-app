@@ -89,6 +89,7 @@ export default function App() {
                 <FeatureLayout
                   title="Tu Diario Emocional Express"
                   description="Monitorea tu estado de ánimo de forma privada."
+                  tone="adaptive"
                   fallback={<CardSkeleton count={2} label="Cargando diario emocional" />}
                 >
                   <MoodTracker />

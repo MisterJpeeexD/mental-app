@@ -594,7 +594,7 @@ h1 {
 }
 [data-theme="dark"] .center-heart-orb { background: #2C2C2E; }
 
-.heart-icon { width: 24px; color: var(--brand-orange); }
+.heart-icon { display: block; width: 26px; height: 26px; color: var(--brand-orange); }
 
 .apple-tooltip {
   position: fixed;
