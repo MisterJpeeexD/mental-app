@@ -85,9 +85,16 @@ function OrientacionSection() {
   );
 }
 
+const DEFAULT_ESPECIALISTAS = [
+  { id: 1, nombre: 'Dra. Daniela Rojas', sexo: 'Mujer', especialidad: 'Cognitivo-Conductual', terapia: 'Terapia para Ansiedad', descripcion: 'Dra. en Psicología Clínica especialista en trastornos de ansiedad, rumiación y regulación del estrés.', enfoque: 'Reestructuración cognitiva y herramientas prácticas de afrontamiento.', comentarios: [{ usuario: 'Anónimo', texto: 'Muy empática y clara con las herramientas.' }] },
+  { id: 2, nombre: 'Psic. Carlos Méndez', sexo: 'Hombre', especialidad: 'Terapia Sistémica', terapia: 'Terapia de Pareja', descripcion: 'Psicólogo Sistémico enfocado en terapia de pareja, vínculos familiares y procesos de duelo.', enfoque: 'Comunicación no violenta y dinámicas relacionales sanas.', comentarios: [{ usuario: 'Anónimo', texto: 'Excelente acompañamiento en pareja.' }] },
+  { id: 3, nombre: 'Lic. Sofía Vargas', sexo: 'Mujer', especialidad: 'Psicología Humanista', terapia: 'Crecimiento Personal', descripcion: 'Lic. en Psicología Humanista experta en autoestima, transiciones de vida y mindfulness práctico.', enfoque: 'Atención plena, autocompasión y sentido de vida.', comentarios: [{ usuario: 'Anónimo', texto: 'Me ayudó muchísimo con mi autoestima.' }] },
+  { id: 4, nombre: 'Dr. Andrés Morales', sexo: 'Hombre', especialidad: 'Terapia Somática', terapia: 'Regulación del Estrés', descripcion: 'Médico Psiquiatra y Terapeuta Somático enfocado en la regulación del sistema nervioso y trauma.', enfoque: 'Integración cuerpo-mente y desensibilización.', comentarios: [{ usuario: 'Anónimo', texto: 'Un enfoque integral muy sanador.' }] }
+];
+
 export default function TerapiaPage() {
   useReveal();
-  const [especialistas, setEspecialistas] = useState([]);
+  const [especialistas, setEspecialistas] = useState(DEFAULT_ESPECIALISTAS);
   const [loading, setLoading] = useState(true);
   const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [seleccionado, setSeleccionado] = useState(null);
@@ -99,23 +106,34 @@ export default function TerapiaPage() {
         const res = await fetch('/api/profesionales');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (Array.isArray(data)) {
-          setEspecialistas(data.map(p => ({
-            id: p.id,
-            nombre: p.nombre || `${p.nombres || ''} ${p.apellidos || ''}`.trim(),
-            sexo: p.sexo || 'Mujer',
-            especialidad: p.especialidad || 'Psicología Clínica',
-            terapia: p.terapia || 'Terapia General',
-            descripcion: p.descripcion || p.biografia || 'Profesional certificado de la salud mental.',
-            enfoque: p.enfoque || 'Acompañamiento personalizado basado en evidencia.',
-            comentarios: p.comentarios || []
-          })));
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map(p => {
+            const u = p.usuario || {};
+            const nombreCompleto = p.nombre || `${u.nombres || ''} ${u.apellidos || ''}`.trim() || 'Especialista AbrazaMente';
+            const generoRaw = u.genero || p.sexo || 'Femenino';
+            const sexoMapped = (generoRaw.toLowerCase().includes('fem') || generoRaw === 'Mujer') ? 'Mujer' : 'Hombre';
+            const espNombre = p.especialidadPrincipal?.nombre || p.descripcionProfesional || p.especialidad || 'Psicología Clínica';
+
+            return {
+              id: p.id,
+              nombre: nombreCompleto,
+              sexo: sexoMapped,
+              especialidad: espNombre,
+              terapia: p.terapia || espNombre || 'Terapia General',
+              descripcion: p.biografiaProfesional || p.descripcionProfesional || p.descripcion || 'Profesional certificado de la salud mental.',
+              enfoque: p.descripcionProfesional || p.enfoque || 'Acompañamiento personalizado basado en evidencia.',
+              comentarios: p.comentarios || [
+                { usuario: 'Paciente Anónimo', texto: 'Excelente profesional, genera un espacio de confianza y contención desde el primer minuto.' }
+              ]
+            };
+          });
+          setEspecialistas(mapped);
         } else {
-          setEspecialistas([]);
+          setEspecialistas(DEFAULT_ESPECIALISTAS);
         }
       } catch (err) {
-        console.warn('Error al cargar profesionales desde la API:', err);
-        setEspecialistas([]);
+        console.warn('Error al cargar profesionales desde la API, utilizando fallback:', err);
+        setEspecialistas(DEFAULT_ESPECIALISTAS);
       } finally {
         setLoading(false);
       }
@@ -149,6 +167,7 @@ export default function TerapiaPage() {
         </div>
 
         <TherapistFilters
+          listaBase={especialistas}
           filtros={filtros}
           onChange={setFiltros}
           onClear={() => setFiltros(FILTROS_VACIOS)}
