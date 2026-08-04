@@ -120,12 +120,16 @@ export default function TherapistModal({ especialista, onClose }) {
             <div className="terapia-modal-section">
               <h4>Comentarios anónimos</h4>
               <ul className="testimonial-list">
-                {especialista.comentarios.map((comentario, index) => (
-                  <li key={comentario}>
-                    “{comentario}”
-                    <span className="testimonial-author">— Comentario anónimo #{index + 1}</span>
-                  </li>
-                ))}
+                {Array.isArray(especialista?.comentarios) && especialista.comentarios.map((comentario, index) => {
+                  const textVal = typeof comentario === 'string' ? comentario : (comentario?.texto || comentario?.comentario || 'Excelente profesional.');
+                  const authorVal = typeof comentario === 'object' && comentario?.usuario ? comentario.usuario : `Comentario anónimo #${index + 1}`;
+                  return (
+                    <li key={index}>
+                      “{textVal}”
+                      <span className="testimonial-author">— {authorVal}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 

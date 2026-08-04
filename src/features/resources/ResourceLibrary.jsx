@@ -396,8 +396,15 @@ function ResourceModal({ recurso, onClose }) {
   );
 }
 
+const DEFAULT_RECURSOS = [
+  { id: '1', tipo: 'podcast', titulo: 'Episodio 12: Superando el Síndrome del Impostor', autor: 'Dra. Camila Rojas & Lic. Andrés Fuenzalida', editorial: 'AbrazaMente Podcast', anio: 2026, tags: ['Autoestima', 'Burnout'], gratis: true, url: 'https://open.spotify.com/show/4rOoJ6Egrf8K2I8jTFTT03', spotifyEmbedUrl: 'https://open.spotify.com/embed/show/4rOoJ6Egrf8K2I8jTFTT03', descargable: true, descripcion: 'Conversación profunda sobre la autoexigencia desmedida y reprogramación de la voz crítica interna.', vistas: 2890, duracion: 32 },
+  { id: '2', tipo: 'video', titulo: 'Técnica de Respiración Guiada 4-7-8 en HD', autor: 'Lic. Fernanda Muñoz', editorial: 'AbrazaMente Videos', anio: 2026, tags: ['Ansiedad', 'Sueño'], gratis: true, url: 'https://www.youtube.com/watch?v=gz4G31LGyog', youtubeEmbedUrl: 'https://www.youtube.com/embed/gz4G31LGyog', descargable: true, descripcion: 'Video guiado paso a paso para activar el sistema parasimpático y conciliar el sueño.', vistas: 4420, duracion: 10 },
+  { id: '3', tipo: 'libro', titulo: 'Manual de Terapia de Aceptación y Compromiso (ACT)', autor: 'Dra. Valentina Soto', editorial: 'Editorial AbrazaMente', anio: 2026, tags: ['Autoestima', 'Psicología'], gratis: true, url: 'https://openlibrary.org', descargable: true, descripcion: 'Libro digital estructurado sobre la flexibilidad psicológica, valores de vida y la defusión cognitiva.', vistas: 1610, duracion: 180 },
+  { id: '4', tipo: 'guia', titulo: 'Guía Práctica para la Gestión Integral de Ansiedad', autor: 'Equipo Clínico AbrazaMente', editorial: 'AbrazaMente Clínico', anio: 2026, tags: ['Ansiedad', 'Crisis'], gratis: true, url: 'https://openlibrary.org', descargable: true, descripcion: 'Manual estructurado con registros diarios, escala de angustia y herramientas cognitivo-conductuales.', vistas: 3450, duracion: 25 }
+];
+
 export default function ResourceLibrary() {
-  const [recursos, setRecursos] = useState([]);
+  const [recursos, setRecursos] = useState(DEFAULT_RECURSOS);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -414,7 +421,7 @@ export default function ResourceLibrary() {
         const res = await fetch('/api/recursos-digitales');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map(r => {
             const tipoBruto = r.tipoContenido?.toLowerCase() || 'guia';
             let tipoMapped = tipoBruto;
@@ -473,11 +480,11 @@ export default function ResourceLibrary() {
           );
           setRecursos(uniqueMapped);
         } else {
-          setRecursos([]);
+          setRecursos(DEFAULT_RECURSOS);
         }
       } catch (err) {
-        console.warn('Error fetching API resources:', err);
-        setRecursos([]);
+        console.warn('Error fetching API resources, cargando fallback:', err);
+        setRecursos(DEFAULT_RECURSOS);
       } finally {
         setLoading(false);
       }
