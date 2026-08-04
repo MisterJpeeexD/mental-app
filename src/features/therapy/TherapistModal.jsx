@@ -57,11 +57,28 @@ export default function TherapistModal({ especialista, onClose }) {
   const handleConfirmarReserva = (e) => {
     e.preventDefault();
     setConfirmado(true);
+
+    const nuevaSesion = {
+      id: Date.now(),
+      terapeutaNombre: especialista.nombre,
+      especialidad: especialista.especialidad,
+      fecha,
+      hora,
+      estado: 'Confirmada'
+    };
+
+    try {
+      const locales = JSON.parse(localStorage.getItem('mental-app-sesiones') || '[]');
+      localStorage.setItem('mental-app-sesiones', JSON.stringify([nuevaSesion, ...locales]));
+    } catch (err) {
+      console.warn('Error guardando sesión local:', err);
+    }
+
     setTimeout(() => {
       setConfirmado(false);
       setAgendando(false);
       onClose();
-    }, 2800);
+    }, 2500);
   };
 
   return (

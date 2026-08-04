@@ -19,11 +19,27 @@ export default function ProfilePage() {
   const [loadingSesiones, setLoadingSesiones] = useState(true);
 
   useEffect(() => {
+    const getLocalSesiones = () => {
+      try {
+        return JSON.parse(localStorage.getItem('mental-app-sesiones') || '[]');
+      } catch {
+        return [];
+      }
+    };
+
     if (user) {
       apiRequest('/api/sesiones/mis-sesiones')
-        .then(data => { setSesiones(data); setLoadingSesiones(false); })
-        .catch(() => setLoadingSesiones(false));
+        .then(data => { 
+          const combined = Array.isArray(data) && data.length > 0 ? data : getLocalSesiones();
+          setSesiones(combined); 
+          setLoadingSesiones(false); 
+        })
+        .catch(() => {
+          setSesiones(getLocalSesiones());
+          setLoadingSesiones(false);
+        });
     } else {
+      setSesiones(getLocalSesiones());
       setLoadingSesiones(false);
     }
   }, [user]);
