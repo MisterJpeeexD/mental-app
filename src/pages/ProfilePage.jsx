@@ -44,6 +44,20 @@ export default function ProfilePage() {
     }
   }, [user]);
 
+  const handleCancelarSesion = (id) => {
+    if (!window.confirm('¿Estás seguro de que deseas cancelar esta cita de terapia?')) return;
+    
+    setSesiones(prev => prev.map(s => s.id === id ? { ...s, estado: 'CANCELADA' } : s));
+
+    try {
+      const locales = JSON.parse(localStorage.getItem('mental-app-sesiones') || '[]');
+      const actualizadas = locales.map(s => s.id === id ? { ...s, estado: 'CANCELADA' } : s);
+      localStorage.setItem('mental-app-sesiones', JSON.stringify(actualizadas));
+    } catch (err) {
+      console.warn('Error cancelando sesión local:', err);
+    }
+  };
+
   const initials = `${user?.nombres?.[0] || ''}${user?.apellidos?.[0] || ''}`.toUpperCase();
 
   return (
@@ -233,33 +247,48 @@ export default function ProfilePage() {
                 }}>
                   <div>
                     <h3 style={{ margin: '0 0 4px', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                      Sesión con {sesion.profesionalNombre}
+                      Sesión con {sesion.terapeutaNombre || sesion.profesionalNombre || 'Especialista'}
                     </h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                       <Clock style={{ width: '13px', height: '13px' }} />
-                      {new Date(sesion.fechaHora).toLocaleString('es-CL', { dateStyle: 'medium', timeStyle: 'short' })}
+                      {sesion.fecha ? `${sesion.fecha} ${sesion.hora || ''}` : new Date(sesion.fechaHora || Date.now()).toLocaleString('es-CL', { dateStyle: 'medium', timeStyle: 'short' })}
                     </div>
                     <span style={{
                       display: 'inline-block', marginTop: '8px', padding: '3px 10px', borderRadius: '100px',
                       fontSize: '0.7rem', fontWeight: 800,
-                      background: sesion.estado === 'PENDIENTE' ? 'rgba(255,138,101,0.15)' : 'rgba(77,208,225,0.15)',
-                      color: sesion.estado === 'PENDIENTE' ? '#c75e35' : '#009aab',
+                      background: sesion.estado === 'CANCELADA' ? 'rgba(239,68,68,0.15)' : sesion.estado === 'PENDIENTE' ? 'rgba(255,138,101,0.15)' : 'rgba(77,208,225,0.15)',
+                      color: sesion.estado === 'CANCELADA' ? '#dc2626' : sesion.estado === 'PENDIENTE' ? '#c75e35' : '#009aab',
                     }}>
                       {sesion.estado}
                     </span>
                   </div>
-                  {sesion.teamsMeetingUrl && sesion.estado === 'PENDIENTE' && (
-                    <a
-                      href={sesion.teamsMeetingUrl} target="_blank" rel="noopener noreferrer"
-                      style={{
-                        padding: '10px 18px', background: '#5B5FC7', color: 'white', borderRadius: '14px',
-                        textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700,
-                        boxShadow: '0 4px 12px rgba(91,95,199,0.3)', whiteSpace: 'nowrap',
-                      }}
-                    >
-                      Unirse por Teams
-                    </a>
-                  )}
+
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    {sesion.teamsMeetingUrl && sesion.estado !== 'CANCELADA' && (
+                      <a
+                        href={sesion.teamsMeetingUrl} target="_blank" rel="noopener noreferrer"
+                        style={{
+                          padding: '8px 16px', background: '#5B5FC7', color: 'white', borderRadius: '12px',
+                          textDecoration: 'none', fontSize: '0.82rem', fontWeight: 700,
+                          boxShadow: '0 4px 12px rgba(91,95,199,0.3)', whiteSpace: 'nowrap',
+                        }}
+                      >
+                        Unirse por Teams
+                      </a>
+                    )}
+                    {sesion.estado !== 'CANCELADA' && (
+                      <button
+                        onClick={() => handleCancelarSesion(sesion.id)}
+                        style={{
+                          padding: '8px 14px', background: 'rgba(239,68,68,0.1)', color: '#dc2626',
+                          border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px',
+                          fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
+                        }}
+                      >
+                        Cancelar Cita
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

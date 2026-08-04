@@ -65,8 +65,8 @@ public class SecurityConfig {
                                 "/botiquin/breathing", "/botiquin/grounding",
                                 "/assets/**", "/legacy/**", "/favicon.ico", "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth/login", "/admin/recursos/sync").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/recursos-digitales", "/api/recursos-digitales/**", "/api/profesionales", "/api/profesionales/**", "/api/foros", "/api/foros/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth/login", "/admin/recursos/sync", "/sesiones", "/api/sesiones").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/recursos-digitales", "/api/recursos-digitales/**", "/api/profesionales", "/api/profesionales/**", "/api/foros", "/api/foros/**", "/sesiones/**", "/api/sesiones/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/**").hasAnyRole("USUARIO", "ADMIN")
