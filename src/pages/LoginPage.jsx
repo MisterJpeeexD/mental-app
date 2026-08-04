@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Lock, Mail } from 'lucide-react';
 import AuthVisual from '../components/layout/AuthVisual';
 import FieldError from '../components/common/FieldError';
+import RequiredMark from '../components/common/RequiredMark';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -46,12 +48,12 @@ export default function LoginPage() {
           <div className="auth-card-heading"><span>Bienvenido de vuelta</span><h2>Inicia sesión</h2><p>Ingresa con el correo asociado a tu cuenta.</p></div>
           {serverError && <div className="form-alert form-alert--error" role="alert">{serverError}</div>}
           <form className="auth-form" onSubmit={handleSubmit} noValidate>
-            <label className="auth-field">Correo electrónico
-              <div className={`auth-input ${errors.email ? 'invalid' : ''}`}><span aria-hidden="true">✉</span><input type="email" autoComplete="email" placeholder="correo@ejemplo.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+            <label className="auth-field"><span className="auth-field__label">Correo electrónico<RequiredMark /></span>
+              <div className={`auth-input ${errors.email ? 'invalid' : ''}`}><Mail className="auth-input__icon" aria-hidden="true" /><input type="email" autoComplete="email" placeholder="correo@ejemplo.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
               <FieldError message={errors.email} />
             </label>
-            <label className="auth-field">Contraseña
-              <div className={`auth-input ${errors.password ? 'invalid' : ''}`}><span aria-hidden="true">●</span><input type="password" autoComplete="current-password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
+            <label className="auth-field"><span className="auth-field__label">Contraseña<RequiredMark /></span>
+              <div className={`auth-input ${errors.password ? 'invalid' : ''}`}><Lock className="auth-input__icon" aria-hidden="true" /><input type="password" autoComplete="current-password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
               <FieldError message={errors.password} />
             </label>
             <label className="auth-checkbox"><input type="checkbox" checked={form.remember} onChange={(e) => setForm({ ...form, remember: e.target.checked })} /><span>Recordarme en este dispositivo</span></label>

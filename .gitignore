@@ -41,11 +41,11 @@ buildNumber.properties
 .vscode/
 
 # Environments
-#.env
-#.env.local
-#.env.production
-#.env.development
-#.env.staging
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
 
 # Mac Os
 .DS_Store
