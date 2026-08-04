@@ -90,8 +90,9 @@ public class RecursoSyncService {
                     String key = doc.path("key").asText("");
                     String coverId = doc.path("cover_i").asText("");
 
-                    // Evitamos duplicados
-                    if (!recursoRepository.existsByUrlContenido("https://openlibrary.org" + key)) {
+                    // Evitamos duplicados por URL o por Título
+                    String urlLibro = "https://openlibrary.org" + key;
+                    if (!recursoRepository.existsByUrlContenido(urlLibro) && !recursoRepository.existsByTitulo(titulo)) {
                         RecursoDigital recurso = new RecursoDigital();
                         recurso.setTitulo(titulo);
                         recurso.setAutor(autor);

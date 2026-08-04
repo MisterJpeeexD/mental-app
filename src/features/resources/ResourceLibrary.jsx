@@ -166,6 +166,7 @@ function ResourceCard({ recurso, onClick }) {
         {/* Stats */}
         <div style={{ display: 'flex', gap: '12px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
            <span>{recurso.vistas} vistas</span>
+           {recurso.duracion > 0 && <span>· {recurso.duracion} min</span>}
         </div>
 
         {/* Action Buttons */}
@@ -460,11 +461,17 @@ export default function ResourceLibrary() {
                 imagenPortadaUrl: r.imagenPortadaUrl || undefined,
                 descargable: true,
                 descripcion: r.descripcion || 'Material seleccionado por el equipo clínico, pensado para autogestión y acompañamiento integral.',
-                vistas: r.vistas || Math.floor(Math.random() * 2000) + 1000,
-                duracion: r.duracionMinutos || 15
+                vistas: r.vistas ?? 0,
+                duracion: r.duracionMinutos ?? 0
             };
           });
-          setRecursos(mapped);
+          const uniqueMapped = mapped.filter((item, index, self) =>
+            index === self.findIndex(t => 
+              t.titulo.toLowerCase().trim() === item.titulo.toLowerCase().trim() || 
+              (item.url !== '#' && t.url === item.url)
+            )
+          );
+          setRecursos(uniqueMapped);
         } else {
           setRecursos([]);
         }

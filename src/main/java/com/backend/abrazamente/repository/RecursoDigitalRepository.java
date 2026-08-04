@@ -13,4 +13,5 @@ public interface RecursoDigitalRepository extends JpaRepository<RecursoDigital, 
     
     List<RecursoDigital> findByTitulo(String titulo);
     boolean existsByUrlContenido(String urlContenido);
+    boolean existsByTitulo(String titulo);
 }
