@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Cross } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
 
 
@@ -34,6 +35,8 @@ const faqs = [
 ];
 
 function Hero() {
+  const location = useLocation();
+
   return (
     <section className="apple-hero">
       <div className="mesh-background" aria-hidden="true">
@@ -49,6 +52,15 @@ function Hero() {
           <div className="actions">
             <Link to="/registro" className="btn-primary">Comenzar ahora</Link>
             <a href="#ecosistema" className="btn-secondary">Conocer la app</a>
+            <Link
+              to="/botiquin/breathing"
+              state={{ backgroundLocation: location }}
+              className="btn-emergency"
+              aria-label="Botiquín de apoyo inmediato"
+              title="Botiquín de apoyo inmediato"
+            >
+              <Cross aria-hidden="true" strokeWidth={2.5} />
+            </Link>
           </div>
           <div className="feature-cards">
             {['Terapia profesional', 'Herramientas emocionales', 'Comunidad moderada'].map((text, index) => (
@@ -105,7 +117,8 @@ function FAQSection() {
             <button className="faq-question" type="button" aria-expanded={openIndex === index} onClick={() => setOpenIndex(openIndex === index ? -1 : index)}>
               <span>{question}</span><div className="faq-icon">⌄</div>
             </button>
-            <div className="faq-answer"><p>{answer}</p></div>
+            {/* el div interior no lleva padding: es lo que permite colapsar a 0 */}
+            <div className="faq-answer"><div><p>{answer}</p></div></div>
           </div>
         ))}
       </div>
@@ -150,7 +163,7 @@ export default function HomePage() {
           </div>
         </section>
         <FAQSection />
-        <section className="cta-section reveal"><div className="cta-container"><div className="cta-glow glow-blue" /><div className="cta-glow glow-orange" /><div className="cta-content"><h2>Tu bienestar emocional no tiene por qué esperar.</h2><p>Da el primer paso hoy. Crea tu cuenta y comienza a construir una vida más equilibrada con apoyo profesional.</p><div className="cta-actions"><Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link><a href="mailto:hola@menteconecta.cl" className="btn-secondary-dark">Hablar con soporte</a></div></div></div></section>
+        <section className="cta-section reveal"><div className="cta-container"><div className="cta-glow glow-blue" /><div className="cta-glow glow-orange" /><div className="cta-content"><h2>Tu bienestar emocional no tiene por qué esperar.</h2><p>Da el primer paso hoy. Crea tu cuenta y comienza a construir una vida más equilibrada con apoyo profesional.</p><div className="cta-actions"><Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link><a href="mailto:hola@abrazamente.cl" className="btn-secondary-dark">Hablar con soporte</a></div></div></div></section>
       </main>
     </>
   );

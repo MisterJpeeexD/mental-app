@@ -1,5 +1,5 @@
 -- ============================================================================
--- AbrazaMente / MenteConecta - Esquema PostgreSQL consolidado
+-- AbrazaMente - Esquema PostgreSQL consolidado
 -- Migración no destructiva desde MySQL
 -- IMPORTANTE: este script NO elimina ni sobrescribe la base MySQL original.
 -- Ejecutar sobre una base PostgreSQL vacía creada previamente con codificación UTF-8.
@@ -92,7 +92,6 @@ CREATE TABLE IF NOT EXISTS profesionales (
     licencia_profesional VARCHAR(255),
     especialidad_principal_id INTEGER,
     descripcion_profesional TEXT,
-    sexo_profesional varchar(255),
     es_voluntario BOOLEAN DEFAULT FALSE,
     tarifa_sesion DECIMAL(10,2),
     biografia_profesional TEXT,
