@@ -38,7 +38,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/**", "/usuarios", "/auth/**")
+                        .ignoringRequestMatchers("/api/**", "/usuarios", "/auth/**", "/admin/**")
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
@@ -61,9 +61,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/", "/index.html", "/login", "/registro", "/perfil",
+                                "/comunidad", "/recursos", "/professionals", "/journal",
+                                "/botiquin/breathing", "/botiquin/grounding",
                                 "/assets/**", "/legacy/**", "/favicon.ico", "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth/login", "/admin/recursos/sync", "/sesiones", "/api/sesiones").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/recursos-digitales", "/api/recursos-digitales/**", "/api/profesionales", "/api/profesionales/**", "/api/foros", "/api/foros/**", "/sesiones/**", "/api/sesiones/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/**").hasAnyRole("USUARIO", "ADMIN")

@@ -1,11 +1,9 @@
-import { opcionesDe } from './therapyData';
-
-const especialidades = opcionesDe('especialidad');
-const terapias = opcionesDe('terapia');
-const sexos = opcionesDe('sexo');
-
-export default function TherapistFilters({ filtros, onChange, onClear }) {
+export default function TherapistFilters({ listaBase = [], filtros, onChange, onClear }) {
   const update = (campo) => (event) => onChange({ ...filtros, [campo]: event.target.value });
+
+  const especialidades = [...new Set(listaBase.map(e => e.especialidad).filter(Boolean))].sort();
+  const terapias = [...new Set(listaBase.map(e => e.terapia).filter(Boolean))].sort();
+  const sexos = [...new Set(listaBase.map(e => e.sexo).filter(Boolean))].sort();
 
   return (
     <div className="terapia-filters reveal">

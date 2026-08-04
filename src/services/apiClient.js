@@ -37,7 +37,17 @@ export async function apiRequest(path, options = {}) {
       clearToken();
       window.dispatchEvent(new Event('abrazamente:unauthorized'));
     }
-    const message = payload?.mensaje || payload?.message || 'La solicitud no pudo completarse';
+    let message = payload?.mensaje || payload?.message || 'La solicitud no pudo completarse';
+    
+    // Sanitize technical backend messages
+    if (typeof message === 'string') {
+      if (message.includes('Duplicate entry') || message.includes('Unique index or primary key violation')) {
+        message = 'Ya existe una cuenta con estos datos (como el correo o RUT).';
+      } else if (message.includes('SQL') || message.includes('Exception') || message.includes('null')) {
+        message = 'Ha ocurrido un error en el servidor. Por favor, intenta más tarde.';
+      }
+    }
+    
     throw new ApiError(message, response.status, payload);
   }
 
