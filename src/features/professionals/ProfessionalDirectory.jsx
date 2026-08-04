@@ -290,6 +290,36 @@ export default function ProfessionalDirectory() {
         </div>
       </section>
 
+      {/* Quick Filter Pills */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+        {[
+          { label: 'Todos los terapeutas', esp: '', ter: '', sexo: '' },
+          { label: '👩 Terapeuta Mujer', esp: '', ter: '', sexo: 'Mujer' },
+          { label: '👨 Terapeuta Hombre', esp: '', ter: '', sexo: 'Hombre' },
+          { label: '🧠 Psicología Clínica', esp: 'Psicología Clínica', ter: '', sexo: '' },
+          { label: '💬 Terapia de Pareja', esp: 'Terapia de Pareja', ter: '', sexo: '' },
+          { label: '🌱 Psicología Humanista', esp: 'Psicología Humanista', ter: '', sexo: '' },
+        ].map((pill, idx) => {
+          const isActive = filterSexo === pill.sexo && filterEsp === pill.esp && filterTer === pill.ter;
+          return (
+            <button
+              key={idx}
+              onClick={() => { setFilterSexo(pill.sexo); setFilterEsp(pill.esp); setFilterTer(pill.ter); }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                fontSize: '0.8rem', fontWeight: 700, padding: '7px 14px', borderRadius: '100px',
+                border: isActive ? `1.5px solid ${BRAND.blue}` : '1px solid rgba(255,255,255,0.8)',
+                background: isActive ? 'rgba(62,123,250,0.14)' : 'rgba(255,255,255,0.6)',
+                color: isActive ? BRAND.blue : 'var(--text-main)',
+                backdropFilter: 'blur(12px)', cursor: 'pointer', transition: 'all 0.2s ease'
+              }}
+            >
+              <span>{pill.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Filtros */}
       <div id="especialistas" style={{
         display: 'grid',
@@ -306,7 +336,7 @@ export default function ProfessionalDirectory() {
           <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>Buscar</label>
           <div style={{ position: 'relative' }}>
             <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: 'var(--text-muted)' }} />
-            <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Nombre o descripción…" style={{ width: '100%', minHeight: '48px', paddingLeft: '42px', paddingRight: '16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)', transition: 'all 0.2s' }} />
+            <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar por nombre, especialidad o enfoque…" style={{ width: '100%', minHeight: '48px', paddingLeft: '42px', paddingRight: '16px', border: '1px solid rgba(255,255,255,0.8)', borderRadius: '16px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', color: 'var(--text-main)', fontFamily: 'inherit', fontSize: '0.9rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)', transition: 'all 0.2s' }} />
           </div>
         </div>
         {/* Especialidad */}

@@ -465,7 +465,7 @@ export default function ResourceLibrary() {
           <div style={{ position: 'relative', width: '100%', maxWidth: '640px', margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.9)', borderRadius: '100px', padding: '6px 8px 6px 22px', backdropFilter: 'blur(30px) saturate(160%)', WebkitBackdropFilter: 'blur(30px) saturate(160%)', boxShadow: '0 24px 48px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1)', transition: 'box-shadow 0.25s ease, border-color 0.25s ease' }}>
               <Search style={{ width: '20px', height: '20px', color: 'var(--text-muted)', flexShrink: 0 }} />
-              <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Busca por título, autor, editorial, ISBN, tema o síntoma…" aria-label="Buscar recursos" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontFamily: 'inherit', fontSize: '1rem', color: 'var(--text-main)', height: '52px' }} />
+              <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Busca en tiempo real por título, autor, formato (video, podcast), tema o síntoma…" aria-label="Buscar recursos" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontFamily: 'inherit', fontSize: '1rem', color: 'var(--text-main)', height: '52px' }} />
               {busqueda && (
                 <button onClick={() => setBusqueda('')} style={{ width: '34px', height: '34px', borderRadius: '50%', border: 'none', background: 'rgba(0, 0, 0, 0.06)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s ease' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.12)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.06)'}>
                   <X style={{ width: '14px', height: '14px' }} />
@@ -474,10 +474,48 @@ export default function ResourceLibrary() {
             </div>
           </div>
 
+          {/* Quick Format Filter Pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+            {[
+              { id: 'todos', label: 'Todos los formatos', icon: BookOpen },
+              { id: 'video', label: 'Videos (YouTube)', icon: Video },
+              { id: 'podcast', label: 'Podcasts (Spotify)', icon: Headphones },
+              { id: 'guia', label: 'Guías & Lecturas', icon: FileText },
+              { id: 'protocolo', label: 'Protocolos', icon: ClipboardList },
+            ].map(f => {
+              const active = filtroTipo === f.id;
+              const IconComp = f.icon;
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setFiltroTipo(f.id)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    padding: '8px 16px',
+                    borderRadius: '100px',
+                    border: active ? `1.5px solid ${BRAND.blue}` : '1px solid rgba(255,255,255,0.8)',
+                    background: active ? 'rgba(62,123,250,0.14)' : 'rgba(255,255,255,0.6)',
+                    color: active ? BRAND.blue : 'var(--text-main)',
+                    backdropFilter: 'blur(12px)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <IconComp style={{ width: '14px', height: '14px' }} />
+                  <span>{f.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* Stat pills */}
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '18px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
-              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.blue }}>{recursos.length}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Recursos</span>
+              <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.blue }}>{recursosFiltered.length}</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{recursosFiltered.length === 1 ? 'Recurso visible' : 'Recursos visibles'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '8px 18px', borderRadius: '100px', backdropFilter: 'blur(14px)' }}>
               <strong style={{ fontSize: '1rem', fontWeight: 800, color: BRAND.orange }}>28</strong> <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Temáticas</span>
