@@ -64,7 +64,8 @@ export default function TherapistModal({ especialista, onClose }) {
       especialidad: especialista.especialidad,
       fecha,
       hora,
-      estado: 'Confirmada'
+      estado: 'Confirmada',
+      teamsMeetingUrl: `https://teams.microsoft.com/l/meetup-join/19%3ameeting_${Date.now()}@thread.v2/0`
     };
 
     try {
