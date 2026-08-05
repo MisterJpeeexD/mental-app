@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { EyeOff, Trash2, Plus } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { EyeOff, Trash2, AlertTriangle } from 'lucide-react';
 import '../styles/comunidad.css';
 
 // ---------- Íconos (copia exacta de los SVG usados en la versión legacy) ----------
@@ -27,6 +27,8 @@ const IconEmptyPeople = (props) => (
 );
 
 // ---------- Datos (mock, en memoria — a la espera de una API real) ----------
+// Ya no es posible crear temáticas nuevas desde la interfaz: el listado es
+// fijo y ahora incluye "Temática libre" para publicaciones sin categoría.
 const INITIAL_TOPICS = [
   { id: 'todos', name: 'Todas las temáticas', color: 'blue', desc: 'Todo el muro' },
   { id: 'ansiedad', name: 'Ansiedad y estrés', color: 'blue', desc: 'Herramientas y apoyo diario' },
@@ -35,9 +37,8 @@ const INITIAL_TOPICS = [
   { id: 'vinculos', name: 'Relaciones y vínculos', color: 'teal', desc: 'Familia, pareja y amistad' },
   { id: 'autoestima', name: 'Autoestima', color: 'orange', desc: 'Autoconocimiento' },
   { id: 'mindfulness', name: 'Mindfulness y hábitos', color: 'teal', desc: 'Presencia y calma' },
+  { id: 'libre', name: 'Temática libre', color: 'blue', desc: 'Comparte lo que quieras, sin categoría' },
 ];
-// Colores disponibles para asignar (de forma cíclica) a las temáticas que cree la persona usuaria.
-const TOPIC_COLOR_CYCLE = ['blue', 'orange', 'teal', 'purple'];
 
 const CHIP_COLORS = {
   blue: ['rgba(62,123,250,0.14)', 'var(--brand-blue)'],
@@ -134,21 +135,81 @@ function ToastContainer({ toasts }) {
   );
 }
 
+// ---------- Modal de confirmación de eliminación (mismo estilo que el modal de Terapia) ----------
+function ConfirmDeleteModal({ open, onCancel, onConfirm }) {
+  const modalRef = useRef(null);
+  const closeRef = useRef(null);
+
+  // Bloquea el scroll del fondo, enfoca el modal y devuelve el foco al cerrar.
+  useEffect(() => {
+    if (!open) return undefined;
+    const previouslyFocused = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeRef.current?.focus();
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
+    };
+  }, [open, onCancel]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="terapia-modal-overlay"
+      onClick={(event) => { if (event.target === event.currentTarget) onCancel(); }}
+    >
+      <div
+        className="terapia-modal confirm-delete-modal"
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmDeleteTitle"
+      >
+        <button type="button" className="terapia-modal-close" ref={closeRef} onClick={onCancel} aria-label="Cerrar">
+          ✕
+        </button>
+
+        <div className="confirm-delete-icon" aria-hidden="true">
+          <AlertTriangle size={26} />
+        </div>
+
+        <h3 id="confirmDeleteTitle">¿Eliminar esta publicación?</h3>
+        <p className="terapia-modal-desc">
+          Esta acción no se puede deshacer. La publicación y sus comentarios se eliminarán del muro para siempre.
+        </p>
+
+        <div className="terapia-modal-actions">
+          <button type="button" className="btn-danger" onClick={onConfirm}>Eliminar publicación</button>
+          <button type="button" className="btn-secondary" onClick={onCancel}>Cancelar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ComunidadPage() {
   const { toasts, showToast } = useToasts();
 
   const [posts, setPosts] = useState(INITIAL_POSTS);
-  const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [activeTopic, setActiveTopic] = useState('todos');
   const [composerText, setComposerText] = useState('');
-  const [composerTopic, setComposerTopic] = useState(INITIAL_TOPICS[1].id);
+  const [composerTopic, setComposerTopic] = useState('libre');
   const [composerAnonymous, setComposerAnonymous] = useState(false);
   const [openComments, setOpenComments] = useState({});
   const [commentDrafts, setCommentDrafts] = useState({});
   const [commentAnonDrafts, setCommentAnonDrafts] = useState({});
-  const [isAddingTopic, setIsAddingTopic] = useState(false);
-  const [newTopicName, setNewTopicName] = useState('');
+  const [postToDelete, setPostToDelete] = useState(null);
 
+  const topics = INITIAL_TOPICS;
   const TOPIC_MAP = Object.fromEntries(topics.map((t) => [t.id, t]));
   const filteredPosts = activeTopic === 'todos' ? posts : posts.filter((p) => p.topic === activeTopic);
 
@@ -160,38 +221,19 @@ export default function ComunidadPage() {
     setOpenComments((m) => ({ ...m, [postId]: !m[postId] }));
   }
 
-  function deletePost(postId) {
-    if (!window.confirm('¿Eliminar esta publicación? Esta acción no se puede deshacer.')) return;
-    setPosts((list) => list.filter((p) => p.id !== postId));
-    showToast('Tu publicación fue eliminada');
+  function requestDeletePost(postId) {
+    setPostToDelete(postId);
   }
 
-  function addTopic(e) {
-    e.preventDefault();
-    const name = newTopicName.trim();
-    if (!name) return;
+  function cancelDeletePost() {
+    setPostToDelete(null);
+  }
 
-    // Genera un id simple a partir del nombre (sin tildes, en minúsculas, guiones por espacios)
-    const baseId = name
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '') || 'tematica';
-    let id = baseId;
-    let n = 2;
-    while (topics.some((t) => t.id === id)) {
-      id = `${baseId}-${n}`;
-      n += 1;
-    }
-
-    const color = TOPIC_COLOR_CYCLE[topics.length % TOPIC_COLOR_CYCLE.length];
-    const newTopic = { id, name, color, desc: 'Temática creada por ti' };
-
-    setTopics((list) => [...list, newTopic]);
-    setComposerTopic(id);
-    setNewTopicName('');
-    setIsAddingTopic(false);
-    showToast('Nueva temática añadida');
+  function confirmDeletePost() {
+    if (!postToDelete) return;
+    setPosts((list) => list.filter((p) => p.id !== postToDelete));
+    setPostToDelete(null);
+    showToast('Tu publicación fue eliminada');
   }
 
   function submitComment(postId, e) {
@@ -242,7 +284,7 @@ export default function ComunidadPage() {
         <div className="social-hero-inner">
           <div className="eyebrow">
             <span className="eyebrow-dot" />
-            Comunidad · Temáticas · Amistades
+            Comunidad · Temáticas
           </div>
           <h1>
             Comparte tu proceso,
@@ -254,7 +296,7 @@ export default function ComunidadPage() {
           </p>
 
           <div className="social-stat-pills">
-            <div className="social-stat-pill"><strong>6</strong><span>&nbsp;temáticas</span></div>
+            <div className="social-stat-pill"><strong>{topics.length - 1}</strong><span>&nbsp;temáticas</span></div>
             <div className="social-stat-pill"><strong>100%</strong><span>&nbsp;moderado por profesionales</span></div>
           </div>
         </div>
@@ -291,34 +333,6 @@ export default function ComunidadPage() {
                 );
               })}
             </ul>
-
-            {isAddingTopic ? (
-              <form className="topic-add-form" onSubmit={addTopic}>
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder="Nombre de la temática…"
-                  maxLength={40}
-                  value={newTopicName}
-                  onChange={(e) => setNewTopicName(e.target.value)}
-                />
-                <div className="topic-add-actions">
-                  <button type="submit" className="btn-post" disabled={newTopicName.trim().length === 0}>Crear</button>
-                  <button
-                    type="button"
-                    className="post-action-btn"
-                    onClick={() => { setIsAddingTopic(false); setNewTopicName(''); }}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <button type="button" className="topic-btn topic-add-btn" onClick={() => setIsAddingTopic(true)}>
-                <Plus size={16} />
-                <span className="topic-info"><span className="topic-name">Añadir temática</span></span>
-              </button>
-            )}
           </div>
         </div>
 
@@ -396,7 +410,7 @@ export default function ComunidadPage() {
                         <IconShare /><span>Compartir</span>
                       </button>
                       {post.isMine && (
-                        <button type="button" className="post-action-btn delete-btn" onClick={() => deletePost(post.id)}>
+                        <button type="button" className="post-action-btn delete-btn" onClick={() => requestDeletePost(post.id)}>
                           <Trash2 size={16} /><span>Eliminar</span>
                         </button>
                       )}
@@ -444,6 +458,11 @@ export default function ComunidadPage() {
         </div>
       </section>
 
+      <ConfirmDeleteModal
+        open={Boolean(postToDelete)}
+        onCancel={cancelDeletePost}
+        onConfirm={confirmDeletePost}
+      />
       <ToastContainer toasts={toasts} />
     </div>
   );
