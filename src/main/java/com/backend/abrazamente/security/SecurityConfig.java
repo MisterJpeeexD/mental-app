@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -36,10 +35,7 @@ public class SecurityConfig {
             CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/**", "/usuarios", "/auth/**")
-                )
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
@@ -61,10 +57,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/", "/index.html", "/login", "/registro", "/perfil",
+                                "/comunidad", "/recursos", "/professionals", "/journal",
+                                "/botiquin/breathing", "/botiquin/grounding",
                                 "/assets/**", "/legacy/**", "/favicon.ico", "/error"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios", "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/recursos-digitales", "/api/recursos-digitales/**", "/api/profesionales", "/api/profesionales/**", "/api/foros", "/api/foros/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/admin/recursos/sync").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
+                        .requestMatchers("/api/diario/**", "/sesiones/**", "/api/sesiones/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/**").hasAnyRole("USUARIO", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasRole("ADMIN")

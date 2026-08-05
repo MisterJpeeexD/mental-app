@@ -4,7 +4,6 @@ button, input, select { font: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(62,123,250,.35); outline-offset: 2px; }
 .header-logout { border: 0; background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; }
 .trust-fragment { display: contents; }
-.heart-icon { font-size: 2rem; line-height: 1; }
 .loading-screen { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 12px; background: var(--bg-base); color: var(--text-main); }
 .loading-screen--compact { min-height: 160px; }
 .loading-spinner { width: 34px; height: 34px; border: 3px solid rgba(62,123,250,.2); border-top-color: var(--brand-blue); border-radius: 50%; animation: spin .8s linear infinite; }

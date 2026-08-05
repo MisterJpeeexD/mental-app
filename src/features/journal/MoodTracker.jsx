@@ -1,266 +1,362 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Save, Calendar, Lock, Users, Sparkles } from 'lucide-react';
+import { AlertCircle, Save, Calendar, Lock, Sparkles, Trash2, Download, LineChart, Archive, FileText, RefreshCw } from 'lucide-react';
+import { MOODS, dateKey, MONTH_NAMES, monthsWithEntries, PROMPTS, promptOfTheDay, parseEntry } from './journalData';
+import { downloadMonthlyJournal, downloadTrackerSvg } from './journalExport';
+import { apiRequest } from '../../services/apiClient';
+import { useAuth } from '../../context/useAuth';
+import MoodChart from './MoodChart';
 
-const MOODS = [
-  { emoji: '😢', name: 'Triste', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-  { emoji: '😐', name: 'Neutral', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
-  { emoji: '🙂', name: 'Bien', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-  { emoji: '😄', name: 'Feliz', color: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
-  { emoji: '😡', name: 'Estresado', color: 'bg-rose-500/20 text-rose-400 border-rose-500/30' }
-];
+/* El respaldo local se separa por usuario: con una sola clave, dos cuentas en
+   el mismo navegador veían el diario de la otra. */
+const storageKey = (usuarioId) => `mental-app-journal-${usuarioId ?? 'guest'}`;
 
 export default function MoodTracker() {
+  const { user } = useAuth();
+  const STORAGE_KEY = storageKey(user?.id);
   const [selectedMood, setSelectedMood] = useState(null);
   const [content, setContent] = useState('');
-  const [privacy, setPrivacy] = useState('PRIVATE');
   const [entries, setEntries] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState(null);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [scale, setScale] = useState('semana');
+  const [showArchive, setShowArchive] = useState(false);
+  const [promptIndex, setPromptIndex] = useState(promptOfTheDay);
+  const [exportingMonth, setExportingMonth] = useState(null);
+  const chartRef = useRef(null);
+  const exportRef = useRef(null);
 
   useEffect(() => {
     fetchEntries();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
+  const persistLocally = (lista) => localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+
+  /* apiRequest adjunta el token, así que el backend responde con el diario del
+     usuario de la sesión y con ningún otro. */
   const fetchEntries = async () => {
     try {
-      const response = await fetch('/api/journal');
-      if (response.ok) {
-        const data = await response.json();
-        setEntries(data);
-        setIsOfflineMode(false);
-      } else {
-        throw new Error('API unavailable or unauthorized');
-      }
+      const datos = await apiRequest('/api/diario');
+      setEntries((datos || []).map(parseEntry));
+      setIsOfflineMode(false);
     } catch (err) {
-      console.warn('Using offline fallback for journal entries:', err);
-      // Fallback to localStorage if API fails or offline
+      console.warn('Diario sin conexión, se usa el respaldo local:', err);
       setIsOfflineMode(true);
-      const local = localStorage.getItem('mental-app-journal');
-      if (local) {
-        setEntries(JSON.parse(local));
-      }
+      const local = localStorage.getItem(STORAGE_KEY);
+      setEntries(local ? JSON.parse(local).map(parseEntry) : []);
     }
+  };
+
+  const notify = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 4000);
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!selectedMood) {
-      setMessage({ type: 'error', text: 'Por favor, selecciona un estado de ánimo.' });
-      return;
-    }
-    if (!content.trim()) {
-      setMessage({ type: 'error', text: 'Por favor, escribe cómo te sientes hoy.' });
-      return;
-    }
+    if (!selectedMood) return notify('error', 'Por favor, selecciona un estado de ánimo.');
+    if (!content.trim()) return notify('error', 'Por favor, escribe cómo te sientes hoy.');
 
     setIsSaving(true);
     setMessage(null);
 
-    const newEntry = {
-      id: Date.now(), // temporary id
-      moodEmoji: selectedMood.emoji,
-      moodName: selectedMood.name,
-      contenido: content,
-      estadoPrivacidad: privacy,
-      fechaEntrada: new Date().toLocaleDateString('es-CL'),
-      creadoEn: new Date().toISOString()
+    const ahora = new Date();
+    const contenidoPlano = `${selectedMood.emoji} [${selectedMood.name}] ${content}`;
+
+    const guardarLocal = () => {
+      const nueva = parseEntry({
+        id: Date.now(),
+        contenido: contenidoPlano,
+        // El diario es siempre privado: ya no existe la opción de compartirlo
+        estadoPrivacidad: 'privado',
+        fecha: dateKey(ahora),
+        creadoEn: ahora.toISOString(),
+      });
+      const updated = [nueva, ...entries.filter((e) => e.fecha !== nueva.fecha)];
+      setEntries(updated);
+      persistLocally(updated);
     };
 
     if (isOfflineMode) {
-      // Save locally
-      const updated = [newEntry, ...entries];
-      setEntries(updated);
-      localStorage.setItem('mental-app-journal', JSON.stringify(updated));
-      finishSaveSuccess();
+      guardarLocal();
     } else {
-      // Save to Spring Boot API
       try {
-        const response = await fetch('/api/journal', {
+        await apiRequest('/api/diario', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contenido: `${selectedMood.emoji} [${selectedMood.name}] ${content}`,
-            estadoPrivacidad: privacy
-          })
+          body: JSON.stringify({ contenido: contenidoPlano, fechaEntrada: dateKey(ahora) }),
         });
-
-        if (response.ok) {
-          fetchEntries();
-          finishSaveSuccess();
-        } else {
-          throw new Error('POST failed');
-        }
+        await fetchEntries();
       } catch (err) {
-        console.warn('Failed to save journal entry to API, using local storage:', err);
-        // Fallback to local save if API request fails
+        console.warn('No se pudo guardar en el servidor, se usa el respaldo local:', err);
         setIsOfflineMode(true);
-        const updated = [newEntry, ...entries];
-        setEntries(updated);
-        localStorage.setItem('mental-app-journal', JSON.stringify(updated));
-        finishSaveSuccess();
+        guardarLocal();
       }
     }
-  };
 
-  const finishSaveSuccess = () => {
     setIsSaving(false);
     setSelectedMood(null);
     setContent('');
-    setMessage({ type: 'success', text: 'Entrada guardada con éxito. ¡Gracias por expresarte!' });
-    setTimeout(() => setMessage(null), 4000);
+    notify('success', 'Entrada guardada con éxito. ¡Gracias por expresarte!');
   };
 
+  const handleDelete = async (id) => {
+    if (!isOfflineMode) {
+      try {
+        await apiRequest(`/api/diario/${id}`, { method: 'DELETE' });
+        await fetchEntries();
+        setPendingDelete(null);
+        return notify('success', 'Entrada eliminada.');
+      } catch (err) {
+        console.warn('No se pudo eliminar en el servidor:', err);
+        setPendingDelete(null);
+        return notify('error', 'No se pudo eliminar la entrada. Inténtalo de nuevo.');
+      }
+    }
+    const updated = entries.filter((entry) => entry.id !== id);
+    setEntries(updated);
+    persistLocally(updated);
+    setPendingDelete(null);
+    notify('success', 'Entrada eliminada.');
+  };
+
+  const hoy = new Date();
+  const mesesPrevios = monthsWithEntries(entries)
+    .filter((m) => !(m.year === hoy.getFullYear() && m.month === hoy.getMonth()));
+
+  /* El SVG de un mes pasado no está en pantalla, así que se monta fuera de vista,
+     se serializa y se descarta en cuanto termina la descarga. */
+  useEffect(() => {
+    if (!exportingMonth || !exportRef.current) return;
+    const { year, month } = exportingMonth;
+    downloadTrackerSvg(exportRef.current, `tracker-${MONTH_NAMES[month]}-${year}.svg`);
+    setExportingMonth(null);
+  }, [exportingMonth]);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
-      {/* Entry Form */}
-      <form onSubmit={handleSave} className="md:col-span-3 bg-white/2 block border border-white/5 rounded-2xl p-5 flex flex-col gap-5">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-indigo-400" /> ¿Cómo te sientes hoy?
+    <div className="journal">
+      <form onSubmit={handleSave} className="journal-panel">
+        <h3 className="journal-panel__title">
+          <Sparkles aria-hidden="true" /> ¿Cómo te sientes hoy?
         </h3>
 
-        {/* Emojis Selector */}
-        <div className="flex justify-between gap-2">
+        <div className="journal-moods" role="group" aria-label="Estado de ánimo">
           {MOODS.map((mood) => (
             <button
               key={mood.name}
               type="button"
+              className="journal-mood"
+              aria-pressed={selectedMood?.name === mood.name}
               onClick={() => setSelectedMood(mood)}
-              className={`flex-1 flex flex-col items-center gap-2 py-3 rounded-xl border cursor-pointer transition-all active:scale-95 ${
-                selectedMood?.name === mood.name
-                  ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg shadow-indigo-600/20'
-                  : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400 hover:text-white'
-              }`}
             >
-              <span className="text-2xl">{mood.emoji}</span>
-              <span className="text-[11px] font-semibold">{mood.name}</span>
+              <span className="journal-mood__emoji" aria-hidden="true">{mood.emoji}</span>
+              <span className="journal-mood__name">{mood.name}</span>
             </button>
           ))}
         </div>
 
-        {/* Text Area */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-gray-400">Cuéntale a tu diario lo que estás viviendo:</label>
+        <div className="journal-field">
+          <label htmlFor="journal-content">Cuéntale a tu diario lo que estás viviendo</label>
+
+          <div className="journal-prompt">
+            <p>{PROMPTS[promptIndex]}</p>
+            <button
+              type="button"
+              className="journal-prompt__next"
+              onClick={() => setPromptIndex((i) => (i + 1) % PROMPTS.length)}
+            >
+              <RefreshCw aria-hidden="true" /> Otra pregunta
+            </button>
+          </div>
+
           <textarea
+            id="journal-content"
+            className="journal-textarea"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={4}
-            placeholder="Escribe pensamientos, sensaciones físicas, o lo que causó tu estado de ánimo..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:bg-white/10 focus:shadow-md focus:shadow-indigo-500/5 transition-all text-sm resize-none"
+            placeholder="Escribe pensamientos, sensaciones físicas, o el momento exacto que detonó lo que sentiste..."
           />
         </div>
 
-        {/* Privacy options */}
-        <div className="flex justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-gray-400">Privacidad:</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPrivacy('PRIVATE')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
-                  privacy === 'PRIVATE'
-                    ? 'bg-blue-600/20 border-blue-500/30 text-blue-400'
-                    : 'bg-white/5 border-white/10 text-gray-400'
-                }`}
-                title="Solo visible para ti"
-              >
-                <Lock className="w-3.5 h-3.5" /> Privado
-              </button>
-              <button
-                type="button"
-                onClick={() => setPrivacy('PROFESSIONAL')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
-                  privacy === 'PROFESSIONAL'
-                    ? 'bg-violet-600/20 border-violet-500/30 text-violet-400'
-                    : 'bg-white/5 border-white/10 text-gray-400'
-                }`}
-                title="Compartido con tu terapeuta asignado"
-              >
-                <Users className="w-3.5 h-3.5" /> Profesional
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm cursor-pointer"
-          >
-            <Save className="w-4 h-4" /> {isSaving ? 'Guardando...' : 'Guardar'}
+        <div className="journal-actions">
+          <p className="journal-note">
+            <Lock aria-hidden="true" /> Tu diario es privado: solo tú puedes leerlo.
+          </p>
+          <button type="submit" className="journal-save" disabled={isSaving}>
+            <Save aria-hidden="true" /> {isSaving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
 
-        {/* Status Messages */}
         <AnimatePresence>
           {message && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`p-3.5 rounded-xl flex items-start gap-2.5 text-xs font-semibold ${
-                message.type === 'success'
-                  ? 'bg-emerald-500/15 border border-emerald-500/25 text-emerald-400'
-                  : 'bg-rose-500/15 border border-rose-500/25 text-rose-400'
-              }`}
+              className={`journal-alert journal-alert--${message.type}`}
+              role="status"
             >
-              <AlertCircle className="w-4 h-4 shrink-0" />
+              <AlertCircle aria-hidden="true" />
               <span>{message.text}</span>
             </motion.div>
           )}
         </AnimatePresence>
       </form>
 
-      {/* History List */}
-      <div className="md:col-span-2 bg-white/2 border border-white/5 rounded-2xl p-5 flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-base font-bold text-white">Historial de Calma</h3>
-          {isOfflineMode && (
-            <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold">
-              Modo Local
-            </span>
-          )}
+      <div className="journal-panel">
+        <div className="journal-history__head">
+          <h3 className="journal-panel__title">Historial de Calma</h3>
+          {isOfflineMode && <span className="journal-badge">Modo local</span>}
         </div>
 
-        <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1 scrollable">
+        <div className="journal-entries">
           {entries.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 text-sm">
-              <Calendar className="w-8 h-8 mx-auto mb-2 text-gray-600" />
+            <p className="journal-empty">
+              <Calendar aria-hidden="true" />
               No tienes entradas guardadas.
-            </div>
+            </p>
           ) : (
             entries.map((entry) => (
-              <div
-                key={entry.id}
-                className="bg-white/3 border border-white/5 rounded-xl p-3.5 flex flex-col gap-1.5 hover:bg-white/5 transition-all"
-              >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{entry.moodEmoji || '📝'}</span>
-                    <span className="text-xs font-bold text-gray-300">
-                      {entry.moodName || 'Diario'}
-                    </span>
+              <article key={entry.id} className="journal-entry">
+                <div className="journal-entry__head">
+                  <div className="journal-entry__mood">
+                    <span aria-hidden="true">{entry.moodEmoji || '📝'}</span>
+                    <span>{entry.moodName || 'Diario'}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
-                    {entry.estadoPrivacidad === 'PRIVATE' ? (
-                      <Lock className="w-3 h-3" />
-                    ) : (
-                      <Users className="w-3 h-3" />
-                    )}
+                  <div className="journal-entry__meta">
                     <span>{entry.fechaEntrada}</span>
+                    <button
+                      type="button"
+                      className="journal-delete"
+                      onClick={() => setPendingDelete(entry.id)}
+                      aria-label={`Eliminar la entrada del ${entry.fechaEntrada}`}
+                    >
+                      <Trash2 aria-hidden="true" />
+                    </button>
                   </div>
                 </div>
-                <p className="text-xs text-gray-300 leading-relaxed break-words">
+
+                <p>
                   {entry.contenido && entry.contenido.includes(']')
                     ? entry.contenido.split(']').slice(1).join(']').trim()
                     : entry.contenido}
                 </p>
-              </div>
+
+                {pendingDelete === entry.id && (
+                  <div className="journal-confirm" role="alertdialog" aria-label="Confirmar borrado">
+                    <span>¿Eliminar esta entrada?</span>
+                    <div className="journal-confirm__actions">
+                      <button type="button" className="journal-confirm__yes" onClick={() => handleDelete(entry.id)}>
+                        Eliminar
+                      </button>
+                      <button type="button" className="journal-confirm__no" onClick={() => setPendingDelete(null)}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </article>
             ))
           )}
         </div>
       </div>
+
+      <section className="journal-panel journal-tracker">
+        <div className="journal-tracker__head">
+          <h3 className="journal-panel__title">
+            <LineChart aria-hidden="true" /> Tu tracker de ánimo
+          </h3>
+
+          <div className="journal-scale" role="group" aria-label="Escala del tracker">
+            <button type="button" className="journal-scale__btn" aria-pressed={scale === 'semana'} onClick={() => setScale('semana')}>
+              Semana
+            </button>
+            <button type="button" className="journal-scale__btn" aria-pressed={scale === 'mes'} onClick={() => setScale('mes')}>
+              Mes
+            </button>
+          </div>
+        </div>
+
+        <p className="journal-tracker__hint">
+          Cada día que guardas una entrada se dibuja un punto, y la línea se va completando sola a
+          medida que avanzan los días.
+        </p>
+
+        <div className="journal-chart-wrap">
+          <MoodChart entries={entries} scale={scale} svgRef={chartRef} />
+        </div>
+
+        <div className="journal-downloads">
+          <button
+            type="button"
+            className="journal-download"
+            onClick={() => downloadMonthlyJournal(entries, hoy.getFullYear(), hoy.getMonth())}
+          >
+            <Download aria-hidden="true" /> Descargar diario de {MONTH_NAMES[hoy.getMonth()]}
+          </button>
+          <button
+            type="button"
+            className="journal-download"
+            onClick={() => downloadTrackerSvg(chartRef.current, `tracker-${scale}-${dateKey(hoy)}.svg`)}
+          >
+            <Download aria-hidden="true" /> Descargar tracker
+          </button>
+
+          <button
+            type="button"
+            className="journal-download journal-download--archive"
+            onClick={() => setShowArchive((abierto) => !abierto)}
+            aria-expanded={showArchive}
+            disabled={mesesPrevios.length === 0}
+            title={mesesPrevios.length === 0 ? 'Aparecerá cuando cierres tu primer mes' : undefined}
+          >
+            <Archive aria-hidden="true" /> Meses anteriores ({mesesPrevios.length})
+          </button>
+        </div>
+
+        {showArchive && mesesPrevios.length > 0 && (
+          <ul className="journal-archive">
+            {mesesPrevios.map((mes) => (
+              <li key={`${mes.year}-${mes.month}`} className="journal-archive__item">
+                <div className="journal-archive__label">
+                  <strong>{mes.label}</strong>
+                  <span>{mes.total} {mes.total === 1 ? 'entrada' : 'entradas'}</span>
+                </div>
+                <div className="journal-archive__actions">
+                  <button
+                    type="button"
+                    className="journal-archive__btn"
+                    onClick={() => downloadMonthlyJournal(entries, mes.year, mes.month)}
+                  >
+                    <FileText aria-hidden="true" /> Diario
+                  </button>
+                  <button
+                    type="button"
+                    className="journal-archive__btn"
+                    onClick={() => setExportingMonth({ year: mes.year, month: mes.month })}
+                  >
+                    <LineChart aria-hidden="true" /> Tracker
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {exportingMonth && (
+          <div className="journal-offscreen" aria-hidden="true">
+            <MoodChart
+              entries={entries}
+              scale="mes"
+              year={exportingMonth.year}
+              month={exportingMonth.month}
+              svgRef={exportRef}
+            />
+          </div>
+        )}
+      </section>
     </div>
   );
 }

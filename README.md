@@ -1,6 +1,6 @@
 # 🧠 Abraza Mente — Plataforma Práctica de Salud Mental
 
-Este repositorio contiene la arquitectura, el código fuente y el flujo de integración de la **Plataforma Práctica de Salud Mental (Mente Conecta)**, un sistema ágil y psicoeducativo orientado a la autogestión de la salud mental y la colaboración con profesionales clínicos.
+Este repositorio contiene la arquitectura, el código fuente y el flujo de integración de la **Plataforma Práctica de Salud Mental (AbrazaMente)**, un sistema ágil y psicoeducativo orientado a la autogestión de la salud mental y la colaboración con profesionales clínicos.
 
 ---
 
@@ -51,7 +51,7 @@ graph TD
 | Componente | Tecnologías Utilizadas |
 | :--- | :--- |
 | **Frontend** | React, Vite, HTML5, CSS3, JavaScript (ES6+), React Hooks |
-| **Backend** | Java 17+, Spring Boot (Web, JPA, Validation), Lombok |
+| **Backend** | Java 21+, Spring Boot (Web, JPA, Validation), Lombok |
 | **Base de Datos** | MySQL (Producción), H2 (Desarrollo y Pruebas en Memoria) |
 | **CI / CD** | GitHub Actions (Maven Workflow, CodeQL) |
 | **Licencia** | GNU General Public License v3.0 (GPLv3) |
@@ -120,7 +120,7 @@ mental-app/
 ## ⚙️ Configuración y Ejecución Local
 
 ### Prerrequisitos
-- **Java JDK 17** o superior instalado en el equipo.
+- **Java JDK 21** o superior instalado en el equipo.
 
 ### Ejecución (Spring Boot)
 1. Ejecuta la aplicación utilizando Maven directamente desde la raíz del proyecto (el archivo utiliza base de datos H2 en memoria por defecto):
@@ -128,7 +128,7 @@ mental-app/
    mvn spring-boot:run
    ```
 2. La API estará disponible en `http://localhost:8080`.
-3. La consola H2 interactiva se encuentra en `http://localhost:8080/h2-console` (Credenciales: URL: `jdbc:h2:mem:taskdb`, Usuario: `sa`, sin contraseña).
+3. La consola H2 interactiva se encuentra en `http://localhost:8080/h2-console` (Credenciales: URL: `jdbc:h2:mem:testdb`, Usuario: `sa`, sin contraseña).
 
 ### Configuración de Base de Datos
 Para conectar la aplicación a un servidor Neon PostgreSQL real, edita el archivo `src/main/resources/application.yml` o bien crea un archivo `.env` en la raíz del proyecto basándote en la plantilla correspondiente.
@@ -138,7 +138,7 @@ Para conectar la aplicación a un servidor Neon PostgreSQL real, edita el archiv
 ## 🔄 Flujo de Integración Continua (CI)
 El workflow [maven.yml](file:///c:/Users/Ricardo/Desktop/rep/mental-app/.github/workflows/maven.yml) se ejecuta automáticamente en cada `push` o `pull_request` a la rama principal:
 1. Configura un entorno Ubuntu.
-2. Inicializa Java JDK 17 (Temurin).
+2. Inicializa Java JDK 21 (Temurin).
 3. Compila el backend ejecutando `mvn clean package -DskipTests`.
 4. Ejecuta toda la suite de pruebas unitarias mediante `mvn test`.
 

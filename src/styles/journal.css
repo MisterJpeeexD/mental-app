@@ -1,0 +1,523 @@
+/* =========================================================
+   Diario emocional. Sigue el tema claro/oscuro del sitio, como
+   el botiquín: antes era una tarjeta oscura fija sobre fondo claro.
+   ========================================================= */
+
+.journal {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 20px;
+  color: var(--text-main);
+}
+
+.journal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(16px, 3vw, 22px);
+  border: 1px solid rgba(134, 134, 139, 0.18);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='dark'] .journal-panel {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.journal-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.journal-panel__title svg { width: 19px; height: 19px; color: var(--brand-blue); }
+
+/* --- Selector de ánimo --- */
+/* 3+3 en vez de 6 en fila: el panel nunca pasa de ~430px, así que en una sola
+   fila "Emocionado" no cabría, y con auto-fit quedaba un 4+2 desbalanceado */
+.journal-moods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.journal-mood {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px;
+  border: 1px solid rgba(134, 134, 139, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text-muted);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+}
+
+[data-theme='dark'] .journal-mood {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.journal-mood:hover { transform: translateY(-2px); }
+
+.journal-mood[aria-pressed='true'] {
+  border-color: var(--brand-blue);
+  background: rgba(62, 123, 250, 0.12);
+  color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(62, 123, 250, 0.12);
+}
+
+.journal-mood__emoji { font-size: 1.55rem; line-height: 1; }
+/* clamp + hyphens: con 5 columnas fijas, "Estresado" pedía 52px en un botón de
+   50px y se desbordaba en móvil */
+.journal-mood__name { font-size: 0.74rem; font-weight: 700; hyphens: auto; }
+
+/* --- Texto --- */
+.journal-field { display: flex; flex-direction: column; gap: 8px; }
+
+.journal-field label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Pregunta guía: acompaña sin competir con el campo de escritura */
+.journal-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px dashed rgba(62, 123, 250, 0.32);
+  border-radius: 14px;
+  background: rgba(62, 123, 250, 0.07);
+}
+
+.journal-prompt p {
+  flex: 1 1 220px;
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.journal-prompt__next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(62, 123, 250, 0.14);
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.journal-prompt__next svg { width: 13px; height: 13px; }
+.journal-prompt__next:hover { background: rgba(62, 123, 250, 0.24); }
+
+[data-theme='dark'] .journal-prompt {
+  border-color: rgba(120, 160, 255, 0.32);
+  background: rgba(120, 160, 255, 0.08);
+}
+
+.journal-textarea {
+  width: 100%;
+  min-height: 118px;
+  padding: 13px 15px;
+  border: 1px solid rgba(134, 134, 139, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.journal-textarea::placeholder { color: var(--text-muted); }
+
+.journal-textarea:focus {
+  border-color: rgba(62, 123, 250, 0.55);
+  box-shadow: 0 0 0 4px rgba(62, 123, 250, 0.12);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+[data-theme='dark'] .journal-textarea {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] .journal-textarea:focus { background: rgba(255, 255, 255, 0.09); }
+
+/* --- Nota de privacidad y guardar --- */
+.journal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.journal-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.journal-note svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.journal-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--brand-blue);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(62, 123, 250, 0.24);
+  transition: background 0.2s, opacity 0.2s, transform 0.15s;
+}
+
+.journal-save svg { width: 16px; height: 16px; }
+.journal-save:hover:not(:disabled) { background: var(--brand-blue-hover); }
+.journal-save:active:not(:disabled) { transform: scale(0.98); }
+.journal-save:disabled { opacity: 0.55; cursor: wait; }
+
+/* --- Avisos --- */
+.journal-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.journal-alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+.journal-alert--success { background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.28); color: #0f7a5a; }
+.journal-alert--error { background: rgba(217, 75, 75, 0.12); border: 1px solid rgba(217, 75, 75, 0.28); color: #b52b2b; }
+
+[data-theme='dark'] .journal-alert--success { color: #6ee7b7; }
+[data-theme='dark'] .journal-alert--error { color: #fca5a5; }
+
+/* --- Historial --- */
+.journal-history__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.journal-badge {
+  padding: 4px 10px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .journal-badge { color: #fbbf24; }
+
+.journal-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.journal-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(134, 134, 139, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme='dark'] .journal-entry {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.journal-entry__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.journal-entry__mood { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; }
+.journal-entry__mood span:first-child { font-size: 1.15rem; }
+.journal-entry__meta { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.7rem; font-weight: 600; }
+.journal-entry__meta svg { width: 12px; height: 12px; }
+.journal-entry p { color: var(--text-muted); font-size: 0.82rem; line-height: 1.55; overflow-wrap: anywhere; }
+
+.journal-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 34px 12px;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  text-align: center;
+}
+
+.journal-empty svg { width: 30px; height: 30px; opacity: 0.6; }
+
+/* --- Borrado de entradas --- */
+.journal-delete {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.journal-delete svg { width: 14px; height: 14px; }
+
+.journal-delete:hover {
+  background: rgba(217, 75, 75, 0.12);
+  color: #d94b4b;
+}
+
+.journal-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 75, 75, 0.25);
+  border-radius: 12px;
+  background: rgba(217, 75, 75, 0.08);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.journal-confirm__actions { display: flex; gap: 8px; }
+
+.journal-confirm__yes,
+.journal-confirm__no {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.journal-confirm__yes { background: #d94b4b; color: #fff; }
+.journal-confirm__no { background: rgba(134, 134, 139, 0.16); color: var(--text-main); }
+
+[data-theme='dark'] .journal-confirm__no { background: rgba(255, 255, 255, 0.1); }
+
+/* --- Tracker --- */
+.journal-tracker { grid-column: 1 / -1; }
+
+.journal-tracker__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.journal-tracker__hint {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.journal-scale {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(134, 134, 139, 0.14);
+}
+
+[data-theme='dark'] .journal-scale { background: rgba(255, 255, 255, 0.07); }
+
+.journal-scale__btn {
+  min-height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.journal-scale__btn[aria-pressed='true'] {
+  background: var(--brand-blue);
+  color: #fff;
+}
+
+/* El gráfico se desplaza en horizontal cuando el mes no cabe, en vez de
+   encogerse hasta que los días son ilegibles */
+.journal-chart-wrap {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.mood-chart {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.journal-downloads { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.journal-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(62, 123, 250, 0.28);
+  border-radius: 12px;
+  background: rgba(62, 123, 250, 0.1);
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.journal-download svg { width: 15px; height: 15px; }
+.journal-download:hover:not(:disabled) { background: rgba(62, 123, 250, 0.18); }
+.journal-download:active:not(:disabled) { transform: scale(0.98); }
+
+.journal-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Neutro: es un archivo, no una descarga directa como los otros dos */
+.journal-download--archive {
+  border-color: rgba(134, 134, 139, 0.28);
+  background: rgba(134, 134, 139, 0.1);
+  color: var(--text-main);
+}
+
+.journal-download--archive:hover:not(:disabled) { background: rgba(134, 134, 139, 0.18); }
+
+[data-theme='dark'] .journal-download--archive {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* --- Archivo de meses --- */
+.journal-archive {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.journal-archive__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(134, 134, 139, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme='dark'] .journal-archive__item {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.journal-archive__label { display: flex; flex-direction: column; gap: 2px; }
+.journal-archive__label strong { font-size: 0.9rem; text-transform: capitalize; }
+.journal-archive__label span { color: var(--text-muted); font-size: 0.76rem; }
+
+.journal-archive__actions { display: flex; gap: 8px; }
+
+.journal-archive__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(62, 123, 250, 0.25);
+  border-radius: 10px;
+  background: rgba(62, 123, 250, 0.08);
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.journal-archive__btn svg { width: 13px; height: 13px; }
+.journal-archive__btn:hover { background: rgba(62, 123, 250, 0.16); }
+
+/* Fuera de vista pero renderizado: hace falta para poder serializar el SVG */
+.journal-offscreen {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  width: 900px;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .journal { grid-template-columns: 1fr; }
+  .journal-actions { flex-direction: column; align-items: stretch; }
+  .journal-save { width: 100%; }
+  .journal-downloads > .journal-download { flex: 1 1 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-mood, .journal-save, .journal-scale__btn, .journal-download { transition: none; }
+  .journal-mood:hover { transform: none; }
+}

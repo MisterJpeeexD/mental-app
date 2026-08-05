@@ -1,5 +1,5 @@
 -- ============================================================================
--- AbrazaMente / MenteConecta - Esquema PostgreSQL consolidado
+-- AbrazaMente - Esquema PostgreSQL consolidado
 -- Migración no destructiva desde MySQL
 -- IMPORTANTE: este script NO elimina ni sobrescribe la base MySQL original.
 -- Ejecutar sobre una base PostgreSQL vacía creada previamente con codificación UTF-8.
