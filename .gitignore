@@ -41,11 +41,11 @@ buildNumber.properties
 .vscode/
 
 # Environments
-#.env
-#.env.local
-#.env.production
-#.env.development
-#.env.staging
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
 
 # Mac Os
 .DS_Store
@@ -64,5 +64,12 @@ src/main/resources/static/assets/
 src/main/resources/static/index.html
 
 REFAC-CLIENTE-A-USUARIO.md
+opencode.json
+CLAUDE.md
+claude.md
+
+build/
+
+dist/
  
  
