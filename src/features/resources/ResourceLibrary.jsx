@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Search, BookOpen, Headphones, Video, FileText, ClipboardList, X, ExternalLink, Download, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 
 /* ─── Paleta (igual que global.css) ─────────────────────────── */
 const BRAND = {
@@ -206,9 +207,9 @@ function ResourceCard({ recurso, onClick }) {
   );
 }
 
-function FilterGroup({ title, open, onToggle, children }) {
+function FilterGroup({ title, open, onToggle, children, isDark }) {
   return (
-    <div style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
       <button
         onClick={onToggle}
         style={{
@@ -226,7 +227,7 @@ function FilterGroup({ title, open, onToggle, children }) {
   );
 }
 
-function ResourceModal({ recurso, onClose }) {
+function ResourceModal({ recurso, onClose, isDark }) {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -250,12 +251,20 @@ function ResourceModal({ recurso, onClose }) {
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-[920px] bg-[#f5f5f8]/95 border border-white/70 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.3)] backdrop-blur-[40px] saturate-150 p-7 md:p-11 my-auto mx-auto transform transition-all"
+        className="relative w-full max-w-[920px] rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.3)] backdrop-blur-[40px] saturate-150 p-7 md:p-11 my-auto mx-auto transform transition-all"
+        style={{
+          background: isDark ? 'rgba(28,28,30,0.96)' : 'rgba(245,245,248,0.95)',
+          border: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.7)',
+        }}
         onClick={e => e.stopPropagation()}
       >
         <button 
           onClick={onClose}
-          className="absolute top-5 right-5 z-10 w-[38px] h-[38px] rounded-full border-none bg-black/5 hover:bg-black/10 text-gray-800 flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-5 right-5 z-10 w-[38px] h-[38px] rounded-full border-none flex items-center justify-center transition-colors cursor-pointer"
+          style={{
+            background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+            color: isDark ? 'rgba(255,255,255,0.82)' : 'rgb(31,41,55)',
+          }}
         >
           <X strokeWidth={2} style={{ width: '16px', height: '16px' }} />
         </button>
@@ -360,7 +369,13 @@ function ResourceModal({ recurso, onClose }) {
 
         <div className="mb-6">
           <h4 className="text-[0.95rem] font-bold mb-3 text-gray-900">Ficha del recurso</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 bg-white/50 border border-white/80 p-4 rounded-2xl">
+          <div
+            className="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 p-4 rounded-2xl"
+            style={{
+              background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.5)',
+              border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(255,255,255,0.8)',
+            }}
+          >
             <div className="flex flex-col gap-0.5">
               <span className="text-[0.68rem] uppercase tracking-[0.05em] text-gray-400 font-bold">Autor</span>
               <span className="text-[0.85rem] text-gray-800 font-semibold">{recurso.autor}</span>
@@ -404,6 +419,7 @@ const DEFAULT_RECURSOS = [
 ];
 
 export default function ResourceLibrary() {
+  const { theme } = useTheme();
   const [recursos, setRecursos] = useState(DEFAULT_RECURSOS);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
@@ -413,6 +429,7 @@ export default function ResourceLibrary() {
   const [grupoTipoOpen, setGrupoTipoOpen] = useState(true);
   const [grupoAccesoOpen, setGrupoAccesoOpen] = useState(true);
   const [selectedResource, setSelectedResource] = useState(null);
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -602,7 +619,7 @@ export default function ResourceLibrary() {
           flexShrink: 0,
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.75)',
+            background: isDark ? 'rgba(30,30,32,0.7)' : 'rgba(255,255,255,0.5)', border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.75)',
             borderRadius: '18px', padding: '20px',
             backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
           }}>
@@ -619,7 +636,7 @@ export default function ResourceLibrary() {
             </div>
 
             {/* Tipo de recurso */}
-            <FilterGroup title="Tipo" open={grupoTipoOpen} onToggle={() => setGrupoTipoOpen(v => !v)}>
+            <FilterGroup title="Tipo" open={grupoTipoOpen} onToggle={() => setGrupoTipoOpen(v => !v)} isDark={isDark}>
               <nav aria-label="Filtrar por tipo">
                 {MENU_TIPO.map(item => {
                   const Icon = item.icon;
@@ -647,7 +664,7 @@ export default function ResourceLibrary() {
             </FilterGroup>
 
             {/* Disponibilidad */}
-            <FilterGroup title="Disponibilidad" open={grupoAccesoOpen} onToggle={() => setGrupoAccesoOpen(v => !v)}>
+            <FilterGroup title="Disponibilidad" open={grupoAccesoOpen} onToggle={() => setGrupoAccesoOpen(v => !v)} isDark={isDark}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {MENU_ACCESO.map(item => {
                   const active = filtroAcceso === item.key;
@@ -687,7 +704,7 @@ export default function ResourceLibrary() {
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 padding: '6px 12px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 600,
-                background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.75)',
+                background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.5)', border: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.75)',
                 color: 'var(--text-muted)', cursor: 'pointer',
               }}
             >
@@ -717,7 +734,7 @@ export default function ResourceLibrary() {
               gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
               gap: '16px',
             }}>
-              {recursosFiltered.map(r => <ResourceCard key={r.id} recurso={r} onClick={setSelectedResource} />)}
+              {recursosFiltered.map(r => <ResourceCard key={r.id} recurso={r} onClick={setSelectedResource} isDark={isDark} />)}
             </div>
           )}
         </div>
@@ -726,7 +743,7 @@ export default function ResourceLibrary() {
       </section>
 
       {/* Modal Overlay */}
-      <ResourceModal recurso={selectedResource} onClose={() => setSelectedResource(null)} />
+      <ResourceModal recurso={selectedResource} onClose={() => setSelectedResource(null)} isDark={isDark} />
     </>
   );
 }

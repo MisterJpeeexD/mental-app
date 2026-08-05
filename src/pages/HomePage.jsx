@@ -6,7 +6,7 @@ import { useReveal } from '../hooks/useReveal';
 
 const services = [
   { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/professionals', label: 'Saber más' },
-  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/recursos', label: 'Explorar recursos' },
+  { color: 'orange', title: 'Botiquín de apoyo', text: 'Accede a respiración guiada, grounding y herramientas rápidas para regularte en momentos de crisis.', link: '/botiquin/breathing', label: 'Abrir botiquín' },
   { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/comunidad', label: 'Unirse al grupo' },
 ];
 

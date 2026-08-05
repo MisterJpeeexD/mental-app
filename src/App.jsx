@@ -114,6 +114,7 @@ export default function App() {
                 <FeatureLayout
                   title="Recursos Psicoeducativos"
                   description="Biblioteca de guías, artículos y contenidos psicoeducativos."
+                  tone="adaptive"
                   fallback={<CardSkeleton count={2} label="Cargando biblioteca de recursos" />}
                 >
                   <ResourceLibrary />
