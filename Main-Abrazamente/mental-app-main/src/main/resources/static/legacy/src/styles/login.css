@@ -1,0 +1,1032 @@
+/* ==========================================================
+   LOGIN
+   AbrazaMente
+========================================================== */
+
+/* ==========================================================
+   VARIABLES LOCALES
+========================================================== */
+
+:root {
+
+    --login-width: 520px;
+    --hero-max-width: 700px;
+
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 32px;
+    --space-5: 48px;
+    --space-6: 64px;
+    --space-7: 96px;
+
+}
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+body{
+
+    overflow-x:hidden;
+
+}
+
+/* ==========================================================
+   BACKGROUND
+========================================================== */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-10;
+
+    overflow:hidden;
+
+    background:
+
+        var(--color-background);
+
+    transition:background .35s ease;
+
+}
+
+/* degradado superior */
+
+.background::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:700px;
+
+    height:700px;
+
+    left:-260px;
+
+    top:-220px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(91,141,239,.18),
+            transparent 70%
+        );
+
+    filter:blur(40px);
+
+}
+
+/* degradado inferior */
+
+.background::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:650px;
+
+    height:650px;
+
+    right:-240px;
+
+    bottom:-240px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(139,124,248,.18),
+            transparent 70%
+        );
+
+    filter:blur(40px);
+
+}
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.login{
+
+    width:min(1600px,94%);
+
+    min-height:100vh;
+
+    padding:110px 0 60px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:
+
+        minmax(650px,1fr)
+
+        var(--login-width);
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:120px;
+
+}
+
+/* ==========================================================
+   HERO
+========================================================== */
+
+.hero{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.hero__content{
+
+    width:100%;
+
+    max-width:var(--hero-max-width);
+
+    animation:fadeLeft .8s ease;
+
+}
+
+/* ==========================================================
+   BADGE
+========================================================== */
+
+.hero__badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:
+
+        10px
+
+        18px;
+
+    border-radius:999px;
+
+    background:
+
+        rgba(91,141,239,.08);
+
+    border:
+
+        1px solid rgba(91,141,239,.12);
+
+    color:
+
+        var(--color-primary);
+
+    font-weight:600;
+
+    font-size:.9rem;
+
+    margin-bottom:40px;
+
+}
+
+.hero__badge-dot{
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:
+
+        var(--color-primary);
+
+    box-shadow:
+
+        0 0 12px
+
+        var(--color-primary);
+
+}
+
+/* ==========================================================
+   TITULO
+========================================================== */
+
+.hero__title{
+
+    font-size:
+
+        clamp(3.2rem,5vw,5rem);
+
+    line-height:1.05;
+
+    letter-spacing:-.05em;
+
+    color:
+
+        var(--color-title);
+
+    margin-bottom:28px;
+
+}
+
+/* ==========================================================
+   DESCRIPCIÓN
+========================================================== */
+
+.hero__description{
+
+    max-width:560px;
+
+    font-size:1.1rem;
+
+    line-height:1.9;
+
+    color:
+
+        var(--color-text);
+
+}
+
+/* ==========================================================
+   ILUSTRACIÓN
+========================================================== */
+
+.hero__illustration{
+
+    position:relative;
+
+    width:520px;
+
+    height:200px;
+
+    margin-top:32px;
+
+}
+
+/* núcleo */
+
+.mind-core{
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    width:150px;
+
+    height:150px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #5B8DEF,
+
+            #8B7CF8
+
+        );
+
+    box-shadow:
+
+        0 35px 80px rgba(91,141,239,.35);
+
+}
+
+.mind-heart{
+
+    color:white;
+
+    font-size:2.6rem;
+
+}
+
+/* ==========================================================
+   ENTRADA
+========================================================== */
+
+@keyframes fadeLeft{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+            translateX(-40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+            translateX(0);
+
+    }
+
+}
+
+/* ==========================================================
+   LOGIN CARD
+========================================================== */
+
+.login-card{
+
+    position:relative;
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:100%;
+
+    animation:fadeRight .8s ease;
+
+    justify-self:end;
+
+    gap:32px;
+
+    padding:40px;
+
+    border-radius:32px;
+
+    background:rgba(255,255,255,.75);
+
+    backdrop-filter:blur(28px);
+
+    -webkit-backdrop-filter:blur(28px);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow: 0 20px 70px rgba(0,0,0,.08);
+
+    overflow:hidden;
+
+}
+
+/* Modo oscuro */
+
+html[data-theme="dark"] .login-card{
+
+    background:rgba(20,26,40,.78);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+
+        0 25px 80px rgba(0,0,0,.45);
+
+}
+
+/* Línea superior */
+
+.login-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:4px;
+
+    background:linear-gradient(
+
+        90deg,
+
+        var(--color-primary),
+
+        #8B7CF8
+
+    );
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.login-card__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:24px;
+
+}
+
+.login-card__subtitle{
+
+    display:block;
+
+    color:var(--color-primary);
+
+    text-transform:uppercase;
+
+    letter-spacing:.14em;
+
+    font-size:.8rem;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+.login-card__title{
+
+    color:var(--color-title);
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    line-height:1.1;
+
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+.form__group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.form__row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.form__label{
+
+    color:var(--color-title);
+
+    font-size:.92rem;
+
+    font-weight:600;
+
+}
+
+.form__link{
+
+    color:var(--color-primary);
+
+    font-size:.85rem;
+
+    text-decoration:none;
+
+    transition:.25s;
+
+}
+
+.form__link:hover{
+
+    opacity:.75;
+
+}
+
+/* ==========================================================
+   INPUT
+========================================================== */
+
+.input{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    height:58px;
+
+    padding:0 18px;
+
+    border-radius:16px;
+
+    background:var(--color-input);
+
+    border:1px solid var(--color-border);
+
+    transition:all .25s ease;
+
+}
+
+.input:hover{
+
+    border-color:rgba(91,141,239,.35);
+
+}
+
+.input:focus-within{
+
+    border-color:var(--color-primary);
+
+    box-shadow:
+
+        0 0 0 4px rgba(91,141,239,.12);
+
+}
+
+.input__icon{
+
+    width:20px;
+
+    height:20px;
+
+    color:#7B8AA5;
+
+    flex-shrink:0;
+
+}
+
+.input input{
+
+    width:100%;
+
+    border:none;
+
+    outline:none;
+
+    background:transparent;
+
+    color:var(--color-title);
+
+    font-size:.95rem;
+
+    font-family:inherit;
+
+}
+
+.input input::placeholder{
+
+    color:#9CA7BA;
+
+}
+
+/* ==========================================================
+   OPCIONES
+========================================================== */
+
+.form__options{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.checkbox{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    color:var(--color-text);
+
+}
+
+.checkbox input{
+
+    width:18px;
+
+    height:18px;
+
+    accent-color:var(--color-primary);
+
+}
+
+/* ==========================================================
+   BOTONES
+========================================================== */
+
+.button{
+
+    border:none;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    font-family:inherit;
+
+}
+
+.button--primary{
+
+    height:58px;
+
+    background:linear-gradient(
+
+        135deg,
+
+        var(--color-primary),
+
+        #8B7CF8
+
+    );
+
+    color:white;
+
+    font-size:.96rem;
+
+    font-weight:600;
+
+}
+
+.button--primary:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+        0 12px 28px rgba(91,141,239,.35);
+
+}
+
+.button--primary:active{
+
+    transform:translateY(0);
+
+}
+
+/* ==========================================================
+   SEPARADOR
+========================================================== */
+
+.separator{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+.separator::before,
+
+.separator::after{
+
+    content:"";
+
+    flex:1;
+
+    height:1px;
+
+    background:var(--color-border);
+
+}
+
+.separator span{
+
+    color:var(--color-text);
+
+    font-size:.9rem;
+
+}
+
+/* ==========================================================
+   SOCIAL
+========================================================== */
+
+.social{
+
+    display:grid;
+
+    grid-template-columns:1fr;
+
+    gap:16px;
+
+}
+
+.button--secondary{
+
+    height:56px;
+
+    background:transparent;
+
+    border:1px solid var(--color-border);
+
+    color:var(--color-title);
+
+    font-weight:600;
+
+}
+
+.button--secondary:hover{
+
+    background:rgba(91,141,239,.08);
+
+    border-color:var(--color-primary);
+
+}
+
+.button--google{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+    width:100%;
+
+    height:58px;
+
+    color:#ffffff;
+
+    font-weight:700;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626 48%,
+            #b91c1c
+        );
+
+    border:1px solid rgba(255,255,255,.18);
+
+    box-shadow:
+        0 16px 34px rgba(220,38,38,.28);
+
+    overflow:hidden;
+
+}
+
+.button--google::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,.22),
+            transparent
+        );
+
+    transform:translateX(-120%);
+
+    transition:transform .45s ease;
+
+}
+
+.button--google:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 20px 42px rgba(220,38,38,.36);
+
+}
+
+.button--google:hover::before{
+
+    transform:translateX(120%);
+
+}
+
+.button--google:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.72;
+
+    transform:none;
+
+}
+
+.button--google__icon{
+
+    display:grid;
+
+    place-items:center;
+
+    width:30px;
+
+    height:30px;
+
+    border-radius:50%;
+
+    color:#dc2626;
+
+    background:#ffffff;
+
+    font-size:1rem;
+
+    font-weight:800;
+
+    z-index:1;
+
+}
+
+.button--google span{
+
+    z-index:1;
+
+}
+
+.google-signin-native{
+
+    position:absolute;
+
+    width:1px;
+
+    height:1px;
+
+    overflow:hidden;
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.login-card__footer{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-size:.92rem;
+
+    color:var(--color-text);
+
+}
+
+.login-card__footer a{
+
+    color:var(--color-primary);
+
+    font-weight:600;
+
+    text-decoration:none;
+
+}
+
+.login-card__footer a:not(.button):hover{
+
+    text-decoration:underline;
+
+}
+
+.button--full{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+/* ==========================================================
+   ANIMACIÓN
+========================================================== */
+
+@keyframes fadeRight{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1380px) {
+
+    .login {
+        grid-template-columns: 1fr;
+        width: min(560px, 94%);
+        gap: 0;
+    }
+
+    .hero {
+        display: none;
+    }
+
+    .login-card {
+        justify-self: center;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .login-card {
+        padding: 28px;
+        border-radius: 24px;
+    }
+
+}
