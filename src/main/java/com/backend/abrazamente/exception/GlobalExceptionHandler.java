@@ -1,80 +1,64 @@
 package com.backend.abrazamente.exception;
 
-import com.backend.abrazamente.dto.ErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<ErrorResponse> manejarNoEncontrado(RecursoNoEncontradoException ex) {
-        return respuesta(HttpStatus.NOT_FOUND, ex.getMessage());
-    }
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ConflictoException.class)
-    public ResponseEntity<ErrorResponse> manejarConflicto(ConflictoException ex) {
-        return respuesta(HttpStatus.CONFLICT, ex.getMessage());
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(HttpStatus.NOT_FOUND.value(), "Not Found", ex.getMessage()));
     }
 
     @ExceptionHandler(ValidacionNegocioException.class)
-    public ResponseEntity<ErrorResponse> manejarValidacionNegocio(ValidacionNegocioException ex) {
-        return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleValidacionNegocio(ValidacionNegocioException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Bad Request", ex.getMessage()));
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> manejarCredencialesIncorrectas(BadCredentialsException ex) {
-        return respuesta(HttpStatus.UNAUTHORIZED, "Correo electrónico o contraseña incorrectos");
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> manejarAutenticacion(AuthenticationException ex) {
-        return respuesta(HttpStatus.UNAUTHORIZED, "No fue posible autenticar la solicitud");
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> manejarAccesoDenegado(AccessDeniedException ex) {
-        return respuesta(HttpStatus.FORBIDDEN, ex.getMessage());
+    @ExceptionHandler(ConflictoException.class)
+    public ResponseEntity<ErrorResponse> handleConflicto(ConflictoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(HttpStatus.CONFLICT.value(), "Conflict", ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> manejarValidacion(MethodArgumentNotValidException ex) {
-        String mensajeError = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .findFirst()
-                .map(error -> error.getDefaultMessage())
-                .orElse("Error de validación en los campos");
-        return respuesta(HttpStatus.BAD_REQUEST, mensajeError);
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> manejarJsonInvalido(HttpMessageNotReadableException ex) {
-        return respuesta(HttpStatus.BAD_REQUEST, "El cuerpo de la solicitud contiene datos inválidos");
+    public ResponseEntity<ErrorResponse> handleValidacionCampos(MethodArgumentNotValidException ex) {
+        Map<String, String> errores = new LinkedHashMap<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errores.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Bad Request",
+                        "Los datos enviados no son válidos", errores));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> manejarIntegridad(DataIntegrityViolationException ex) {
-        return respuesta(HttpStatus.CONFLICT, "No fue posible guardar los datos porque ya existe un registro incompatible");
+    public ResponseEntity<ErrorResponse> handleViolacionIntegridad(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(HttpStatus.CONFLICT.value(), "Conflict",
+                        "Ya existe un registro con esos datos (correo, RUT u otro valor único)."));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> manejarExcepcionGenerica(Exception ex) {
-        return respuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error interno. Intenta nuevamente más tarde");
-    }
-
-    private ResponseEntity<ErrorResponse> respuesta(HttpStatus status, String mensaje) {
-        ErrorResponse response = new ErrorResponse(LocalDateTime.now(), status.value(), mensaje);
-        return ResponseEntity.status(status).body(response);
+    public ResponseEntity<ErrorResponse> handleInesperado(Exception ex) {
+        log.error("Error no controlado", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Internal Server Error", "Ha ocurrido un error interno del servidor."));
     }
 }

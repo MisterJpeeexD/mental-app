@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react';
-
-const THEME_KEY = 'abrazamente.theme';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
 export function useTheme() {
-  const [theme, setTheme] = useState(() => localStorage.getItem(THEME_KEY) || 'light');
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem(THEME_KEY, theme);
-  }, [theme]);
-
-  return {
-    theme,
-    toggleTheme: () => setTheme((current) => (current === 'dark' ? 'light' : 'dark')),
-  };
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error('useTheme debe utilizarse dentro de ThemeProvider');
+  return context;
 }

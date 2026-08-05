@@ -25,6 +25,14 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true
+      },
+      '/auth': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      },
+      '/usuarios': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
       }
     }
   },

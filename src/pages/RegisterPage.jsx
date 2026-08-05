@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import AuthVisual from '../components/layout/AuthVisual';
 import FieldError from '../components/common/FieldError';
+import RequiredMark from '../components/common/RequiredMark';
 import { useAuth } from '../context/AuthContext';
 import { formatRut, isValidRut, normalizeRut } from '../utils/rut';
 
@@ -61,8 +62,13 @@ export default function RegisterPage() {
     }
   }
 
-  const field = (name, label, input) => (
-    <label className="auth-field" key={name}>{label}{input}<FieldError message={errors[name]} /></label>
+  const field = (name, label, input, optional = false) => (
+    <label className="auth-field" key={name}>
+      {/* en un solo span: .auth-field es flex column y si no, el asterisco caería debajo */}
+      <span className="auth-field__label">{label}{!optional && <RequiredMark />}</span>
+      {input}
+      <FieldError message={errors[name]} />
+    </label>
   );
 
   return (
@@ -70,7 +76,7 @@ export default function RegisterPage() {
       <AuthVisual register />
       <section className="auth-card-wrap">
         <div className="auth-card auth-card--wide">
-          <div className="auth-card-heading"><span>Crear cuenta</span><h2>Regístrate en AbrazaMente</h2><p>Los campos marcados son necesarios para crear tu cuenta.</p></div>
+          <div className="auth-card-heading"><span>Crear cuenta</span><h2>Regístrate en AbrazaMente</h2><p>Los campos marcados con <span className="required-mark">*</span> son obligatorios.</p></div>
           {serverError && <div className="form-alert form-alert--error" role="alert">{serverError}</div>}
           <form className="auth-form" onSubmit={handleSubmit} noValidate>
             <div className="auth-grid">
@@ -79,14 +85,14 @@ export default function RegisterPage() {
               {field('run', 'RUT', <div className={`auth-input ${errors.run ? 'invalid' : ''}`}><input value={form.run} onChange={(e) => update('run', formatRut(e.target.value))} maxLength={12} placeholder="12.345.678-9" /></div>)}
               {field('fechaNacimiento', 'Fecha de nacimiento', <div className={`auth-input ${errors.fechaNacimiento ? 'invalid' : ''}`}><input type="date" value={form.fechaNacimiento} onChange={(e) => update('fechaNacimiento', e.target.value)} /></div>)}
               {field('email', 'Correo electrónico', <div className={`auth-input ${errors.email ? 'invalid' : ''}`}><input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" placeholder="correo@ejemplo.com" /></div>)}
-              {field('telefono', 'Teléfono (opcional)', <div className={`auth-input ${errors.telefono ? 'invalid' : ''}`}><input type="tel" value={form.telefono} onChange={(e) => update('telefono', e.target.value)} autoComplete="tel" placeholder="+56 9 1234 5678" /></div>)}
+              {field('telefono', 'Teléfono (opcional)', <div className={`auth-input ${errors.telefono ? 'invalid' : ''}`}><input type="tel" value={form.telefono} onChange={(e) => update('telefono', e.target.value)} autoComplete="tel" placeholder="+56 9 1234 5678" /></div>, true)}
               {field('ciudad', 'Ciudad de residencia', <div className={`auth-input ${errors.ciudad ? 'invalid' : ''}`}><input value={form.ciudad} onChange={(e) => update('ciudad', e.target.value)} autoComplete="address-level2" placeholder="Ej. Santiago" /></div>)}
               {field('genero', 'Género', <div className={`auth-input ${errors.genero ? 'invalid' : ''}`}><select value={form.genero} onChange={(e) => update('genero', e.target.value)}><option value="">Selecciona...</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option><option value="prefiero_no_decir">Prefiero no decir</option></select></div>)}
-              {field('estadoCivil', 'Estado civil (opcional)', <div className="auth-input"><select value={form.estadoCivil} onChange={(e) => update('estadoCivil', e.target.value)}><option value="">Selecciona...</option><option value="soltero">Soltero/a</option><option value="casado">Casado/a</option><option value="divorciado">Divorciado/a</option><option value="viudo">Viudo/a</option><option value="otro">Otro</option></select></div>)}
+              {field('estadoCivil', 'Estado civil (opcional)', <div className="auth-input"><select value={form.estadoCivil} onChange={(e) => update('estadoCivil', e.target.value)}><option value="">Selecciona...</option><option value="soltero">Soltero/a</option><option value="casado">Casado/a</option><option value="divorciado">Divorciado/a</option><option value="viudo">Viudo/a</option><option value="otro">Otro</option></select></div>, true)}
               {field('password', 'Contraseña', <div className={`auth-input ${errors.password ? 'invalid' : ''}`}><input type="password" value={form.password} onChange={(e) => update('password', e.target.value)} autoComplete="new-password" placeholder="Mínimo 8 caracteres" /></div>)}
               {field('confirmPassword', 'Confirmar contraseña', <div className={`auth-input ${errors.confirmPassword ? 'invalid' : ''}`}><input type="password" value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} autoComplete="new-password" placeholder="Repite tu contraseña" /></div>)}
             </div>
-            <label className="auth-checkbox auth-checkbox--terms"><input type="checkbox" checked={form.terms} onChange={(e) => update('terms', e.target.checked)} /><span>Acepto los términos del servicio y la política de privacidad.</span></label>
+            <label className="auth-checkbox auth-checkbox--terms"><input type="checkbox" checked={form.terms} onChange={(e) => update('terms', e.target.checked)} /><span>Acepto los términos del servicio y la política de privacidad.<RequiredMark /></span></label>
             <FieldError message={errors.terms} />
             <button type="submit" className="auth-submit" disabled={submitting}>{submitting ? 'Creando cuenta...' : 'Registrarse en AbrazaMente'}</button>
           </form>

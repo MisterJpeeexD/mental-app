@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Cross, Heart } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
 
 
 const services = [
   { color: 'blue', title: 'Terapia Profesional', text: 'Conecta a través de videollamadas seguras con especialistas que se adaptan a tus necesidades y horarios.', link: '/professionals', label: 'Saber más' },
-  { color: 'orange', title: 'Herramientas Emocionales', text: 'Registra tu estado de ánimo, accede a meditaciones guiadas y ejercicios de respiración validados clínicamente.', link: '/recursos', label: 'Explorar recursos' },
+  { color: 'orange', title: 'Botiquín de apoyo', text: 'Accede a respiración guiada, grounding y herramientas rápidas para regularte en momentos de crisis.', link: '/botiquin/breathing', label: 'Abrir botiquín' },
   { color: 'teal', title: 'Comunidad Moderada', text: 'Participa en grupos de apoyo anónimos facilitados por profesionales. Nunca estarás solo en tu proceso.', link: '/comunidad', label: 'Unirse al grupo' },
 ];
 
@@ -34,8 +35,10 @@ const faqs = [
 ];
 
 function Hero() {
+  const location = useLocation();
+
   return (
-    <section className="apple-hero">
+    <section className="apple-hero pt-[140px]">
       <div className="mesh-background" aria-hidden="true">
         <div className="mesh-blob blob-blue" />
         <div className="mesh-blob blob-orange" />
@@ -49,6 +52,15 @@ function Hero() {
           <div className="actions">
             <Link to="/registro" className="btn-primary">Comenzar ahora</Link>
             <a href="#ecosistema" className="btn-secondary">Conocer la app</a>
+            <Link
+              to="/botiquin/breathing"
+              state={{ backgroundLocation: location }}
+              className="btn-emergency"
+              aria-label="Botiquín de apoyo inmediato"
+              title="Botiquín de apoyo inmediato"
+            >
+              <Cross aria-hidden="true" strokeWidth={2.5} />
+            </Link>
           </div>
           <div className="feature-cards">
             {['Terapia profesional', 'Herramientas emocionales', 'Comunidad moderada'].map((text, index) => (
@@ -67,7 +79,9 @@ function Hero() {
               <div className="orb orb-purple" data-emotion="Reflexión" title="Reflexión"><div className="orb-face face-reflexion"><div className="eyes-row"><span className="eye" /><span className="eye" /></div><div className="mouth" /></div></div>
               <div className="orb orb-orange" data-emotion="Energía" title="Energía"><div className="orb-face face-energia"><div className="eyes-row"><span className="eye" /><span className="eye" /></div><div className="mouth" /></div></div>
               <div className="orb orb-teal" data-emotion="Serenidad" title="Serenidad"><div className="orb-face face-serenidad"><span className="eye" /><span className="eye" /></div></div>
-              <div className="center-heart-orb"><span className="heart-icon" aria-hidden="true">♥</span></div>
+              {/* SVG y no el glifo ♥: el carácter se salía de su caja de 24px hacia
+                  la derecha, así que la caja quedaba centrada y el corazón no */}
+              <div className="center-heart-orb"><Heart className="heart-icon" aria-hidden="true" fill="currentColor" strokeWidth={0} /></div>
             </div>
           </div>
         </div>
@@ -105,7 +119,8 @@ function FAQSection() {
             <button className="faq-question" type="button" aria-expanded={openIndex === index} onClick={() => setOpenIndex(openIndex === index ? -1 : index)}>
               <span>{question}</span><div className="faq-icon">⌄</div>
             </button>
-            <div className="faq-answer"><p>{answer}</p></div>
+            {/* el div interior no lleva padding: es lo que permite colapsar a 0 */}
+            <div className="faq-answer"><div><p>{answer}</p></div></div>
           </div>
         ))}
       </div>
@@ -150,7 +165,7 @@ export default function HomePage() {
           </div>
         </section>
         <FAQSection />
-        <section className="cta-section reveal"><div className="cta-container"><div className="cta-glow glow-blue" /><div className="cta-glow glow-orange" /><div className="cta-content"><h2>Tu bienestar emocional no tiene por qué esperar.</h2><p>Da el primer paso hoy. Crea tu cuenta y comienza a construir una vida más equilibrada con apoyo profesional.</p><div className="cta-actions"><Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link><a href="mailto:hola@menteconecta.cl" className="btn-secondary-dark">Hablar con soporte</a></div></div></div></section>
+        <section className="cta-section reveal"><div className="cta-container"><div className="cta-glow glow-blue" /><div className="cta-glow glow-orange" /><div className="cta-content"><h2>Tu bienestar emocional no tiene por qué esperar.</h2><p>Da el primer paso hoy. Crea tu cuenta y comienza a construir una vida más equilibrada con apoyo profesional.</p><div className="cta-actions"><Link to="/registro" className="btn-primary-dark">Comenzar mi proceso</Link><a href="mailto:hola@abrazamente.cl" className="btn-secondary-dark">Hablar con soporte</a></div></div></div></section>
       </main>
     </>
   );

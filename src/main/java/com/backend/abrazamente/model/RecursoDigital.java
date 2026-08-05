@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "recursos_digitales")
+@Table(name = "recurso_digital")
 public class RecursoDigital {
 
     @Id
