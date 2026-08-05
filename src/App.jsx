@@ -108,20 +108,11 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
-            <Route
-              path="/recursos"
-              element={(
-                <FeatureLayout
-                  title="Recursos Psicoeducativos"
-                  description="Biblioteca de guías, artículos y contenidos psicoeducativos."
-                  tone="adaptive"
-                  fallback={<CardSkeleton count={2} label="Cargando biblioteca de recursos" />}
-                >
-                  <ResourceLibrary />
-                </FeatureLayout>
-              )}
-            />
-              <Route path="/comunidad" element={<ComunidadPage />} />
+
+            {/* ✅ AQUÍ ESTÁ EL CAMBIO: Se eliminó el FeatureLayout */}
+            <Route path="/recursos" element={<ResourceLibrary />} />
+
+            <Route path="/comunidad" element={<ComunidadPage />} />
 // Deprecated auth route removed; use /login and /registro pages
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
