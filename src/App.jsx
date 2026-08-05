@@ -9,7 +9,7 @@ import CardSkeleton from './components/skeletons/CardSkeleton';
 import TimerSkeleton from './components/skeletons/TimerSkeleton';
 import { AuthProvider } from './context/AuthContext';
 
-
+// Ariel's pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
@@ -24,7 +24,7 @@ const GroundingWizard = lazy(() => import('./features/grounding/GroundingWizard'
 const MoodTracker = lazy(() => import('./features/journal/MoodTracker'));
 const ProfessionalDirectory = lazy(() => import('./features/professionals/ProfessionalDirectory'));
 const AuthModal = lazy(() => import('./features/auth/AuthModal'));
-const ComunidadPage = lazy(() => import('./pages/ComunidadPage'));
+const CommunityForum = lazy(() => import('./features/community/CommunityForum'));
 const ResourceLibrary = lazy(() => import('./features/resources/ResourceLibrary'));
 
 const botiquinIcon = (
@@ -120,7 +120,20 @@ export default function App() {
                 </FeatureLayout>
               )}
             />
-              <Route path="/comunidad" element={<ComunidadPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route
+                path="/comunidad"
+                element={(
+                  <FeatureLayout
+                    title="Foro de la Comunidad"
+                    description="Conecta, comparte y recibe apoyo en un ambiente seguro."
+                    fallback={<CardSkeleton count={4} label="Cargando foro de la comunidad" />}
+                  >
+                    <CommunityForum />
+                  </FeatureLayout>
+                )}
+              />
+            </Route>
 // Deprecated auth route removed; use /login and /registro pages
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

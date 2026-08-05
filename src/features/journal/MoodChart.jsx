@@ -15,20 +15,23 @@ const INK = '#3f3f46';
 const GUIDE = '#d9d4cc';
 const LINE = '#5b7cc4';
 
-export default function MoodChart({ entries, scale, svgRef }) {
+/* `year` y `month` permiten dibujar un mes pasado (lo usa la descarga del
+   archivo); sin ellos se dibuja el mes en curso. */
+export default function MoodChart({ entries, scale, svgRef, year, month }) {
   const hoy = new Date();
+  const anio = year ?? hoy.getFullYear();
+  const mes = month ?? hoy.getMonth();
 
   const dias = useMemo(() => {
     if (scale === 'semana') {
       return lastSevenDays(hoy).map((d) => ({ key: dateKey(d), label: String(d.getDate()) }));
     }
-    const total = daysInMonth(hoy.getFullYear(), hoy.getMonth());
-    return Array.from({ length: total }, (_, i) => {
-      const d = new Date(hoy.getFullYear(), hoy.getMonth(), i + 1);
-      return { key: dateKey(d), label: String(i + 1) };
-    });
+    return Array.from({ length: daysInMonth(anio, mes) }, (_, i) => ({
+      key: dateKey(new Date(anio, mes, i + 1)),
+      label: String(i + 1),
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scale, hoy.getFullYear(), hoy.getMonth(), hoy.getDate()]);
+  }, [scale, anio, mes, hoy.getFullYear(), hoy.getMonth(), hoy.getDate()]);
 
   const porDia = useMemo(() => scoresByDay(entries), [entries]);
 
@@ -49,7 +52,7 @@ export default function MoodChart({ entries, scale, svgRef }) {
 
   const titulo = scale === 'semana'
     ? 'Últimos 7 días'
-    : `${MONTH_NAMES[hoy.getMonth()]} ${hoy.getFullYear()}`;
+    : `${MONTH_NAMES[mes]} ${anio}`;
 
   return (
     <svg

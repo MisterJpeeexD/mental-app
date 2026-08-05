@@ -27,10 +27,4 @@ services:
       - key: JWT_EXPIRATION
         value: "86400000"
       - key: FRONTEND_ORIGINS
-        # Render genera automáticamente la URL pública del servicio.
-        # En el Dashboard de Render, establece este valor con la URL real del servicio,
-        # por ejemplo: https://mental-app.onrender.com
-        # También puedes agregar http://localhost:5173 separado por coma para desarrollo local.
-        sync: false
-      - key: PORT
-        value: "8080"
+        sync: false # URL pública de Render (ej: https://mental-app-backend.onrender.com)
