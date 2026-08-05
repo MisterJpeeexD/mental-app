@@ -38,7 +38,7 @@ function Hero() {
   const location = useLocation();
 
   return (
-    <section className="apple-hero pt-[140px]">
+    <section className="apple-hero">
       <div className="mesh-background" aria-hidden="true">
         <div className="mesh-blob blob-blue" />
         <div className="mesh-blob blob-orange" />

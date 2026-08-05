@@ -13,6 +13,20 @@ export const MOODS = [
 
 export const MAX_SCORE = MOODS.length;
 
+/* Preguntas guía para cuando cuesta arrancar. La primera es la que pidió el
+   equipo; las demás siguen la misma idea: nombrar la emoción y el momento que
+   la detonó, que es justo lo que separa el selector de ánimo del texto. */
+export const PROMPTS = [
+  'Al repasar tu último día, ¿cuáles fueron las emociones más intensas que sentiste (desde la alegría, gratitud o paz, hasta el enojo, tristeza o miedo) y qué momentos exactos las detonaron?',
+  '¿Hubo algún momento del día en que tu cuerpo reaccionó antes que tu cabeza? ¿Qué estaba pasando justo ahí?',
+  'Si tuvieras que ponerle nombre a lo que sentiste hoy con una sola palabra, ¿cuál sería y qué la provocó?',
+  '¿Qué cosa pequeña te hizo bien hoy, aunque el día en general haya sido difícil?',
+  '¿Qué le dirías a alguien que quieres si hubiera vivido exactamente tu día de hoy?',
+];
+
+/* Cambia sola cada día para que la pregunta no se vuelva parte del decorado */
+export const promptOfTheDay = (date = new Date()) => date.getDate() % PROMPTS.length;
+
 export const moodByName = (name) => MOODS.find((mood) => mood.name === name);
 export const moodByScore = (score) => MOODS.find((mood) => mood.score === score);
 

@@ -87,6 +87,53 @@
   color: var(--text-muted);
 }
 
+/* Pregunta guía: acompaña sin competir con el campo de escritura */
+.journal-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px dashed rgba(62, 123, 250, 0.32);
+  border-radius: 14px;
+  background: rgba(62, 123, 250, 0.07);
+}
+
+.journal-prompt p {
+  flex: 1 1 220px;
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.journal-prompt__next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(62, 123, 250, 0.14);
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.journal-prompt__next svg { width: 13px; height: 13px; }
+.journal-prompt__next:hover { background: rgba(62, 123, 250, 0.24); }
+
+[data-theme='dark'] .journal-prompt {
+  border-color: rgba(120, 160, 255, 0.32);
+  background: rgba(120, 160, 255, 0.08);
+}
+
 .journal-textarea {
   width: 100%;
   min-height: 118px;
@@ -379,8 +426,89 @@
 }
 
 .journal-download svg { width: 15px; height: 15px; }
-.journal-download:hover { background: rgba(62, 123, 250, 0.18); }
-.journal-download:active { transform: scale(0.98); }
+.journal-download:hover:not(:disabled) { background: rgba(62, 123, 250, 0.18); }
+.journal-download:active:not(:disabled) { transform: scale(0.98); }
+
+.journal-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Neutro: es un archivo, no una descarga directa como los otros dos */
+.journal-download--archive {
+  border-color: rgba(134, 134, 139, 0.28);
+  background: rgba(134, 134, 139, 0.1);
+  color: var(--text-main);
+}
+
+.journal-download--archive:hover:not(:disabled) { background: rgba(134, 134, 139, 0.18); }
+
+[data-theme='dark'] .journal-download--archive {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* --- Archivo de meses --- */
+.journal-archive {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.journal-archive__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(134, 134, 139, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme='dark'] .journal-archive__item {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.journal-archive__label { display: flex; flex-direction: column; gap: 2px; }
+.journal-archive__label strong { font-size: 0.9rem; text-transform: capitalize; }
+.journal-archive__label span { color: var(--text-muted); font-size: 0.76rem; }
+
+.journal-archive__actions { display: flex; gap: 8px; }
+
+.journal-archive__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(62, 123, 250, 0.25);
+  border-radius: 10px;
+  background: rgba(62, 123, 250, 0.08);
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.journal-archive__btn svg { width: 13px; height: 13px; }
+.journal-archive__btn:hover { background: rgba(62, 123, 250, 0.16); }
+
+/* Fuera de vista pero renderizado: hace falta para poder serializar el SVG */
+.journal-offscreen {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  width: 900px;
+  pointer-events: none;
+}
 
 @media (max-width: 760px) {
   .journal { grid-template-columns: 1fr; }
