@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Save, Calendar, Lock, Sparkles, Trash2, Download, LineChart } from 'lucide-react';
-import { MOODS, dateKey, MONTH_NAMES } from './journalData';
+import { AlertCircle, Save, Calendar, Lock, Sparkles, Trash2, Download, LineChart, Archive, FileText, RefreshCw } from 'lucide-react';
+import { MOODS, dateKey, MONTH_NAMES, monthsWithEntries, PROMPTS, promptOfTheDay } from './journalData';
 import { downloadMonthlyJournal, downloadTrackerSvg } from './journalExport';
 import MoodChart from './MoodChart';
 
@@ -16,7 +16,11 @@ export default function MoodTracker() {
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [scale, setScale] = useState('semana');
+  const [showArchive, setShowArchive] = useState(false);
+  const [promptIndex, setPromptIndex] = useState(promptOfTheDay);
+  const [exportingMonth, setExportingMonth] = useState(null);
   const chartRef = useRef(null);
+  const exportRef = useRef(null);
 
   useEffect(() => {
     fetchEntries();
@@ -113,6 +117,17 @@ export default function MoodTracker() {
   };
 
   const hoy = new Date();
+  const mesesPrevios = monthsWithEntries(entries)
+    .filter((m) => !(m.year === hoy.getFullYear() && m.month === hoy.getMonth()));
+
+  /* El SVG de un mes pasado no está en pantalla, así que se monta fuera de vista,
+     se serializa y se descarta en cuanto termina la descarga. */
+  useEffect(() => {
+    if (!exportingMonth || !exportRef.current) return;
+    const { year, month } = exportingMonth;
+    downloadTrackerSvg(exportRef.current, `tracker-${MONTH_NAMES[month]}-${year}.svg`);
+    setExportingMonth(null);
+  }, [exportingMonth]);
 
   return (
     <div className="journal">
@@ -138,12 +153,24 @@ export default function MoodTracker() {
 
         <div className="journal-field">
           <label htmlFor="journal-content">Cuéntale a tu diario lo que estás viviendo</label>
+
+          <div className="journal-prompt">
+            <p>{PROMPTS[promptIndex]}</p>
+            <button
+              type="button"
+              className="journal-prompt__next"
+              onClick={() => setPromptIndex((i) => (i + 1) % PROMPTS.length)}
+            >
+              <RefreshCw aria-hidden="true" /> Otra pregunta
+            </button>
+          </div>
+
           <textarea
             id="journal-content"
             className="journal-textarea"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Escribe pensamientos, sensaciones físicas, o lo que causó tu estado de ánimo..."
+            placeholder="Escribe pensamientos, sensaciones físicas, o el momento exacto que detonó lo que sentiste..."
           />
         </div>
 
@@ -270,7 +297,59 @@ export default function MoodTracker() {
           >
             <Download aria-hidden="true" /> Descargar tracker
           </button>
+
+          <button
+            type="button"
+            className="journal-download journal-download--archive"
+            onClick={() => setShowArchive((abierto) => !abierto)}
+            aria-expanded={showArchive}
+            disabled={mesesPrevios.length === 0}
+            title={mesesPrevios.length === 0 ? 'Aparecerá cuando cierres tu primer mes' : undefined}
+          >
+            <Archive aria-hidden="true" /> Meses anteriores ({mesesPrevios.length})
+          </button>
         </div>
+
+        {showArchive && mesesPrevios.length > 0 && (
+          <ul className="journal-archive">
+            {mesesPrevios.map((mes) => (
+              <li key={`${mes.year}-${mes.month}`} className="journal-archive__item">
+                <div className="journal-archive__label">
+                  <strong>{mes.label}</strong>
+                  <span>{mes.total} {mes.total === 1 ? 'entrada' : 'entradas'}</span>
+                </div>
+                <div className="journal-archive__actions">
+                  <button
+                    type="button"
+                    className="journal-archive__btn"
+                    onClick={() => downloadMonthlyJournal(entries, mes.year, mes.month)}
+                  >
+                    <FileText aria-hidden="true" /> Diario
+                  </button>
+                  <button
+                    type="button"
+                    className="journal-archive__btn"
+                    onClick={() => setExportingMonth({ year: mes.year, month: mes.month })}
+                  >
+                    <LineChart aria-hidden="true" /> Tracker
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {exportingMonth && (
+          <div className="journal-offscreen" aria-hidden="true">
+            <MoodChart
+              entries={entries}
+              scale="mes"
+              year={exportingMonth.year}
+              month={exportingMonth.month}
+              svgRef={exportRef}
+            />
+          </div>
+        )}
       </section>
     </div>
   );
