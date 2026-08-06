@@ -1,0 +1,10 @@
+ignore:
+  - "src/main/resources/static"
+  - "node_modules"
+  - "target"
+  - "dist"
+  - "public"
+  - ".agents"
+  - ".git"
+  - ".vscode"
+  - "database"

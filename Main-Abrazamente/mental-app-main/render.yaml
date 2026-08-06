@@ -1,0 +1,36 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Service Backend + Static SPA: Spring Boot (API REST + Servidor SPA)
+  # Se conecta a Neon PostgreSQL a través de variables de entorno de Render.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: mental-app
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /
+    envVars:
+      - key: DB_URL
+        sync: false # Pega aquí la connection string de Neon DB (con ?sslmode=require)
+      - key: DB_USER
+        sync: false # Usuario de Neon DB
+      - key: DB_PASSWORD
+        sync: false # Password de Neon DB
+      - key: DB_DRIVER
+        value: "org.postgresql.Driver"
+      - key: JPA_DDL_AUTO
+        value: "update"
+      - key: JPA_SHOW_SQL
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: "86400000"
+      - key: FRONTEND_ORIGINS
+        # Render genera automáticamente la URL pública del servicio.
+        # En el Dashboard de Render, establece este valor con la URL real del servicio,
+        # por ejemplo: https://mental-app.onrender.com
+        # También puedes agregar http://localhost:5173 separado por coma para desarrollo local.
+        sync: false
+      - key: PORT
+        value: "8080"

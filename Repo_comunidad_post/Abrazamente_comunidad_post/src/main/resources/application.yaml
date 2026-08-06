@@ -1,0 +1,48 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: abrazamente
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: "0"
+
+jwt:
+  # Base64 válido para HS256 (dev). En producción inyectar JWT_SECRET.
+  # Generar uno propio con: openssl rand -base64 48
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+microsoft:
+  graph:
+    tenant-id: ${MS_GRAPH_TENANT_ID:mock-tenant-id}
+    client-id: ${MS_GRAPH_CLIENT_ID:mock-client-id}
+    client-secret: ${MS_GRAPH_CLIENT_SECRET:mock-client-secret}
+    user-id: ${MS_GRAPH_USER_ID:mock-user-id}
+
+youtube:
+  api-key: ${YOUTUBE_API_KEY:mock-youtube-api-key}
+
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID:mock-spotify-client-id}
+  client-secret: ${SPOTIFY_CLIENT_SECRET:mock-spotify-client-secret}
+
+app:
+  cors:
+    allowed-origins: ${FRONTEND_ORIGINS:http://localhost:5173}
