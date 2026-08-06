@@ -1,0 +1,500 @@
+/* =========================================================
+   Contenedor de features (botiquín, diario, directorio…) y
+   estilos del botiquín emocional.
+   ========================================================= */
+
+.feature-shell {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 80vh;
+  /* deja aire bajo el header fijo */
+  padding: clamp(96px, 14vh, 132px) clamp(12px, 4vw, 24px) clamp(40px, 8vh, 72px);
+}
+
+/* Versión flotante: por encima del header (z-index 1000) */
+.feature-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 4vw, 28px);
+  background: rgba(18, 18, 18, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.feature-card--floating {
+  max-height: min(86vh, 760px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+}
+
+/* sobre el fondo atenuado, la tarjeta translúcida se veía grisácea */
+.feature-card--floating.feature-card--adaptive {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme='dark'] .feature-card--floating.feature-card--adaptive {
+  background: rgba(28, 28, 30, 0.94);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* --- Tono oscuro: aspecto original, usado por el resto de features --- */
+.feature-card--dark {
+  background: rgba(30, 30, 32, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.feature-card--dark .feature-card__head,
+.feature-card--dark .feature-tabs {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.feature-card--dark .feature-card__title { color: #fff; }
+.feature-card--dark .feature-card__desc,
+.feature-card--dark .feature-card__close { color: #a1a1a6; }
+.feature-card--dark .feature-card__close { background: rgba(255, 255, 255, 0.1); }
+.feature-card--dark .feature-tabs { background: rgba(255, 255, 255, 0.02); }
+.feature-card--dark .feature-tab { color: #a1a1a6; }
+.feature-card--dark .feature-tab[aria-current='page'] { color: #3e7bfa; border-bottom-color: #3e7bfa; }
+
+/* --- Tono adaptativo: sigue el tema claro/oscuro del sitio --- */
+.feature-card--adaptive {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  box-shadow: 0 24px 60px rgba(16, 24, 40, 0.10);
+}
+
+[data-theme='dark'] .feature-card--adaptive {
+  background: rgba(30, 30, 32, 0.78);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.feature-card--adaptive .feature-card__head,
+.feature-card--adaptive .feature-tabs {
+  border-color: rgba(134, 134, 139, 0.20);
+}
+
+[data-theme='dark'] .feature-card--adaptive .feature-card__head,
+[data-theme='dark'] .feature-card--adaptive .feature-tabs {
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.feature-card--adaptive .feature-card__title { color: var(--text-main); }
+.feature-card--adaptive .feature-card__desc { color: var(--text-muted); }
+.feature-card--adaptive .feature-card__close {
+  background: rgba(134, 134, 139, 0.14);
+  color: var(--text-main);
+}
+.feature-card--adaptive .feature-tabs { background: rgba(134, 134, 139, 0.06); }
+.feature-card--adaptive .feature-tab { color: var(--text-muted); }
+.feature-card--adaptive .feature-tab[aria-current='page'] {
+  color: var(--brand-blue);
+  border-bottom-color: var(--brand-blue);
+}
+
+/* --- Cabecera --- */
+.feature-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(18px, 4vw, 24px);
+  border-bottom: 1px solid;
+}
+
+.feature-card__heading {
+  display: flex;
+  /* alineada al título: centrada se descolgaba cuando el texto envuelve */
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* Cruz de botiquín a la izquierda del título */
+.feature-card__badge {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  border-radius: 13px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.feature-card__badge svg {
+  width: 24px;
+  height: 24px;
+}
+
+[data-theme='dark'] .feature-card__badge {
+  border-color: rgba(248, 113, 113, 0.28);
+  background: rgba(248, 113, 113, 0.16);
+  color: #f87171;
+}
+
+.feature-card__title {
+  font-size: clamp(1.05rem, 3vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.feature-card__desc {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.feature-card__close {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.feature-card__close:hover { transform: scale(1.06); }
+
+/* --- Pestañas --- */
+.feature-tabs {
+  display: flex;
+  gap: clamp(14px, 4vw, 24px);
+  padding: 0 clamp(18px, 4vw, 24px);
+  border-bottom: 1px solid;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.feature-tabs::-webkit-scrollbar { display: none; }
+
+.feature-tab {
+  flex-shrink: 0;
+  padding: 14px 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* --- Cuerpo --- */
+.feature-card__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: clamp(18px, 4vw, 24px);
+}
+
+@media (max-width: 700px) {
+  /* como página conviene que crezca y scrollee la página; flotando no, o el
+     modal se saldría de la pantalla */
+  .feature-card:not(.feature-card--floating) {
+    max-height: none;
+  }
+}
+
+/* =========================================================
+   Botiquín: respiración y grounding
+   ========================================================= */
+
+.botiquin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 4vw, 28px);
+  color: var(--text-main);
+}
+
+.breathing-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(288px, 78vw);
+  aspect-ratio: 1;
+}
+
+.breathing-halo {
+  position: absolute;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(38px);
+}
+
+.breathing-orb {
+  /* sin posicionamiento, el halo absoluto se pintaría encima y lavaría el texto */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(140px, 38vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  /* el degradado aclara el orbe; la sombra mantiene legible el texto blanco */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.breathing-orb__label {
+  display: block;
+  font-size: clamp(1.05rem, 4.5vw, 1.4rem);
+  letter-spacing: 0.08em;
+}
+
+.breathing-orb__count {
+  display: block;
+  font-size: clamp(1.4rem, 6vw, 1.85rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.breathing-caption {
+  min-height: 52px;
+  max-width: 34ch;
+  margin: 0 auto;
+  color: var(--text-muted);
+  font-size: clamp(0.95rem, 2.6vw, 1.1rem);
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* --- Botones del botiquín: alto táctil y sin texto apretado --- */
+.botiquin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.botiquin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.botiquin-btn svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.botiquin-btn:active { transform: scale(0.97); }
+
+.botiquin-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.botiquin-btn--primary {
+  background: var(--brand-blue);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(62, 123, 250, 0.28);
+}
+
+.botiquin-btn--primary:hover:not(:disabled) { background: var(--brand-blue-hover); }
+
+.botiquin-btn--ghost {
+  background: rgba(134, 134, 139, 0.12);
+  border-color: rgba(134, 134, 139, 0.20);
+  color: var(--text-main);
+}
+
+.botiquin-btn--ghost:hover:not(:disabled) { background: rgba(134, 134, 139, 0.2); }
+
+[data-theme='dark'] .botiquin-btn--ghost {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme='dark'] .botiquin-btn--ghost:hover:not(:disabled) { background: rgba(255, 255, 255, 0.14); }
+
+/* --- Grounding --- */
+.grounding {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--text-main);
+}
+
+.grounding__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.grounding__title {
+  font-size: clamp(1.05rem, 3.4vw, 1.25rem);
+  font-weight: 700;
+  color: var(--brand-blue);
+}
+
+.grounding__badge {
+  padding: 6px 12px;
+  border: 1px solid rgba(62, 123, 250, 0.25);
+  border-radius: 100px;
+  background: rgba(62, 123, 250, 0.12);
+  color: var(--brand-blue);
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.grounding__desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.grounding__progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(134, 134, 139, 0.18);
+  overflow: hidden;
+}
+
+.grounding__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand-blue);
+  transition: width 0.3s ease;
+}
+
+.grounding__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grounding__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(134, 134, 139, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.grounding__input::placeholder { color: var(--text-muted); }
+
+.grounding__input:focus {
+  border-color: rgba(62, 123, 250, 0.55);
+  box-shadow: 0 0 0 4px rgba(62, 123, 250, 0.12);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+[data-theme='dark'] .grounding__input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme='dark'] .grounding__input:focus { background: rgba(255, 255, 255, 0.10); }
+
+.grounding__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(134, 134, 139, 0.18);
+}
+
+[data-theme='dark'] .grounding__nav { border-top-color: rgba(255, 255, 255, 0.08); }
+
+.grounding__done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.grounding__done-icon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+}
+
+.grounding__done-icon svg { width: 38px; height: 38px; }
+
+.grounding__done h3 { font-size: 1.4rem; font-weight: 700; }
+
+.grounding__done p {
+  max-width: 46ch;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* En móvil los botones ocupan el ancho completo: nunca quedan apretados */
+@media (max-width: 480px) {
+  .botiquin-actions { flex-direction: column; align-items: stretch; }
+  .grounding__nav > .botiquin-btn { flex: 1 1 100%; }
+  .botiquin-btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathing-orb,
+  .breathing-halo,
+  .botiquin-btn,
+  .grounding__progress span { transition: none; }
+}
